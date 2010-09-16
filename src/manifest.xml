@@ -2,44 +2,44 @@
 <componentPackage>
 	
 	<!-- components -->
-	<component id="Application" class="reflex.containers.Application"/>
-	<component id="Group" class="reflex.containers.Group"/>
-	<component id="Scroller" class="reflex.containers.Scroller"/>
-	<component id="Component" class="reflex.components.Component"/>
+	<component id="Application" class="flight.containers.Application"/>
+	<component id="Group" class="flight.containers.Group"/>
+	<component id="Scroller" class="flight.containers.Scroller"/>
+	<component id="Component" class="flight.components.Component"/>
 	
 	<!-- skins -->
-	<component id="Skin" class="reflex.skins.Skin"/>
+	<component id="Skin" class="flight.skins.Skin"/>
 	
 	<!-- behaviors -->
-	<component id="ButtonBehavior" class="reflex.behaviors.ButtonBehavior"/>
-	<component id="DragBehavior" class="reflex.behaviors.DragBehavior"/>
-	<component id="ListBehavior" class="reflex.behaviors.ListBehavior"/>
-	<component id="ListSelectBehavior" class="reflex.behaviors.ListSelectBehavior"/>
-	<component id="SlideBehavior" class="reflex.behaviors.SlideBehavior"/>
-	<component id="SelectBehavior" class="reflex.behaviors.SelectBehavior"/>
-	<component id="StepBehavior" class="reflex.behaviors.StepBehavior"/>
-	<component id="DragStepBehavior" class="reflex.behaviors.DragStepBehavior"/>
+	<component id="ButtonBehavior" class="flight.behaviors.ButtonBehavior"/>
+	<component id="DragBehavior" class="flight.behaviors.DragBehavior"/>
+	<component id="ListBehavior" class="flight.behaviors.ListBehavior"/>
+	<component id="ListSelectBehavior" class="flight.behaviors.ListSelectBehavior"/>
+	<component id="SlideBehavior" class="flight.behaviors.SlideBehavior"/>
+	<component id="SelectBehavior" class="flight.behaviors.SelectBehavior"/>
+	<component id="StepBehavior" class="flight.behaviors.StepBehavior"/>
+	<component id="DragStepBehavior" class="flight.behaviors.DragStepBehavior"/>
 	
 	<!-- layouts -->
-	<component id="ILayout" class="reflex.layouts.ILayout"/>
-	<component id="Layout" class="reflex.layouts.Layout"/>
-	<component id="XYLayout" class="reflex.layouts.XYLayout"/>
-	<component id="BasicLayout" class="reflex.layouts.BasicLayout"/>
-	<component id="VerticalLayout" class="reflex.layouts.VerticalLayout"/>
-	<component id="HorizontalLayout" class="reflex.layouts.HorizontalLayout"/>
-	<component id="DockLayout" class="reflex.layouts.DockLayout"/>
+	<component id="ILayout" class="flight.layouts.ILayout"/>
+	<component id="Layout" class="flight.layouts.Layout"/>
+	<component id="XYLayout" class="flight.layouts.XYLayout"/>
+	<component id="BasicLayout" class="flight.layouts.BasicLayout"/>
+	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
+	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
+	<component id="DockLayout" class="flight.layouts.DockLayout"/>
 	
 	<!-- measurement -->
-	<component id="Measurements" class="reflex.measurement.Measurements"/>
+	<component id="Measurements" class="flight.measurement.Measurements"/>
 	
 	<!-- display -->
-	<!--<component id="Text" class="reflex.display.Text" />-->
-	<component id="BitmapImage" class="reflex.graphics.BitmapImage"/>
+	<!--<component id="Text" class="flight.display.Text" />-->
+	<component id="BitmapImage" class="flight.graphics.BitmapImage"/>
 	
 	
 	<!-- graphics -->
-	<component id="IDrawable" class="reflex.graphics.IDrawable"/>
-	<component id="Rect" class="reflex.graphics.Rect"/>
+	<component id="IDrawable" class="flight.graphics.IDrawable"/>
+	<component id="Rect" class="flight.graphics.Rect"/>
 	
 	<!-- flex dependencies -->
 	<!-- <component id="FlexClasses" class="FlexClasses"/> -->

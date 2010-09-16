@@ -2,7 +2,7 @@ package
 {
 	/**
 	 * @private
-	 * This class is used to link additional classes into reflex.swc
+	 * This class is used to link additional classes into flight-stealth.swc
 	 * beyond those that are found by dependecy analysis starting from the
 	 * classes specified in manifest.xml. For example, compiler-required
 	 * references to Flex classes for use of an MXML workflow and the [Bindable]

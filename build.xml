@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Reflex Framework Build" basedir="." default="all">
+<project name="Stealth Framework Build" basedir="." default="all">
 
 	<!-- Define variables/paths used in this build script -->
 	<property file="build.properties" />
@@ -48,8 +48,8 @@
 		<compc output="${bin.dir}/${library.name}.swc" link-report="${link-report.dir}/link-report.xml">
 			<source-path path-element="${src.dir}"/>
 			<!--<source-path path-element="../FlightCore/src"/>-->
-			<namespace uri="http://rx.reflex.io/2010" manifest="${src.dir}/manifest.xml" />
-			<include-namespaces>http://rx.reflex.io/2010</include-namespaces>
+			<namespace uri="http://flight.flightxd.com/2010" manifest="${src.dir}/manifest.xml" />
+			<include-namespaces>http://flight.flightxd.com/2010</include-namespaces>
 			<strict>true</strict>
 			<optimize>true</optimize>
 			<warnings>true</warnings>
@@ -71,8 +71,8 @@
 	-->
 	<target name="docs">
 		<asdoc output="${docs.dir}" templates-path="${docs.templates}">
-			<doc-namespaces uri="http://reflex.io/2010" />
-			<namespace uri="http://reflex.io/2010" manifest="${basedir}/src/manifest.xml" />
+			<doc-namespaces uri="http://flightxd.com/2010" />
+			<namespace uri="http://flightxd.com/2010" manifest="${basedir}/src/manifest.xml" />
 			<source-path path-element="${src.dir}" />
 			<!--<source-path path-element="../FlightCore/src"/>-->
 			<library-path dir="${flex-sdk.dir}/frameworks/libs" includes="*.swc" append="true" />
