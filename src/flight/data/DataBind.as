@@ -33,6 +33,23 @@ package flight.data
 			bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]);
 		}
 		
+		
+		public function release(target:Object, targetPath:String, source:Object, sourcePath:String, twoWay:Boolean = false, update:Boolean = true):void
+		{
+			DataBind.release(target, targetPath, source, sourcePath);
+		}
+		
+		public function releaseSetter(setter:Function, source:Object, sourcePath:String, params:Array = null):void
+		{
+			DataBind.releaseSetter(setter, source, sourcePath, params);
+		}
+		
+		public function releaseEventListener(type:String, listener:Function, source:Object, sourcePath:String, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
+		{
+			DataBind.releaseSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]);
+		}
+		
+		
 		private function setEventListener(oldValue:*, newValue:*, type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
 			if (IEventDispatcher(oldValue) != null) {
@@ -78,7 +95,7 @@ package flight.data
 		public static function bindSetter(setter:Function, source:Object, sourcePath:String, params:Array = null, update:Boolean = true):Object
 		{
 			params = params || [];
-			params.setter = setter;
+			params.$setter = setter;
 			var sourceBindPath:Array = getBindPath(source, sourcePath);
 			sourceBindPath.$setters[params] = true;
 			if (update) {
@@ -89,7 +106,7 @@ package flight.data
 			return params;
 		}
 		
-		public static function releaseBind(target:Object, targetPath:String, source:Object, sourcePath:String):void
+		public static function release(target:Object, targetPath:String, source:Object, sourcePath:String):void
 		{
 			var sourceBindPath:Array = findBindPath(source, sourcePath);
 			if (!sourceBindPath) {
@@ -127,13 +144,21 @@ package flight.data
 			}
 		}
 		
-		public static function releaseSetter(setter:Function, source:Object, sourcePath:String):void
+		public static function releaseSetter(setter:Function, source:Object, sourcePath:String, params:Array = null):void
 		{
+			params = params || [];
 			var sourceBindPath:Array = getBindPath(source, sourcePath);
 			var setters:Dictionary = sourceBindPath.$setters;
 			var len:int = 0;
+			var paramLen:int = params.length;
 			for (var setterKey:Object in setters) {
-				if ("$setter" in setterKey) {
+				if ("$setter" in setterKey && setterKey.$setter == setter) {
+					for (var i:int = 0; i < paramLen; i++) {
+						if (params[i] != setterKey[i]) {
+							len++;
+							continue;
+						}
+					}
 					delete setters[setterKey];
 				} else {
 					len++;

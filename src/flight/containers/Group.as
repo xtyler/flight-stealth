@@ -5,17 +5,17 @@ package flight.containers
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
+	import flight.collections.SimpleCollection;
+	import flight.components.IStateful;
+	import flight.data.DataChange;
+	import flight.display.Display;
+	import flight.events.RenderPhase;
+	import flight.layouts.ILayout;
+	import flight.templating.addItemsAt;
+	
 	import mx.collections.IList;
 	import mx.events.CollectionEvent;
 	import mx.events.CollectionEventKind;
-	
-	import flight.collections.SimpleCollection;
-	import flight.components.IStateful;
-	import flight.display.Display;
-	import flight.templating.addItemsAt;
-	import flight.events.PropertyEvent;
-	import flight.events.RenderPhase;
-	import flight.layouts.ILayout;
 	
 	[Style(name="left")]
 	[Style(name="right")]
@@ -84,21 +84,14 @@ package flight.containers
 		[Bindable(event="statesChange")]
 		public function get states():Array { return _states; }
 		public function set states(value:Array):void {
-			if (_states == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "states", _states, _states = value);
+			DataChange.change(this, "states", _states, _states = value);
 		}
 		
 		
 		[Bindable(event="currentStateChange")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
-		{
-			if (_currentState == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "currentState", _currentState, _currentState = value);
+		public function set currentState(value:String):void {
+			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
 		/**

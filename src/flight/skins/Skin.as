@@ -9,21 +9,21 @@ package flight.skins
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import mx.collections.IList;
-	import mx.events.CollectionEvent;
-	import mx.events.CollectionEventKind;
-	
-	import flight.binding.Bind;
 	import flight.collections.SimpleCollection;
 	import flight.components.IStateful;
 	import flight.containers.IContainer;
-	import flight.templating.addItemsAt;
-	import flight.events.PropertyEvent;
+	import flight.data.DataBind;
+	import flight.data.DataChange;
 	import flight.events.RenderPhase;
 	import flight.layouts.ILayout;
 	import flight.measurement.IMeasurable;
 	import flight.measurement.IMeasurements;
 	import flight.measurement.Measurements;
+	import flight.templating.addItemsAt;
+	
+	import mx.collections.IList;
+	import mx.events.CollectionEvent;
+	import mx.events.CollectionEventKind;
 	
 	/**
 	 * Skin is a convenient base class for many skins, a swappable graphical
@@ -40,6 +40,8 @@ package flight.skins
 		
 		RenderPhase.registerPhase(MEASURE, 0, true);
 		RenderPhase.registerPhase(LAYOUT, 0, true);
+		
+		protected var dataBind:DataBind = new DataBind();
 		
 		private var renderers:Array = [];
 		private var _layout:ILayout;
@@ -66,8 +68,8 @@ package flight.skins
 				return;
 			}
 			_explicit.width = value;
-			PropertyEvent.dispatchChange(this, "width", unscaledWidth, unscaledWidth = value);
 			RenderPhase.invalidate(target, LAYOUT);
+			DataChange.change(this, "width", unscaledWidth, unscaledWidth = value);
 		}
 		
 		/**
@@ -80,8 +82,8 @@ package flight.skins
 				return;
 			}
 			_explicit.height = value;
-			PropertyEvent.dispatchChange(this, "height", unscaledHeight, unscaledHeight = value);
 			RenderPhase.invalidate(target, LAYOUT);
+			DataChange.change(this, "height", unscaledHeight, unscaledHeight = value);
 		}
 		
 		/**
@@ -118,9 +120,9 @@ package flight.skins
 		 * @inheritDoc
 		 */
 		public function setSize(width:Number, height:Number):void {
-			if (unscaledWidth != width) { PropertyEvent.dispatchChange(this, "width", unscaledWidth, unscaledWidth = width); }
-			if (unscaledHeight != height) { PropertyEvent.dispatchChange(this, "height", unscaledHeight, unscaledHeight = height); }
 			RenderPhase.invalidate(target, LAYOUT);
+			DataChange.queue(this, "width", unscaledWidth, unscaledWidth = width);
+			DataChange.change(this, "height", unscaledHeight, unscaledHeight = height);
 		}
 		
 		/**
@@ -132,42 +134,32 @@ package flight.skins
 			if (_layout == value) {
 				return;
 			}
-			var oldLayout:ILayout = _layout;
 			if (_layout) { _layout.target = null; }
-			_layout = value;
+			DataChange.queue(this, "layout", _layout, _layout = value);
 			_layout.target = target;
 			if (target) {
 				RenderPhase.invalidate(target, MEASURE);
 				RenderPhase.invalidate(target, LAYOUT);
 			}
-			PropertyEvent.dispatchChange(this, "layout", oldLayout, _layout);
+			DataChange.change();
 		}
 		
 		[Bindable(event="templateChange")]
 		public function get template():Object { return _template; }
 		public function set template(value:Object):void {
-			if (_template == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "template", _template, _template = value);
+			DataChange.change(this, "template", _template, _template = value);
 		}
 		
 		[Bindable(event="currentStateChange")]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void {
-			if (_currentState == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "currentState", _currentState, _currentState = value);
+			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
 		[Bindable(event="statesChange")]
 		public function get states():Array { return _states; }
 		public function set states(value:Array):void {
-			if (_states == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "states", _states, _states = value);
+			DataChange.change(this, "states", _states, _states = value);
 		}
 		
 		//protected var containerPart:DisplayObjectContainer;
@@ -185,8 +177,8 @@ package flight.skins
 				//_layout = new XYLayout();
 			}
 			_content.addEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
-			Bind.addListener(this, onLayoutChange, this, "target.layout");
-			Bind.addListener(this, onLayoutChange, this, "layout");
+			dataBind.bindSetter(onLayoutChange, this, "target.layout");
+			dataBind.bindSetter(onLayoutChange, this, "layout");
 			//Bind.addBinding(this, "data", this, "target.data");
 			//Bind.addBinding(this, "state", this, "target.state");
 			//addEventListener(MEASURE, onMeasure, false, 0, true);
@@ -213,8 +205,8 @@ package flight.skins
 				}
 			}
 			*/
-			var oldValue:Object = _target;
-			_target = value;
+			
+			DataChange.queue(this, "target", _target, _target = value);
 			if (layout) {
 				layout.target = _target;
 			}
@@ -258,12 +250,12 @@ package flight.skins
 				RenderPhase.invalidate(target, LAYOUT);
 			}
 			
-			PropertyEvent.dispatchChange(this, "target", oldValue, _target);
 			var items:Array = [];
 			for (var i:int = 0; i < _content.length; i++) {
 				items.push(_content.getItemAt(i));
 			}
 			reset(items);
+			DataChange.change();
 		}
 		
 		protected function init():void
@@ -311,7 +303,7 @@ package flight.skins
 			}
 			
 			
-			PropertyEvent.dispatchChange(this, "content", oldContent, _content);
+			DataChange.change(this, "content", oldContent, _content);
 		}
 		
 		public function getSkinPart(part:String):InteractiveObject

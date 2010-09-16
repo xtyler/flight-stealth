@@ -3,7 +3,7 @@ package flight.behaviors
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	
-	import flight.events.PropertyEvent;
+	import flight.data.DataChange;
 	
 	/**
 	 * @description Adds selection toggling functionality to the target. When clicked, the target's selected property will be flipped.
@@ -18,10 +18,7 @@ package flight.behaviors
 		[Binding(target="target.selected")]
 		public function get selected():Boolean { return _selected; }
 		public function set selected(value:Boolean):void {
-			if (_selected == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "selected", _selected, _selected = value);
+			DataChange.change(this, "selected", _selected, _selected = value);
 		}
 		
 		public function SelectBehavior(target:IEventDispatcher= null)

@@ -6,9 +6,10 @@
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	
+	import flight.data.DataBind;
 	import flight.metadata.resolveBindings;
-	import flight.metadata.resolveEventListeners;
 	import flight.metadata.resolveDataListeners;
+	import flight.metadata.resolveEventListeners;
 	
 	/**
 	 * Behavior is a convenient base class for various behavior implementations.
@@ -27,6 +28,7 @@
 	 */
 	public class Behavior extends EventDispatcher implements IBehavior
 	{
+		protected var dataBind:DataBind = new DataBind();
 		
 		private var _target:IEventDispatcher;
 		

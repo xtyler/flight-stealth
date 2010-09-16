@@ -1,7 +1,6 @@
 package flight.data
 {
-	import flight.events.PropertyEvent;
-
+	
 	public class Scroll extends Range implements IScroll
 	{
 		private var _pageSize:Number = 10;

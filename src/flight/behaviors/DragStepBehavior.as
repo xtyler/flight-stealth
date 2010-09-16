@@ -4,9 +4,9 @@ package flight.behaviors
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	
+	import flight.data.DataChange;
 	import flight.data.IRange;
 	import flight.events.ButtonEvent;
-	import flight.events.PropertyEvent;
 	
 	public class DragStepBehavior extends Behavior
 	{
@@ -17,10 +17,7 @@ package flight.behaviors
 		[Binding(target="target.position")]
 		public function get position():IRange { return _position; }
 		public function set position(value:IRange):void {
-			if (_position == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "position", _position, _position = value);
+			DataChange.change(this, "position", _position, _position = value);
 		}
 		
 		public var increment:Number = 1;

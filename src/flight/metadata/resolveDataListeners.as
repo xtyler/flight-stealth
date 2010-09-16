@@ -2,12 +2,11 @@ package flight.metadata
 {
 	import flash.events.IEventDispatcher;
 	
-	import flight.binding.Bind;
-	
 	/**
 	 * @experimental
 	 */
-	public function resolveDataListeners(instance:IEventDispatcher):void
+	// TODO: Refactor to an object for memory (binding) purposes - possibly extend DataBind with AdvDataBind
+	public function resolveDataListeners(instance:Object):void
 	{
 		var desc:XMLList = Type.describeMethods(instance, "DataListener");
 		for each (var meth:XML in desc) {
@@ -19,9 +18,14 @@ package flight.metadata
 					tag.arg.(@key == "target").@value :
 					tag.arg.@value;
 				
-				Bind.addListener(instance, instance[meth.@name], instance, targ);
+				// TODO: Refactor the bindSetter, currently traps setters in memory because this is a global space
+				dataBind.bindSetter(instance[meth.@name], instance, targ);
 			}
 		}
 	}
 	
 }
+
+import flight.data.DataBind;
+
+internal var dataBind:DataBind = new DataBind();

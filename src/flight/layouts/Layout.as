@@ -7,8 +7,8 @@ package flight.layouts
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
-	import flight.binding.Bind;
-	import flight.events.PropertyEvent;
+	import flight.data.DataBind;
+	import flight.data.DataChange;
 	import flight.events.RenderPhase;
 	import flight.metadata.resolveBindings;
 	import flight.metadata.resolveDataListeners;
@@ -28,23 +28,20 @@ package flight.layouts
 		
 		private var attached:Dictionary = new Dictionary(true);
 		private var _target:IEventDispatcher;
+		protected var dataBind:DataBind = new DataBind();
 		
 		[Bindable(event="targetChange")]
 		public function get target():IEventDispatcher { return _target; }
-		public function set target(value:IEventDispatcher):void
-		{
-			if (_target == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "target", _target, _target = value);
+		public function set target(value:IEventDispatcher):void {
+			DataChange.change(this, "target", _target, _target = value);
 		}
 		
 		public function Layout() {
 			flight.metadata.resolveBindings(this);
 			flight.metadata.resolveEventListeners(this);
 			flight.metadata.resolveDataListeners(this);
-			Bind.addListener(this, onInvalidateLayout, this, "target.width");
-			Bind.addListener(this, onInvalidateLayout, this, "target.height");
+			dataBind.bindSetter(onInvalidateLayout, this, "target.width");
+			dataBind.bindSetter(onInvalidateLayout, this, "target.height");
 		}
 		
 		public function measure(children:Array):Point {

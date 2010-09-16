@@ -10,12 +10,11 @@ package flight.data
 		public function get min():Number { return _min; }
 		public function set min(value:Number):void {
 			if (_min != value) {
-				DataChange.queueChange(this, "min", _min, _min = value);
+				DataChange.queue(this, "min", _min, _min = value);
 				if (_max < _min) {
-					DataChange.queueChange(this, "max", _max, _max = _min);
+					DataChange.queue(this, "max", _max, _max = _min);
 				}
 				position = _position;
-				DataChange.completeChange(this, "min");
 			}
 		}
 		
@@ -24,12 +23,11 @@ package flight.data
 		public function get max():Number { return _max;}
 		public function set max(value:Number):void {
 			if (_max != value) {
-				DataChange.queueChange(this, "max", _max, _max = value);
+				DataChange.queue(this, "max", _max, _max = value);
 				if (_min > _max) {
-					DataChange.queueChange(this, "min", _min, _min = _max);
+					DataChange.queue(this, "min", _min, _min = _max);
 				}
 				position = _position;
-				DataChange.completeChange(this, "max");
 			}
 		}
 		
@@ -41,11 +39,11 @@ package flight.data
 			var p:Number = 1 / _precision;
 			value = Math.round(value * p) / p;
 			if (_position != value) {
-				DataChange.queueChange(this, "position", _position, _position = value);
+				DataChange.queue(this, "position", _position, _position = value);
 				value = _min == _max ? 0 : (_position - _min) / (_max - _min);
-				DataChange.queueChange(this, "percent", _percent, _percent = value);
-				DataChange.completeChange(this, "position");
+				DataChange.queue(this, "percent", _percent, _percent = value);
 			}
+			DataChange.change();
 		}
 		
 		private var _percent:Number = 0;
@@ -68,9 +66,8 @@ package flight.data
 		public function get precision():Number { return _precision; }		
 		public function set precision(value:Number):void {
 			if (_precision != value) {
-				DataChange.queueChange(this, "precision", _precision, _precision = value);
+				DataChange.queue(this, "precision", _precision, _precision = value);
 				position = _position;
-				DataChange.completeChange(this, "precision");
 			}
 		}
 		

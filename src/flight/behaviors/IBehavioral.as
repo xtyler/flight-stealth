@@ -4,6 +4,6 @@ package flight.behaviors
 
 	public interface IBehavioral
 	{
-		function get behaviors():IList;
+		function get behaviors():CompositeBehavior;
 	}
 }

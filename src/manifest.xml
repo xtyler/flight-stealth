@@ -14,7 +14,6 @@
 	<component id="ButtonBehavior" class="flight.behaviors.ButtonBehavior"/>
 	<component id="DragBehavior" class="flight.behaviors.DragBehavior"/>
 	<component id="ListBehavior" class="flight.behaviors.ListBehavior"/>
-	<component id="ListSelectBehavior" class="flight.behaviors.ListSelectBehavior"/>
 	<component id="SlideBehavior" class="flight.behaviors.SlideBehavior"/>
 	<component id="SelectBehavior" class="flight.behaviors.SelectBehavior"/>
 	<component id="StepBehavior" class="flight.behaviors.StepBehavior"/>
@@ -36,10 +35,6 @@
 	<!--<component id="Text" class="flight.display.Text" />-->
 	<component id="BitmapImage" class="flight.graphics.BitmapImage"/>
 	
-	
-	<!-- graphics -->
-	<component id="IDrawable" class="flight.graphics.IDrawable"/>
-	<component id="Rect" class="flight.graphics.Rect"/>
 	
 	<!-- flex dependencies -->
 	<!-- <component id="FlexClasses" class="FlexClasses"/> -->

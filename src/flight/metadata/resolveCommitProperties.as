@@ -6,7 +6,7 @@ package flight.metadata
 	 * @experimental
 	 */
 	// this needs some updates to handle non-DisplayObjects (like Rect) better
-	public function resolveCommitProperties(instance:IEventDispatcher, resolver:Function = null):void
+	public function resolveCommitProperties(instance:Object, resolver:Function = null):void
 	{
 		var desc:XMLList = Type.describeMethods(instance, "CommitProperties");
 		for each (var meth:XML in desc) {

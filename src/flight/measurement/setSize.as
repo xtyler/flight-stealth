@@ -1,9 +1,5 @@
 package flight.measurement
 {
-	import flash.display.DisplayObject;
-	
-	import flight.graphics.IDrawable;
-	import flight.graphics.Rect;
 	
 	public function setSize(child:Object, width:Number, height:Number):void
 	{

@@ -3,13 +3,13 @@
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	
-	import mx.collections.IList;
-	
+	import flight.behaviors.CompositeBehavior;
 	import flight.behaviors.IBehavior;
 	import flight.behaviors.IBehavioral;
 	import flight.collections.SimpleCollection;
+	import flight.data.DataBind;
+	import flight.data.DataChange;
 	import flight.display.Display;
-	import flight.events.PropertyEvent;
 	import flight.events.RenderPhase;
 	import flight.measurement.resolveHeight;
 	import flight.measurement.resolveWidth;
@@ -37,10 +37,12 @@
 		static public const MEASURE:String = "measure";
 		RenderPhase.registerPhase(MEASURE, 0, true);
 		
+		protected var dataBind:DataBind = new DataBind();
+		
 		private var _data:Object;
 		
 		private var _skin:Object;
-		private var _behaviors:SimpleCollection;
+		private var _behaviors:CompositeBehavior;
 		
 		private var _states:Array;
 		private var _currentState:String;
@@ -49,7 +51,7 @@
 		
 		public function Component()
 		{
-			_behaviors = new SimpleCollection();
+			_behaviors = new CompositeBehavior();
 			flight.metadata.resolveCommitProperties(this);
 			addEventListener(MEASURE, onMeasure, false, 0, true);
 		}
@@ -83,7 +85,7 @@
 		 *   &lt;/behaviors&gt;
 		 * &lt;/Component&gt;
 		 */
-		public function get behaviors():IList
+		public function get behaviors():CompositeBehavior
 		{
 			return _behaviors;
 		}
@@ -93,10 +95,11 @@
 			var change:PropertyChange = PropertyChange.begin();
 			value = change.add(this, "behaviors", _behaviors, value);
 			*/
+			_behaviors.clear();
 			if (value is Array) {
-				_behaviors.source = value;
+				_behaviors.add(value);
 			} else if (value is IBehavior) {
-				_behaviors.source = [value];
+				_behaviors.add([value]);
 			}
 			//change.commit();
 			dispatchEvent(new Event("behaviorsChange"));
@@ -128,10 +131,7 @@
 		[Bindable(event="enabledChange")]
 		public function get enabled():Boolean { return _enabled; }
 		public function set enabled(value:Boolean):void {
-			if (_enabled == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "enabled", _enabled, _enabled = value);
+			DataChange.change(this, "enabled", _enabled, _enabled = value);
 		}
 		
 		// IStateful implementation
@@ -148,12 +148,8 @@
 		
 		[Bindable(event="currentStateChange")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
-		{
-			if (_currentState == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "currentState", _currentState, _currentState = value);
+		public function set currentState(value:String):void {
+			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
 		// needs more thought

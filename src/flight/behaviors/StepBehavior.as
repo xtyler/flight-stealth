@@ -4,7 +4,6 @@ package flight.behaviors
 	import flash.display.MovieClip;
 	import flash.events.IEventDispatcher;
 	
-	import flight.binding.Bind;
 	import flight.data.IRange;
 	import flight.data.Range;
 	import flight.events.ButtonEvent;
@@ -41,10 +40,10 @@ package flight.behaviors
 			fwdBehavior = new ButtonBehavior(fwdBtn);
 			bwdBehavior = new ButtonBehavior(bwdBtn);
 			if (fwdBtn is MovieClip) {
-				Bind.addListener(this, onFwdStateChange, fwdBehavior, "state");
+				dataBind.bindSetter(onFwdStateChange, fwdBehavior, "state");
 			}
 			if (bwdBtn is MovieClip) {
-				Bind.addListener(this, onBwdStateChange, bwdBehavior, "state");
+				dataBind.bindSetter(onBwdStateChange, bwdBehavior, "state");
 			}
 		}
 		

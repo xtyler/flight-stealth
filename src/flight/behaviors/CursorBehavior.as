@@ -3,7 +3,6 @@ package flight.behaviors
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
 	
-	import flight.binding.Bind;
 	import flight.cursors.Cursor;
 	
 	public class CursorBehavior extends Behavior
@@ -14,8 +13,8 @@ package flight.behaviors
 		public function CursorBehavior(target:IEventDispatcher=null)
 		{
 			super(target);
-			Bind.addListener(this, cursorChange, this, "cursor");
-			Bind.addListener(this, targetChange, this, "target");
+			dataBind.bindSetter(cursorChange, this, "cursor");
+			dataBind.bindSetter(targetChange, this, "target");
 		}
 		
 		protected function cursorChange(cursor:Object):void

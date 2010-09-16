@@ -6,7 +6,6 @@ package flight.behaviors
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	
-	import flight.binding.Bind;
 	import flight.events.ButtonEvent;
 	
 	[SkinState("up")]
@@ -68,11 +67,11 @@ package flight.behaviors
 					target.removeEventListener(ButtonEvent.DRAG_OVER, onStateDown);
 					target.removeEventListener(ButtonEvent.DRAG_OUT, onStateOver);
 				}
-				Bind.unbindEventListener(ButtonEvent.DRAG_OVER, onStateDown, this, "target");
-				Bind.unbindEventListener(ButtonEvent.DRAG_OUT, onStateOver, this, "target");
+				dataBind.releaseEventListener(ButtonEvent.DRAG_OVER, onStateDown, this, "target");
+				dataBind.releaseEventListener(ButtonEvent.DRAG_OUT, onStateOver, this, "target");
 			} else {
-				Bind.bindEventListener(ButtonEvent.DRAG_OVER, onStateDown, this, "target");
-				Bind.bindEventListener(ButtonEvent.DRAG_OUT, onStateOver, this, "target");
+				dataBind.bindEventListener(ButtonEvent.DRAG_OVER, onStateDown, this, "target");
+				dataBind.bindEventListener(ButtonEvent.DRAG_OUT, onStateOver, this, "target");
 			}
 			dispatchEvent(new Event("holdPressChange"));
 		}

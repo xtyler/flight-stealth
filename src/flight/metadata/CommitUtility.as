@@ -6,7 +6,7 @@ package flight.metadata
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 	
-	import flight.binding.Bind;
+	import flight.data.DataBind;
 	import flight.events.RenderPhase;
 	import flight.graphics.IDrawable;
 	
@@ -23,9 +23,10 @@ package flight.metadata
 		static public var instance:CommitUtility = new CommitUtility();
 		
 		private var dictionary:Dictionary = new Dictionary(true);
-		private var bindings:Array = [];
+		//private var bindings:Array = [];
+		private var dataBind:DataBind = new DataBind();
 		
-		public function register(instance:IEventDispatcher, method:String, properties:Array, resolver:Function):void {
+		public function register(instance:Object, method:String, properties:Array, resolver:Function):void {
 			var token:String = flash.utils.getQualifiedClassName(instance) + "_" + method + "Commit";
 			RenderPhase.registerPhase(token, 0, true);
 			for each(var sourcePath:String in properties) {
@@ -36,7 +37,8 @@ package flight.metadata
 				}
 				array.push(token);
 				
-				bindings.push( Bind.addListener(instance, invalidationHandler, instance, sourcePath) );
+				dataBind.bindSetter(invalidationHandler, instance, sourcePath);
+				//bindings.push( Bind.addListener(instance, invalidationHandler, instance, sourcePath) );
 				//bindings.push( Bind.bindEventListener(token, invalidationHandler, instance, sourcePath, false, 0, false) );
 			}
 			

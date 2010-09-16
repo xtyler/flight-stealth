@@ -26,53 +26,11 @@ package flight.data
 		 * The more concise approach to notifying a change in data when only a
 		 * single value is updated.
 		 */
-		public static function change(source:Object, property:String, oldValue:*, newValue:*, force:Boolean = false):void
+		public static function change(source:Object = null, property:String = null, oldValue:* = null, newValue:* = null, force:Boolean = false):void
 		{
-			queueChange(source, property, oldValue, newValue, force);
-			completeChange(source, property);
-		}
-		
-		public static function queueChange(source:Object, property:String, oldValue:*, newValue:*, force:Boolean = false):DataChange
-		{
-			var dataChange:DataChange;
-			
-			// pull DataChange object from the object pool if available
-			if (objectPool) {
-				dataChange = objectPool;
-				objectPool = dataChange.next;
-			} else {
-				dataChange = new DataChange();
+			if (source && (oldValue != newValue || force)) {
+				queue(source, property, oldValue, newValue, force);
 			}
-			
-			// assign change values
-			dataChange.source = source;
-			dataChange.property = property;
-			dataChange.oldValue = oldValue;
-			dataChange.newValue = newValue;
-			dataChange.force = force;
-			
-			// capture the head change
-			if (!currentChanges) {
-				headChange[property] = source;
-			}
-			
-			// add DataChange object to the list of changes
-			dataChange.next = currentChanges;
-			currentChanges = dataChange;
-			
-			return dataChange;
-		}
-		
-		/**
-		 * Completes the DataChange, broadcasting all changes to data since this
-		 * change started.
-		 */
-		public static function completeChange(source:Object, initialProperty:String):void
-		{
-			if (headChange[initialProperty] != source) {
-				return;
-			}
-			delete headChange[initialProperty];
 			
 			var dataChange:DataChange = currentChanges;
 			var poolChange:DataChange;
@@ -104,6 +62,37 @@ package flight.data
 			}
 		}
 		
+		public static function queue(source:Object, property:String, oldValue:*, newValue:*, force:Boolean = false):DataChange
+		{
+			var dataChange:DataChange;
+			
+			// pull DataChange object from the object pool if available
+			if (objectPool) {
+				dataChange = objectPool;
+				objectPool = dataChange.next;
+			} else {
+				dataChange = new DataChange();
+			}
+			
+			// assign change values
+			dataChange.source = source;
+			dataChange.property = property;
+			dataChange.oldValue = oldValue;
+			dataChange.newValue = newValue;
+			dataChange.force = force;
+			
+			// capture the head change
+			if (!currentChanges) {
+				headChange[property] = source;
+			}
+			
+			// add DataChange object to the list of changes
+			dataChange.next = currentChanges;
+			currentChanges = dataChange;
+			
+			return dataChange;
+		}
+		
 		public var source:Object;
 		public var property:String;
 		public var oldValue:*
@@ -114,7 +103,7 @@ package flight.data
 		
 		public function complete():void
 		{
-			completeChange(source, property);
+			change();
 		}
 	}
 }

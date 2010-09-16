@@ -5,7 +5,7 @@
 	import flash.display.MovieClip;
 	import flash.events.IEventDispatcher;
 	
-	import flight.events.PropertyEvent;
+	import flight.data.DataChange;
 	
 	[SkinState("up")]
 	[SkinState("over")]
@@ -25,20 +25,14 @@
 		[Binding(target="target.currentState")]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void {
-			if (_currentState == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "currentState", _currentState, _currentState = value);
+			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
 		[Bindable(event="movieclipChange")]
 		[Binding(target="target.skin")]
 		public function get movieclip():MovieClip { return _movieclip; }
 		public function set movieclip(value:MovieClip):void {
-			if (_movieclip == value) {
-				return;
-			}
-			PropertyEvent.dispatchChange(this, "movieclip", _movieclip, _movieclip = value);
+			DataChange.change(this, "movieclip", _movieclip, _movieclip = value);
 		}
 		
 		public function MovieClipSkinBehavior(target:IEventDispatcher=null)
