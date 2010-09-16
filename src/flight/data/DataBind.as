@@ -30,7 +30,7 @@ package flight.data
 		
 		public function bindEventListener(type:String, listener:Function, source:Object, sourcePath:String, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
-			bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]);
+			DataBind.bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]);
 		}
 		
 		
@@ -172,6 +172,11 @@ package flight.data
 		// TODO: add check for isUpdating to avoid recursiveness
 		protected static function updateBindPath(bindPath:Array, source:Object):void
 		{
+			if (bindPath.$updating) {
+				return;
+			}
+			
+			bindPath.$updating = true;
 			// the source's index will provide a position in the bindPath to retrieve the property
 			var sourceIndex:int = bindPath.$sources[source].index;
 			var property:String = bindPath[sourceIndex++];
@@ -230,8 +235,8 @@ package flight.data
 					setBindPathValue(value, setterKey as Array);
 				} else if ("$setter" in setterKey) {
 					// is a setter
-					var pos:int = dataChange.length - (setterKey.setter.length - setterKey.length);
-					setterKey.setter.apply(null, dataChange.slice(pos).concat(setterKey));
+					var pos:int = dataChange.length - (setterKey.$setter.length - setterKey.length);
+					setterKey.$setter.apply(null, dataChange.slice(pos).concat(setterKey));
 				} else {
 					// is an array of source/property pair
 					for each (property in setters[setterKey]) {
@@ -243,6 +248,8 @@ package flight.data
 			if (!len) {
 				releaseBindPath(bindPath);
 			}
+			
+			delete bindPath.$updating;
 		}
 		
 		protected static function getBindPath(source:Object, sourcePath:String):Array
@@ -298,7 +305,7 @@ package flight.data
 			bindPaths[source] = bindPath;
 			
 			if (source is IEventDispatcher) {
-				var changeEvents:Array// = getBindableEvents(source, sourceData.property);
+				var changeEvents:Array = getBindableEvents(source, sourceData.property);
 				if (changeEvents.length) {
 					var dispatcher:IEventDispatcher = IEventDispatcher(source);
 					for each (var changeEvent:String in changeEvents) {
@@ -332,7 +339,7 @@ package flight.data
 			}
 			
 			if (source is IEventDispatcher) {
-				var changeEvents:Array// = getBindableEvents(source, sourceData.property);
+				var changeEvents:Array = getBindableEvents(source, sourceData.property);
 				if (changeEvents.length) {
 					var dispatcher:IEventDispatcher = IEventDispatcher(source);
 					for each (var changeEvent:String in changeEvents) {
@@ -366,8 +373,8 @@ package flight.data
 		// dataChange may be a DataChange object, a PropertyChangeEvent or any other Event
 		private static function onDataChange(dataChange:Object):void
 		{
-			var source:Object = dataChange.source || dataChange.target;
-			var property:String = dataChange.property || "*";
+			var source:Object = "source" in dataChange ? dataChange.source : dataChange.target;
+			var property:String = "property" in dataChange ? dataChange.property : "*";
 			var bindPath:Array = bindPaths[source];
 			
 			while (bindPath != null) {

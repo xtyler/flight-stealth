@@ -15,36 +15,32 @@ package flight.behaviors
 		
 		public function ButtonBehaviorTest() {
 			stage = StealthSuite.stage;
-			display = new Group()
-		}
-		
-		[Before]
-		public function setup():void {
+			display = new Group();
 			var behavior:ButtonBehavior = new ButtonBehavior(display);
-			stage.addChild(display);
-		}
-		
-		[After]
-		public function destroy():void {
-			stage.removeChild(display);
 		}
 		
 		[Test]
 		public function testButtonStateUp():void {
+			stage.addChild(display);
 			display.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, true));
 			assertEquals("up", display.currentState);
+			stage.removeChild(display);
 		}
 		
 		[Test]
 		public function testButtonStateOver():void {
+			stage.addChild(display);
 			display.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, true));
 			assertEquals("over", display.currentState);
+			stage.removeChild(display);
 		}
 		
 		[Test]
 		public function testButtonStateDown():void {
+			stage.addChild(display);
 			display.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true));
 			assertEquals("down", display.currentState);
+			stage.removeChild(display);
 		}
 		
 		

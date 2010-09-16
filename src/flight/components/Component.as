@@ -51,7 +51,7 @@
 		
 		public function Component()
 		{
-			_behaviors = new CompositeBehavior();
+			_behaviors = new CompositeBehavior(this);
 			flight.metadata.resolveCommitProperties(this);
 			addEventListener(MEASURE, onMeasure, false, 0, true);
 		}

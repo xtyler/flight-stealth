@@ -13,8 +13,6 @@ package flight.behaviors
 	[SkinState("down")]
 	[SkinState("disabled")]
 	
-	[Event(name="buttonDown", type="mx.events.FlexEvent")]
-	
 	/**
 	 * @alpha
 	 */
@@ -111,6 +109,7 @@ package flight.behaviors
 		[EventListener(type="release", target="target")]
 		public function onStateOver(event:MouseEvent):void
 		{
+			trace("over");
 			if (event.type == MouseEvent.ROLL_OVER && event.buttonDown) {
 				return;
 			}

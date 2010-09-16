@@ -2,41 +2,52 @@
 <componentPackage>
 	
 	<!-- components -->
-	<component id="Application" class="flight.containers.Application"/>
-	<component id="Group" class="flight.containers.Group"/>
-	<component id="Scroller" class="flight.containers.Scroller"/>
+	<component id="Button" class="flight.components.Button"/>
 	<component id="Component" class="flight.components.Component"/>
+	<component id="List" class="flight.components.List"/>
+	<component id="ScrollBar" class="flight.components.ScrollBar"/>
+	<component id="Stepper" class="flight.components.Stepper"/>
+	
+	<!-- data -->
+	<component id="Range" class="flight.data.Range"/>
+	<component id="Scroll" class="flight.data.Scroll"/>
+	
+	<!-- behaviors -->
+	<component id="ButtonBehavior" class="flight.behaviors.ButtonBehavior"/>
+	<component id="CursorBehavior" class="flight.behaviors.CursorBehavior"/>
+	<component id="DragBehavior" class="flight.behaviors.DragBehavior"/>
+	<component id="DragStepBehavior" class="flight.behaviors.DragStepBehavior"/>
+	<component id="ListBehavior" class="flight.behaviors.ListBehavior"/>
+	<component id="MovieClipSkinBehavior" class="flight.behaviors.MovieClipSkinBehavior"/>
+	<component id="SelectBehavior" class="flight.behaviors.SelectBehavior"/>
+	<component id="SlideBehavior" class="flight.behaviors.SlideBehavior"/>
+	<component id="StepBehavior" class="flight.behaviors.StepBehavior"/>
 	
 	<!-- skins -->
 	<component id="Skin" class="flight.skins.Skin"/>
 	
-	<!-- behaviors -->
-	<component id="ButtonBehavior" class="flight.behaviors.ButtonBehavior"/>
-	<component id="DragBehavior" class="flight.behaviors.DragBehavior"/>
-	<component id="ListBehavior" class="flight.behaviors.ListBehavior"/>
-	<component id="SlideBehavior" class="flight.behaviors.SlideBehavior"/>
-	<component id="SelectBehavior" class="flight.behaviors.SelectBehavior"/>
-	<component id="StepBehavior" class="flight.behaviors.StepBehavior"/>
-	<component id="DragStepBehavior" class="flight.behaviors.DragStepBehavior"/>
+	<!-- containers -->
+	<component id="Application" class="flight.containers.Application"/>
+	<component id="Group" class="flight.containers.Group"/>
+	<component id="Scroller" class="flight.containers.Scroller"/>
 	
 	<!-- layouts -->
-	<component id="ILayout" class="flight.layouts.ILayout"/>
-	<component id="Layout" class="flight.layouts.Layout"/>
-	<component id="XYLayout" class="flight.layouts.XYLayout"/>
 	<component id="BasicLayout" class="flight.layouts.BasicLayout"/>
-	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
-	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
 	<component id="DockLayout" class="flight.layouts.DockLayout"/>
+	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
+	<component id="Layout" class="flight.layouts.Layout"/>
+	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
+	<component id="XYLayout" class="flight.layouts.XYLayout"/>
 	
-	<!-- measurement -->
-	<component id="Measurements" class="flight.measurement.Measurements"/>
-	
-	<!-- display -->
-	<!--<component id="Text" class="flight.display.Text" />-->
+	<!-- graphics -->
 	<component id="BitmapImage" class="flight.graphics.BitmapImage"/>
 	
+	<!-- display -->
+	<component id="BitmapDisplay" class="flight.display.BitmapDisplay"/>
+	<component id="Display" class="flight.display.Display"/>
 	
-	<!-- flex dependencies -->
-	<!-- <component id="FlexClasses" class="FlexClasses"/> -->
+	<!-- text -->
+	<component id="Text" class="flight.text.Text"/>
+	<component id="TextFieldDisplay" class="flight.text.TextFieldDisplay"/>
 	
 </componentPackage>
