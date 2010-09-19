@@ -30,7 +30,7 @@ package flight.data
 		
 		public function bindEventListener(type:String, listener:Function, source:Object, sourcePath:String, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
-			DataBind.bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]);
+			setterObjects.push( DataBind.bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]) );
 		}
 		
 		
@@ -169,14 +169,13 @@ package flight.data
 			}
 		}
 		
-		// TODO: add check for isUpdating to avoid recursiveness
 		protected static function updateBindPath(bindPath:Array, source:Object):void
 		{
 			if (bindPath.$updating) {
 				return;
 			}
-			
 			bindPath.$updating = true;
+			
 			// the source's index will provide a position in the bindPath to retrieve the property
 			var sourceIndex:int = bindPath.$sources[source].index;
 			var property:String = bindPath[sourceIndex++];
@@ -206,6 +205,7 @@ package flight.data
 					property = bindPath[i];
 					if ( !(property in source) ) {
 						trace("Warning: Attempted binding access of undefined property '" + property + "' in " + getClassName(value) + ".");
+						value = null;
 						break;
 					}
 					
@@ -217,8 +217,10 @@ package flight.data
 					
 					value = source[property];
 				}
-				for (i; i < len; i++) {
-					unregister(bindPath, store[i]);
+				if (i < len) {		// unresolved path...
+					for (i; i < len; i++) {
+						unregister(bindPath, store[i]);
+					}
 				}
 			}
 			
@@ -275,6 +277,11 @@ package flight.data
 				bindPath.$store[-i] = sourceData;
 				
 				if (source != null) {
+					if ( !(property in source) ) {
+						trace("Warning: Attempted binding access of undefined property '" + property + "' in " + getClassName(source) + ".");
+						source = null;
+						break;
+					}
 					register(bindPath, source, i);
 					source = source[property];
 				}
@@ -311,6 +318,7 @@ package flight.data
 					for each (var changeEvent:String in changeEvents) {
 						dispatcher.addEventListener(changeEvent, onDataChange, false, 0xFF, true);
 					}
+					sourceData.event = changeEvent;
 				}
 			}
 		}
@@ -345,6 +353,7 @@ package flight.data
 					for each (var changeEvent:String in changeEvents) {
 						dispatcher.removeEventListener(changeEvent, onDataChange, false);
 					}
+					delete sourceData.event;
 				}
 			}
 		}
@@ -358,11 +367,15 @@ package flight.data
 		
 		protected static function setBindPathValue(value:*, bindPath:Array):void
 		{
+			if (bindPath.$updating) {
+				return;
+			}
 			var len:int = bindPath.length-1;
+			var property:String = bindPath[len];
 			for (var object:Object in bindPath.$sources) {
 				var sourceData:Object = bindPath.$sources[object];
 				if (sourceData.index == len) {
-					object[bindPath[len]] = value;
+					object[property] = value;
 					break;
 				}
 			}
@@ -374,12 +387,12 @@ package flight.data
 		private static function onDataChange(dataChange:Object):void
 		{
 			var source:Object = "source" in dataChange ? dataChange.source : dataChange.target;
-			var property:String = "property" in dataChange ? dataChange.property : "*";
+			var property:String = "property" in dataChange ? dataChange.property : dataChange.type;
 			var bindPath:Array = bindPaths[source];
 			
 			while (bindPath != null) {
 				var sourceData:Object = bindPath.$sources[source];
-				if (sourceData.property == property || property == "*") {
+				if (sourceData.property == property || sourceData.event == property) {
 					updateBindPath(bindPath, source);
 				}
 				bindPath = sourceData.next;

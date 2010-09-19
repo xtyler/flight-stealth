@@ -38,9 +38,6 @@
 		[Bindable(event="targetChange")]
 		public function get target():IEventDispatcher { return _target; }
 		public function set target(value:IEventDispatcher):void {
-			if (_target) {
-				trace("behavior target: ", value);
-			} else {trace("no target");}
 			_target = value;
 			dispatchEvent(new Event("targetChange"));
 		}

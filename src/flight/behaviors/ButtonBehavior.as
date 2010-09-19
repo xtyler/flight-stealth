@@ -109,7 +109,6 @@ package flight.behaviors
 		[EventListener(type="release", target="target")]
 		public function onStateOver(event:MouseEvent):void
 		{
-			trace("over");
 			if (event.type == MouseEvent.ROLL_OVER && event.buttonDown) {
 				return;
 			}

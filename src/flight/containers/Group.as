@@ -99,7 +99,7 @@ package flight.containers
 		 */
 		[ArrayElementType("Object")]
 		[Bindable(event="contentChange")]
-		public function get content():IList { return _content; }
+		public function get content():IList { if (_content == null) _content = new SimpleCollection(); return _content; }
 		public function set content(value:*):void
 		{
 			if (_content == value) {

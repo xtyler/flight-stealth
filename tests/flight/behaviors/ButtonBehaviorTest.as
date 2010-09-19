@@ -3,20 +3,20 @@ package flight.behaviors
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	
-	import org.flexunit.asserts.assertEquals;
+	import flight.components.Component;
 	
-	import flight.containers.Group;
+	import org.flexunit.asserts.assertEquals;
 
 	public class ButtonBehaviorTest
 	{
 		
 		public var stage:Stage;
-		public var display:Group;
+		public var display:Component;
 		
 		public function ButtonBehaviorTest() {
 			stage = StealthSuite.stage;
-			display = new Group();
-			var behavior:ButtonBehavior = new ButtonBehavior(display);
+			display = new Component();
+			display.behaviors.add(new ButtonBehavior(display));
 		}
 		
 		[Test]

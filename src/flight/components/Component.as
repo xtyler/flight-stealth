@@ -19,6 +19,8 @@
 	import flight.skins.ISkinnable;
 	import flight.templating.addItem;
 	
+	import mx.core.IDataRenderer;
+	
 	[Style(name="left")]
 	[Style(name="right")]
 	[Style(name="top")]
@@ -31,7 +33,7 @@
 	/**
 	 * @alpha
 	 */
-	public class Component extends Display implements IBehavioral, ISkinnable
+	public class Component extends Display implements IBehavioral, ISkinnable, IDataRenderer
 	{
 		
 		static public const MEASURE:String = "measure";
@@ -146,7 +148,7 @@
 		}
 		*/
 		
-		[Bindable(event="currentStateChange")]
+		[Bindable(event="currentStateChange", noEvent)]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void {
 			DataChange.change(this, "currentState", _currentState, _currentState = value);

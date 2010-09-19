@@ -1,6 +1,7 @@
 ﻿package flight.components
 {
 	import flight.data.DataChange;
+	import flight.layouts.ILayout;
 	
 	/**
 	 * @alpha

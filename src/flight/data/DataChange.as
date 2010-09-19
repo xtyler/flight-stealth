@@ -18,8 +18,8 @@ package flight.data
 	{
 		internal static var staticCallbacks:Vector.<Function> = new Vector.<Function>();
 		
-		private static var headChange:Object = {};
-		private static var currentChanges:DataChange;
+		private static var headChange:DataChange;
+		private static var currentChange:DataChange;
 		private static var objectPool:DataChange;
 		
 		/**
@@ -32,33 +32,32 @@ package flight.data
 				queue(source, property, oldValue, newValue, force);
 			}
 			
-			var dataChange:DataChange = currentChanges;
-			var poolChange:DataChange;
-			currentChanges = null;
+			var dataChange:DataChange = headChange;
+			var nextChange:DataChange;
+			headChange = currentChange = null;
 			while (dataChange) {
-				
 				if (dataChange.oldValue != dataChange.newValue || dataChange.force) {
 					// broadcast change to registered callbacks
 					for each (var callback:Function in staticCallbacks) {
 						callback(dataChange);
-						if (dataChange is IEventDispatcher) {
-							var dispatcher:IEventDispatcher = IEventDispatcher(dataChange)
-							var eventType:String = dataChange.property + "Change";
-							if (dispatcher.hasEventListener(eventType)) {
-								dispatcher.dispatchEvent(new Event(eventType));
-							}
+					}
+					if (dataChange.source is IEventDispatcher) {
+						var dispatcher:IEventDispatcher = IEventDispatcher(dataChange.source);
+						var eventType:String = dataChange.property + "Change";
+						if (dispatcher.hasEventListener(eventType)) {
+							dispatcher.dispatchEvent(new Event(eventType));
 						}
 					}
 				}
 				
-				// progress to the next DataChange
-				poolChange = dataChange;
-				dataChange = dataChange.next;
-				
 				// clear and store previous DataChange in the object pool for reuse
-				poolChange.source = poolChange.oldValue = poolChange.newValue = null;
-				poolChange.next = objectPool;
-				objectPool = poolChange;
+				dataChange.source = dataChange.oldValue = dataChange.newValue = null;
+				
+				// progress to the next DataChange
+				nextChange = dataChange.next;
+				dataChange.next = objectPool;
+				objectPool = dataChange;
+				dataChange = nextChange;
 			}
 		}
 		
@@ -70,6 +69,7 @@ package flight.data
 			if (objectPool) {
 				dataChange = objectPool;
 				objectPool = dataChange.next;
+				dataChange.next = null;
 			} else {
 				dataChange = new DataChange();
 			}
@@ -81,14 +81,14 @@ package flight.data
 			dataChange.newValue = newValue;
 			dataChange.force = force;
 			
-			// capture the head change
-			if (!currentChanges) {
-				headChange[property] = source;
+			if (!headChange) {
+				// capture the head change
+				headChange = dataChange;
+			} else {
+				// add DataChange object to the list of changes
+				currentChange.next = dataChange;
 			}
-			
-			// add DataChange object to the list of changes
-			dataChange.next = currentChanges;
-			currentChanges = dataChange;
+			currentChange = dataChange;
 			
 			return dataChange;
 		}
