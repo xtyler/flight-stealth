@@ -30,7 +30,7 @@ package flight.behaviors
 		
 		[Bindable]
 		[Binding(target="target.position")]
-		public var position:IRange= new Range();		// TODO: implement lazy instantiation of position
+		public var position:IRange = new Range();		// TODO: implement lazy instantiation of position
 		
 		
 		private var _percent:Number = 0;
@@ -58,8 +58,8 @@ package flight.behaviors
 				return;
 			}
 			
-			//track = getSkinPart("track");
-			//thumb = getSkinPart("thumb");
+			track = getSkinPart("track");
+			thumb = getSkinPart("thumb");
 			if (track) { ButtonEvent.initialize(track); }
 			if (thumb) { ButtonEvent.initialize(thumb); }
 			

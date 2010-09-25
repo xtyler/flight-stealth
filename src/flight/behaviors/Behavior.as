@@ -10,6 +10,7 @@
 	import flight.metadata.resolveBindings;
 	import flight.metadata.resolveDataListeners;
 	import flight.metadata.resolveEventListeners;
+	import flight.skins.ISkinnable;
 	
 	/**
 	 * Behavior is a convenient base class for various behavior implementations.
@@ -57,9 +58,9 @@
 		
 		protected function getSkinPart(part:String):InteractiveObject
 		{
-			/*if (target is ISkinnable && ISkinnable(target).skin != null) {
+			if (target is ISkinnable && ISkinnable(target).skin != null) {
 				return ISkinnable(target).skin.getSkinPart(part) as InteractiveObject;
-			} else */if (part in target) {
+			} else if (part in target) {
 				return target[part] as InteractiveObject;
 			} else {
 				return null;

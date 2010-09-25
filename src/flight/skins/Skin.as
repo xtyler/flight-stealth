@@ -91,30 +91,12 @@ package flight.skins
 		 */
 		[Bindable(event="explicitChange")]
 		public function get explicit():IMeasurements { return _explicit; }
-		/*public function set explicit(value:IMeasurements):void {
-			if (value == _explicit) {
-				return;
-			}
-			if (value != null) { // must not be null
-				PropertyEvent.dispatchChange(this, "explicit", _explicit, _explicit = value);
-				InvalidationEvent.invalidate(target, LAYOUT);
-			}
-		}*/
 		
 		/**
 		 * @inheritDoc
 		 */
 		[Bindable(event="measuredChange")]
 		public function get measured():IMeasurements { return _measured; }
-		/*public function set measured(value:IMeasurements):void {
-			if (value == _measured) {
-				return;
-			}
-			if (value != null) { // must not be null
-				PropertyEvent.dispatchChange(this, "measured", _measured, _measured = value);
-				InvalidationEvent.invalidate(target, LAYOUT);
-			}
-		}*/
 		
 		/**
 		 * @inheritDoc
@@ -162,8 +144,6 @@ package flight.skins
 			DataChange.change(this, "states", _states, _states = value);
 		}
 		
-		//protected var containerPart:DisplayObjectContainer;
-		//protected var defaultContainer:Boolean = true;
 		private var _target:Sprite;
 		private var _content:IList;
 		
@@ -173,15 +153,7 @@ package flight.skins
 			_content = new SimpleCollection();
 			_explicit = new Measurements(this);
 			_measured = new Measurements(this, 160, 22);
-			if (_layout == null) {
-				//_layout = new XYLayout();
-			}
 			_content.addEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
-			dataBind.bindSetter(onLayoutChange, this, "target.layout");
-			dataBind.bindSetter(onLayoutChange, this, "layout");
-			//Bind.addBinding(this, "data", this, "target.data");
-			//Bind.addBinding(this, "state", this, "target.state");
-			//addEventListener(MEASURE, onMeasure, false, 0, true);
 			addEventListener(LAYOUT, onLayout, false, 0, true);
 		}
 		
@@ -194,18 +166,6 @@ package flight.skins
 				return;
 			}
 			
-			
-			/*
-			var skinnable:IContainer;
-			if (_target != null && _target is IContainer) {
-				skinnable = _target as IContainer;
-				//skinnable.children.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
-				for (var i:int = 0; i < _children.length; i++) {
-					_target.removeChild(_children.getItemAt(i) as DisplayObject);
-				}
-			}
-			*/
-			
 			DataChange.queue(this, "target", _target, _target = value);
 			if (layout) {
 				layout.target = _target;
@@ -216,34 +176,6 @@ package flight.skins
 			}
 			
 			if (_target != null) {
-			/*
-				//var i:int;
-				//for (i = 0; i < _children.length; i++) {
-					//_target.addChildAt(_children.getItemAt(i) as DisplayObject, i);
-				//}
-				var items:Array = [];
-				for (i = 0; i < _children.length; i++) {
-					items.push(_children.getItemAt(i));
-				}
-				flight.display.addItemsAt(_target, items, 0);
-				/*
-				containerPart = getSkinPart("container") as DisplayObjectContainer;
-				if (_target is IContainer && containerPart != null) {
-					
-					skinnable = _target as IContainer;
-					skinnable.children.addEventListener(ListEvent.LIST_CHANGE, onContentChange, false, 0xF);
-					if (skinnable.children.length > 0) {
-						defaultContainer = false;
-						Bind.addBinding(containerPart, "padding", this, "target.padding");
-						while (containerPart.numChildren) {
-							removeContainerChildAt(containerPart.numChildren-1);
-						}
-						for (i = 0; i < skinnable.children.length; i++) {
-							addContainerChildAt(skinnable.children.getItemAt(i) as DisplayObject, i);
-						}
-					}
-				}
-				*/
 				target.addEventListener(MEASURE, onMeasure, false, 0, true);
 				target.addEventListener(LAYOUT, onLayout, false, 0, true);
 				RenderPhase.invalidate(target, MEASURE);
@@ -355,32 +287,6 @@ package flight.skins
 			}
 		}
 		
-		private function onLayoutChange(value:ILayout):void
-		{
-			if (_target == null) {
-				return;
-			}
-			/*
-			var targetLayout:LayoutWrapper = LayoutWrapper.getLayout(_target);
-			
-			if (containerPart != null && _target is IContainer) {
-				var skinnable:IContainer = _target as IContainer;
-				var containerLayout:LayoutWrapper = LayoutWrapper.getLayout(containerPart);
-				if (containerLayout != null) {
-					//containerLayout.algorithm = skinnable.layout;
-				} else if (targetLayout != null) {
-					containerLayout = new targetLayout["constructor"]();
-					containerLayout.target = containerPart;
-					//containerLayout.algorithm = skinnable.layout;
-				}
-			}
-			
-			if (targetLayout != null) {
-				//targetLayout.algorithm = layout;
-			}*/
-			
-		}
-		
 		private function onMeasure(event:Event):void {
 			var target:IMeasurable= this.target as IMeasurable;
 			if (layout && target && (isNaN(target.explicit.width) || isNaN(target.explicit.height))) {
@@ -390,17 +296,7 @@ package flight.skins
 					items.push(_content.getItemAt(i));
 				}
 				var point:Point = layout.measure(items);
-				// this if statement blocks an infinite loop
-				// the lifecycle should be handled better here in some way
-				// update: target should update it's own sizing?
-				/*
-				if (point.x != target.measured.width || point.y != target.measured.height) {
-					target.measured.width = point.x;
-					target.measured.height = point.y;
-				}
-				*/			
 			}
-			//InvalidationEvent.invalidate(this.target, LAYOUT);
 		}
 		
 		private function onLayout(event:Event):void {
@@ -411,8 +307,6 @@ package flight.skins
 					items.push(_content.getItemAt(i));
 				}
 				
-				//var width:Number = flight.measurement.resolveWidth(this);
-				//var height:Number = flight.measurement.resolveHeight(this);
 				var rectangle:Rectangle = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
 				layout.update(items, rectangle);
 			}

@@ -4,6 +4,9 @@ package flight.components
 	import flight.data.DataChange;
 	import flight.data.IRange;
 	import flight.data.Range;
+	import flight.skins.MovieClipSkin;
+	
+	import reflex.components.StepperGraphic;
 	
 	public class Stepper extends Component
 	{
@@ -22,8 +25,9 @@ package flight.components
 			position.position = 0;
 			position.min = 0;
 			position.max = 100;
-			//skin = new StepperSkin();
+			skin = new MovieClipSkin(new StepperGraphic());
 			behaviors = new StepBehavior();
+			dataBind.bind(this, "skin.movieclip.label.text", this, "position.position");
 		}
 	}
 }

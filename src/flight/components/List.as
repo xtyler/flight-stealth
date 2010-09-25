@@ -1,6 +1,8 @@
 package flight.components
 {
 	
+	import flight.collections.SimpleCollection;
+	import flight.containers.Group;
 	import flight.data.DataChange;
 	import flight.data.IRange;
 	import flight.layouts.ILayout;
@@ -45,12 +47,14 @@ package flight.components
 		
 		public function List()
 		{
-			if (layout == null) {
-				layout = new VerticalLayout();
-			}
-			if (template == null) {
-				template = Button;
-			}
+			layout = new VerticalLayout();
+			template = Button;
+			skin = new Group();
+			dataBind.bind(this, "skin.content", this, "dataProvider");
+			dataBind.bind(this, "skin.template", this, "template");
+			dataBind.bind(this, "skin.layout", this, "layout");
+			dataBind.bind(this, "skin.width", this, "width");
+			dataBind.bind(this, "skin.height", this, "height");
 		}
 		
 	}

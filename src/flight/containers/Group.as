@@ -59,21 +59,10 @@ package flight.containers
 		
 		public function Group()
 		{
-			if (_template == null) {
-				//_template = new StealthDataTemplate();
-			}
-			if (_layout == null) {
-				//_layout = new XYLayout();
-			}
-			
 			addEventListener(Event.ADDED, onAdded, false, 0, true);
 			addEventListener(MEASURE, onMeasure, false, 0, true);
 			addEventListener(LAYOUT, onLayout, false, 0, true);
-			//addEventListener("widthChange", onSizeChange, false, 0, true);
-			//addEventListener("heightChange", onSizeChange, false, 0, true);
 		}
-		
-		// width/height invalidation needs some thought
 		
 		private function onSizeChange(event:Event):void {
 			RenderPhase.invalidate(this, LAYOUT);
@@ -191,8 +180,6 @@ package flight.containers
 		
 		private function onLayout(event:Event):void {
 			if (layout) {
-				//var width:Number = flight.measurement.resolveWidth(this);
-				//var height:Number = flight.measurement.resolveHeight(this);
 				var rectangle:Rectangle = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
 				layout.update(renderers, rectangle);
 			}

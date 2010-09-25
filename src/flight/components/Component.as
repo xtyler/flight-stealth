@@ -152,6 +152,9 @@
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void {
 			DataChange.change(this, "currentState", _currentState, _currentState = value);
+			if (_skin && "currentState" in _skin) {
+				_skin.currentState = _currentState;
+			}
 		}
 		
 		// needs more thought

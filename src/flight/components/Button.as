@@ -1,7 +1,13 @@
 ﻿package flight.components
 {
+	import flight.behaviors.ButtonBehavior;
+	import flight.behaviors.MovieClipSkinBehavior;
+	import flight.behaviors.SelectBehavior;
 	import flight.data.DataChange;
 	import flight.layouts.ILayout;
+	import flight.skins.MovieClipSkin;
+	
+	import reflex.components.ButtonGraphic;
 	
 	/**
 	 * @alpha
@@ -28,9 +34,10 @@
 		
 		public function Button()
 		{
-			super();
-			//skin = this;
-			dataBind.bind(this, "skin.label.text", this, "label", false, false);
+			skin = new MovieClipSkin(new ButtonGraphic());
+			behaviors.button = new ButtonBehavior();
+			behaviors.selectable = new SelectBehavior();
+			dataBind.bind(this, "skin.movieclip.label.text", this, "label", false, false);
 		}
 		
 	}

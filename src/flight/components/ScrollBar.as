@@ -1,37 +1,31 @@
 package flight.components
 {
 	import flight.behaviors.SlideBehavior;
+	import flight.behaviors.StepBehavior;
 	import flight.data.DataChange;
-	import flight.data.IRange;
+	import flight.data.IScroll;
+	import flight.data.Scroll;
+	import flight.skins.MovieClipSkin;
 	
 	import legato.components.ScrollBarGraphic;
 
 	public class ScrollBar extends Component
 	{
-		private var _position:IRange;
+		private var _position:IScroll = new Scroll();
 		
 		[Bindable(event="positionChange")]
-		public function get position():IRange { return _position; }
-		public function set position(value:IRange):void {
+		public function get position():IScroll { return _position; }
+		public function set position(value:IScroll):void {
 			DataChange.change(this, "position", _position, _position = value);
 		}
 		
 		public function ScrollBar()
 		{
-			skin = new ScrollBarGraphic();
-			behaviors.addItem(new SlideBehavior(this));
+			position.stepSize = 10;
+			position.pageSize = 40;
+			skin = new MovieClipSkin(new legato.components.ScrollBarGraphic());
+			behaviors.step = new StepBehavior();
+			behaviors.slide = new SlideBehavior();
 		}
-		
-		/*protected function init():void
-		{
-		//var scrollBarSkin:ScrollBarSkin = new ScrollBarSkin();
-		skin = new ScrollBarGraphic();
-		var slideBehavior:SlideBehavior = new SlideBehavior(this);
-		behaviors.slide = slideBehavior;
-		var stepBehavior:StepBehavior = new StepBehavior(this);
-		behaviors.step = stepBehavior;
-		//			position = scrollBarSkin.position = slideBehavior.position = stepBehavior.position;
-		}
-		*/
 	}
 }
