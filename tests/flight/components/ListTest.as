@@ -4,48 +4,50 @@ package flight.components
 	import flight.data.Range;
 	import flight.layouts.XYLayout;
 	import flight.tests.TestBase;
-	
+
+	import raptor.lists.ListBase;
+
 	public class ListTest extends TestBase
 	{
 		
 		[Test(async)]
 		public function testDataProviderChange():void {
-			testPropertyChange(List, "dataProvider", new SimpleCollection());
+			testPropertyChange(ListBase, "dataProvider", new SimpleCollection());
 		}
 		
 		[Test(async)]
 		public function testDataProviderNotChanged():void {
-			testPropertyNotChanged(List, "dataProvider", new SimpleCollection());
+			testPropertyNotChanged(ListBase, "dataProvider", new SimpleCollection());
 		}
 		
 		[Test(async)]
 		public function testTemplateChange():void {
-			testPropertyChange(List, "template", {});
+			testPropertyChange(ListBase, "template", {});
 		}
 		
 		[Test(async)]
 		public function testTemplateNotChanged():void {
-			testPropertyNotChanged(List, "template", {});
+			testPropertyNotChanged(ListBase, "template", {});
 		}
 		
 		[Test(async)]
 		public function testLayoutChange():void {
-			testPropertyChange(List, "layout", new XYLayout());
+			testPropertyChange(ListBase, "layout", new XYLayout());
 		}
 		
 		[Test(async)]
 		public function testLayoutNotChanged():void {
-			testPropertyNotChanged(List, "layout", new XYLayout());
+			testPropertyNotChanged(ListBase, "layout", new XYLayout());
 		}
 		
 		[Test(async)]
 		public function testPositionChange():void {
-			testPropertyChange(List, "position", new Range());
+			testPropertyChange(ListBase, "position", new Range());
 		}
 		
 		[Test(async)]
 		public function testPositionNotChanged():void {
-			testPropertyNotChanged(List, "position", new Range());
+			testPropertyNotChanged(ListBase, "position", new Range());
 		}
 		
 	}

@@ -8,7 +8,7 @@ package flight.display
 		public function DisplayMeasurableTest()
 		{
 			super();
-			C = Display;
+			C = SpriteDisplay;
 		}
 		
 		[Test(async)]

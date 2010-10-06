@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.containers
 {
 	
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	
 	
 	//[Frame(factoryClass="flight.tools.flashbuilder.StealthApplicationLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]

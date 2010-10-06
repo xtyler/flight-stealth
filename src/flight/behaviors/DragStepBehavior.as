@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	
@@ -16,7 +22,8 @@ package flight.behaviors
 		[Bindable(event="positionChange")]
 		[Binding(target="target.position")]
 		public function get position():IRange { return _position; }
-		public function set position(value:IRange):void {
+		public function set position(value:IRange):void
+		{
 			DataChange.change(this, "position", _position, _position = value);
 		}
 		
@@ -52,9 +59,9 @@ package flight.behaviors
 		public function onDrag(event:ButtonEvent):void
 		{
 			if (dragging) {
-				position.position = Math.round( (startDragPosition + event.deltaX) / increment) * increment;
-			} else if ( Math.abs(startDragPosition - event.deltaX) > dragTolerance) {
-				position.position = Math.round( (startDragPosition + event.deltaX) / increment) * increment;
+				position.position = Math.round((startDragPosition + event.deltaX) / increment) * increment;
+			} else if (Math.abs(startDragPosition - event.deltaX) > dragTolerance) {
+				position.position = Math.round((startDragPosition + event.deltaX) / increment) * increment;
 				dragging = true;
 			}
 		}

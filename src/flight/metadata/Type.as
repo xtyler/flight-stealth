@@ -1,7 +1,6 @@
 /*
- * Copyright (c) 2009-2010 the original author or authors
- * 
- * Permission is hereby granted to use, modify, and distribute this file 
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
@@ -9,7 +8,6 @@ package flight.metadata
 {
 	import flash.net.registerClassAlias;
 	import flash.utils.Dictionary;
-	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
@@ -40,7 +38,7 @@ package flight.metadata
 		 */
 		public static function isType(value:Object, type:Class):Boolean
 		{
-			if ( !(value is Class) ) {
+			if (!(value is Class)) {
 				return value is type;
 			}
 			
@@ -49,7 +47,7 @@ package flight.metadata
 			}
 			
 			var inheritance:XMLList = describeInheritance(value);
-			return Boolean( inheritance.(@type == getQualifiedClassName(type)).length() > 0 );
+			return Boolean(inheritance.(@type == getQualifiedClassName(type)).length() > 0);
 		}
 		
 		/**
@@ -66,14 +64,14 @@ package flight.metadata
 		 */
 		public static function getPropertyType(value:Object, property:String):Class
 		{
-			if ( !(value is Class) && !(property in value) ) {
+			if (!(value is Class) && !(property in value)) {
 				return null;
 			}
 			
 			// retrieve the correct property from the property list
 			var propList:XMLList = describeProperties(value).(@name == property);
 			
-			return (propList.length() > 0) ? getDefinitionByName( propList[0].@type ) as Class : null;
+			return (propList.length() > 0) ? getDefinitionByName(propList[0].@type) as Class : null;
 		}
 		
 		/**
@@ -82,9 +80,9 @@ package flight.metadata
 		 * registered with it's full qualified class name, for example:
 		 * <code>flight.utils.Type</code>. If the class has already been
 		 * assigned an alias then its previous registration will be honored.
-		 * 
+		 *
 		 * @param	value			The object or class to register.
-		 * 
+		 *
 		 * @return					True if the registration was successful,
 		 * 							otherwise the object already has an alias.
 		 * 
@@ -92,7 +90,7 @@ package flight.metadata
 		 */
 		public static function registerType(value:Object):Boolean
 		{
-			if ( !(value is Class) ) {
+			if (!(value is Class)) {
 				value = getType(value);
 			}
 			
@@ -122,7 +120,7 @@ package flight.metadata
 		 */
 		public static function describeType(value:Object, refreshCache:Boolean = false):XML
 		{
-			if ( !(value is Class) ) {
+			if (!(value is Class)) {
 				value = getType(value);
 			}
 			

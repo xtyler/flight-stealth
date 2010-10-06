@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
@@ -10,7 +16,7 @@ package flight.behaviors
 		[Bindable]
 		public var cursor:Object;
 		
-		public function CursorBehavior(target:IEventDispatcher=null)
+		public function CursorBehavior(target:IEventDispatcher = null)
 		{
 			super(target);
 			dataBind.bindSetter(cursorChange, this, "cursor");

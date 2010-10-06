@@ -1,26 +1,8 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (c) 2009 Jacob Wright
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-////////////////////////////////////////////////////////////////////////////////
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
 package flight.cursors
 {
 	import flash.display.DisplayObject;
@@ -35,7 +17,7 @@ package flight.cursors
 	import flash.utils.getQualifiedClassName;
 	
 	import flight.events.ButtonEvent;
-
+	
 	/**
 	 * Cursor is a helper class to use custom cursors registered with it in your flash application.
 	 * @experimental
@@ -151,7 +133,7 @@ package flight.cursors
 				cursor = new cursor();
 			}
 			
-			if ( !(cursor is DisplayObject) ) {
+			if (!(cursor is DisplayObject)) {
 				throw new ArgumentError("Cursor registration failed. Cursors must be display objects.");
 			}
 			
@@ -258,7 +240,7 @@ package flight.cursors
 		 */
 		private function hideObjectCursor(interactiveObject:InteractiveObject):void
 		{
-			while (stack.length && stack.pop().target != interactiveObject){}
+			while (stack.length && stack.pop().target != interactiveObject) {}
 			
 			if (interactiveObject) {
 				removeCursor(interactiveObject);
@@ -339,7 +321,7 @@ package flight.cursors
 				currentCursor = null;
 				interactiveObject.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 				interactiveObject.stage.removeEventListener(Event.MOUSE_LEAVE, onMouseLeave);
-			// built-in cursor type
+				// built-in cursor type
 			} else if ("cursor" in Mouse) {
 				Mouse["cursor"] = AUTO; // handle flash 9 nicely
 			}
@@ -347,6 +329,7 @@ package flight.cursors
 		
 	}
 }
+
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 

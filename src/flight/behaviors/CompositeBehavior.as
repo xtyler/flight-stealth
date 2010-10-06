@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	import flash.events.Event;
@@ -56,10 +62,9 @@ package flight.behaviors
 		}
 		
 		
-		public function get length():uint {
-			return behaviors.length;
-		}
-		public function set length(value:uint):void {
+		public function get length():uint { return behaviors.length; }
+		public function set length(value:uint):void
+		{
 			// remove target from truncated items?
 			behaviors.length = value;
 		}
@@ -67,10 +72,10 @@ package flight.behaviors
 		//[ArrayElementType("reflex.core.IBehavior")]
 		public function add(item:Object):uint
 		{
-			if(item is IBehavior) {
+			if (item is IBehavior) {
 				(item as IBehavior).target = _target;
 				behaviors.push(item as IBehavior);
-			} else if(item is Array) {
+			} else if (item is Array) {
 				for each (var behavior:IBehavior in item) {
 					behavior.target = _target;
 					behaviors.push(behavior);
@@ -79,7 +84,8 @@ package flight.behaviors
 			return behaviors.length;
 		}
 		
-		public function clear():Array {
+		public function clear():Array
+		{
 			for each(var behavior:IBehavior in behaviors) {
 				behavior.target = null;
 				//delete dictionary[behavior];
@@ -116,7 +122,7 @@ package flight.behaviors
 				return;
 			}
 			
-			if (value != null && !(value is IBehavior) ) {
+			if (value != null && !(value is IBehavior)) {
 				throw new ArgumentError("Only IBehavior objects can be added to behaviors.");
 			}
 			
@@ -180,7 +186,7 @@ package flight.behaviors
 		 */
 		override flash_proxy function nextValue(index:int):*
 		{
-			return behaviors[index-1];
+			return behaviors[index - 1];
 		}
 		
 		/**
@@ -188,7 +194,7 @@ package flight.behaviors
 		 */
 		override flash_proxy function nextNameIndex(index:int):int
 		{
-			if(index < behaviors.length) {
+			if (index < behaviors.length) {
 				return index + 1;
 			} else {
 				return 0;
@@ -197,10 +203,9 @@ package flight.behaviors
 		}
 		
 		
-		
 		// ========== Dispatcher Methods ========== //
 		
-		public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+		public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
 			if (dispatcher == null) {
 				dispatcher = new EventDispatcher(this);
@@ -210,7 +215,7 @@ package flight.behaviors
 		}
 		
 		
-		public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
+		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
 		{
 			if (dispatcher != null) {
 				dispatcher.removeEventListener(type, listener, useCapture);
@@ -248,7 +253,7 @@ package flight.behaviors
 		protected function dispatch(type:String):Boolean
 		{
 			if (dispatcher != null && dispatcher.hasEventListener(type)) {
-				return dispatcher.dispatchEvent( new Event(type) );
+				return dispatcher.dispatchEvent(new Event(type));
 			}
 			return false;
 		}

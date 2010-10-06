@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
-
+	
 	public class ListBehavior extends Behavior
 	{
 		public var hScrollBar:InteractiveObject;

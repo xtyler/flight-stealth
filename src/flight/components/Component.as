@@ -1,4 +1,10 @@
-﻿package flight.components
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
+package flight.components
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
@@ -6,14 +12,12 @@
 	import flight.behaviors.CompositeBehavior;
 	import flight.behaviors.IBehavior;
 	import flight.behaviors.IBehavioral;
-	import flight.collections.SimpleCollection;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.Display;
-	import flight.events.RenderPhase;
+	import flight.display.SpriteDisplay;
+	import flight.display.RenderPhase;
 	import flight.measurement.resolveHeight;
 	import flight.measurement.resolveWidth;
-	import flight.measurement.setSize;
 	import flight.metadata.resolveCommitProperties;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
@@ -33,7 +37,7 @@
 	/**
 	 * @alpha
 	 */
-	public class Component extends Display implements IBehavioral, ISkinnable, IDataRenderer
+	public class Component extends SpriteDisplay implements IBehavioral, ISkinnable, IDataRenderer
 	{
 		
 		static public const MEASURE:String = "measure";
@@ -54,7 +58,7 @@
 		public function Component()
 		{
 			_behaviors = new CompositeBehavior(this);
-			flight.metadata.resolveCommitProperties(this);
+			resolveCommitProperties(this);
 			addEventListener(MEASURE, onMeasure, false, 0, true);
 		}
 		
@@ -87,10 +91,7 @@
 		 *   &lt;/behaviors&gt;
 		 * &lt;/Component&gt;
 		 */
-		public function get behaviors():CompositeBehavior
-		{
-			return _behaviors;
-		}
+		public function get behaviors():CompositeBehavior { return _behaviors; }
 		public function set behaviors(value:*):void
 		{
 			/*
@@ -109,10 +110,7 @@
 		
 		[Bindable(event="skinChange")]
 		[Inspectable(name="Skin", type=Class)]
-		public function get skin():Object
-		{
-			return _skin;
-		}
+		public function get skin():Object { return _skin; }
 		public function set skin(value:Object):void
 		{
 			if (_skin == value) {
@@ -123,7 +121,7 @@
 			if (_skin is ISkin) {
 				(_skin as ISkin).target = this;
 			} else if (_skin is DisplayObject) {
-				flight.templating.addItem(this, _skin);
+				addItem(this, _skin);
 			}
 			flight.measurement.setSize(skin, width, height);
 			dispatchEvent(new Event("skinChange"));
@@ -132,7 +130,8 @@
 		
 		[Bindable(event="enabledChange")]
 		public function get enabled():Boolean { return _enabled; }
-		public function set enabled(value:Boolean):void {
+		public function set enabled(value:Boolean):void
+		{
 			DataChange.change(this, "enabled", _enabled, _enabled = value);
 		}
 		
@@ -148,9 +147,10 @@
 		}
 		*/
 		
-		[Bindable(event="currentStateChange", noEvent)]
+		[Bindable(event="currentStateChange", style="weak")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void {
+		public function set currentState(value:String):void
+		{
 			DataChange.change(this, "currentState", _currentState, _currentState = value);
 			if (_skin && "currentState" in _skin) {
 				_skin.currentState = _currentState;
@@ -159,25 +159,29 @@
 		
 		// needs more thought
 		
-		override public function set width(value:Number):void {
+		override public function set width(value:Number):void
+		{
 			super.width = value;
 			flight.measurement.setSize(skin, value, height);
 		}
 		
-		override public function set height(value:Number):void {
+		override public function set height(value:Number):void
+		{
 			super.height = value;
 			flight.measurement.setSize(skin, width, value);
 		}
 		
-		override public function setSize(width:Number, height:Number):void {
-			super.setSize(width, height);
+		override public function setLayoutSize(width:Number, height:Number):void
+		{
+			super.setLayoutSize(width, height);
 			flight.measurement.setSize(skin, width, height);
 		}
 		
-		private function onMeasure(event:Event):void {
+		private function onMeasure(event:Event):void
+		{
 			if ((isNaN(explicit.width) || isNaN(explicit.height)) && skin) {
-				measured.width = flight.measurement.resolveWidth(skin); // explicit width of skin becomes measured width of component
-				measured.height = flight.measurement.resolveHeight(skin); // explicit height of skin becomes measured height of component
+				measuredLayout.width = resolveWidth(skin); // explicit width of skin becomes measured width of component
+				measuredLayout.height = resolveHeight(skin); // explicit height of skin becomes measured height of component
 			}
 		}
 		

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.events
 {
 	import flash.display.InteractiveObject;
@@ -181,7 +187,7 @@ package flight.events
 		{
 			// performance improvement when dispatch is aborted while there are no listeners
 			// note: there are always listeners when including callbacks
-			if ( !button.hasEventListener(type) ) {
+			if (!button.hasEventListener(type)) {
 				return;
 			}
 			
@@ -208,9 +214,9 @@ package flight.events
 		private static function onMouseDown(event:MouseEvent):void
 		{
 			var button:InteractiveObject = event.currentTarget as InteractiveObject;
-				button.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				button.stage.addEventListener(MouseEvent.MOUSE_UP, onRelease);
-				button.stage.addEventListener(Event.MOUSE_LEAVE, onRelease);
+			button.stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			button.stage.addEventListener(MouseEvent.MOUSE_UP, onRelease);
+			button.stage.addEventListener(Event.MOUSE_LEAVE, onRelease);
 			
 			pressedIndex[button] = 1;
 			holdIntervals[button] = setTimeout(onDelayHold, DELAY_INTERVAL, button);
@@ -296,7 +302,7 @@ package flight.events
 				dispatchButtonEvent(button, HOLD);
 			}
 			holdIntervals[button] = setInterval(onHold, HOLD_INTERVAL, button);
-		}	
+		}
 		
 		/**
 		 * mouseUp event listener. Triggers release and stateOver events for
@@ -308,9 +314,9 @@ package flight.events
 		private static function onRelease(event:Event):void
 		{
 			var stage:Stage = event.currentTarget as Stage;
-				stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-				stage.removeEventListener(MouseEvent.MOUSE_UP, onRelease);
-				stage.removeEventListener(Event.MOUSE_LEAVE, onRelease);
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onRelease);
+			stage.removeEventListener(Event.MOUSE_LEAVE, onRelease);
 			
 			for (var i:* in pressedIndex) {
 				var button:InteractiveObject = i as InteractiveObject;

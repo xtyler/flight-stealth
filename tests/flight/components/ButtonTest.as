@@ -1,28 +1,30 @@
 package flight.components
 {
 	import flight.tests.TestBase;
-	
+
+	import raptor.buttons.ButtonBase;
+
 	public class ButtonTest extends TestBase
 	{
 		
 		[Test(async)]
 		public function testLabelChange():void {
-			testPropertyChange(Button, "label", "test");
+			testPropertyChange(ButtonBase, "label", "test");
 		}
 		
 		[Test(async)]
 		public function testLabelNotChanged():void {
-			testPropertyNotChanged(Button, "label", "test");
+			testPropertyNotChanged(ButtonBase, "label", "test");
 		}
 		
 		[Test(async)]
 		public function testSelectedChange():void {
-			testPropertyChange(Button, "selected", true);
+			testPropertyChange(ButtonBase, "selected", true);
 		}
 		
 		[Test(async)]
 		public function testSelectedNotChanged():void {
-			testPropertyNotChanged(Button, "selected", true);
+			testPropertyNotChanged(ButtonBase, "selected", true);
 		}
 		
 	}

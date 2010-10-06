@@ -1,7 +1,6 @@
 /*
- * Copyright (c) 2009-2010 the original author or authors
- * 
- * Permission is hereby granted to use, modify, and distribute this file 
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
 
@@ -25,12 +24,12 @@ package flight.data
 		
 		public function bindSetter(setter:Function, source:Object, sourcePath:String, params:Array = null, update:Boolean = true):void
 		{
-			setterObjects.push( DataBind.bindSetter(setter, source, sourcePath, params, update) );
+			setterObjects.push(DataBind.bindSetter(setter, source, sourcePath, params, update));
 		}
 		
 		public function bindEventListener(type:String, listener:Function, source:Object, sourcePath:String, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
-			setterObjects.push( DataBind.bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]) );
+			setterObjects.push(DataBind.bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]));
 		}
 		
 		
@@ -59,7 +58,6 @@ package flight.data
 				IEventDispatcher(newValue).addEventListener(type, listener, useCapture, priority, useWeakReference);
 			}
 		}
-		
 		
 		
 		public static function bind(target:Object, targetPath:String, source:Object, sourcePath:String, twoWay:Boolean = false, update:Boolean = true):void
@@ -99,7 +97,7 @@ package flight.data
 			var sourceBindPath:Array = getBindPath(source, sourcePath);
 			sourceBindPath.$setters[params] = true;
 			if (update) {
-				var dataChange:Array = [source, sourceBindPath[sourceBindPath.length-1], null, sourceBindPath.value];
+				var dataChange:Array = [source, sourceBindPath[sourceBindPath.length - 1], null, sourceBindPath.value];
 				var i:int = dataChange.length - (setter.length - params.length);
 				setter.apply(null, dataChange.slice(i).concat(params));
 			}
@@ -203,7 +201,7 @@ package flight.data
 					
 					source = value;
 					property = bindPath[i];
-					if ( !(property in source) ) {
+					if (!(property in source)) {
 						trace("Warning: Attempted binding access of undefined property '" + property + "' in " + getClassName(value) + ".");
 						value = null;
 						break;
@@ -277,7 +275,7 @@ package flight.data
 				bindPath.$store[-i] = sourceData;
 				
 				if (source != null) {
-					if ( !(property in source) ) {
+					if (!(property in source)) {
 						trace("Warning: Attempted binding access of undefined property '" + property + "' in " + getClassName(source) + ".");
 						source = null;
 						break;
@@ -370,7 +368,7 @@ package flight.data
 			if (bindPath.$updating) {
 				return;
 			}
-			var len:int = bindPath.length-1;
+			var len:int = bindPath.length - 1;
 			var property:String = bindPath[len];
 			for (var object:Object in bindPath.$sources) {
 				var sourceData:Object = bindPath.$sources[object];
@@ -404,7 +402,7 @@ package flight.data
 		
 		protected static function getBindableEvents(target:Object, property:String):Array
 		{
-			if ( !(target is Class) ) {
+			if (!(target is Class)) {
 				target = getType(target);
 			}
 			

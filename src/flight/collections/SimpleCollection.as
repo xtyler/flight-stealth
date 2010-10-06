@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.collections
 {
 	import flash.events.EventDispatcher;
@@ -12,7 +18,8 @@ package flight.collections
 		private var _source:Array;
 		
 		public function get source():Array { return _source; }
-		public function set source(value:Array):void {
+		public function set source(value:Array):void
+		{
 			_source = value;
 			var event:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, false, CollectionEventKind.RESET, -1, -1, _source.concat());
 			dispatchEvent(event);
@@ -46,7 +53,7 @@ package flight.collections
 			dispatchEvent(event);
 		}
 		
-		public function getItemAt(index:int, prefetch:int=0):Object
+		public function getItemAt(index:int, prefetch:int = 0):Object
 		{
 			// todo: implement prefetch
 			return _source[index];
@@ -57,7 +64,7 @@ package flight.collections
 			return _source.indexOf(item);
 		}
 		
-		public function itemUpdated(item:Object, property:Object=null, oldValue:Object=null, newValue:Object=null):void
+		public function itemUpdated(item:Object, property:Object = null, oldValue:Object = null, newValue:Object = null):void
 		{
 			// bah
 		}

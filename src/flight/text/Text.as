@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.text
 {
 	
@@ -21,17 +27,18 @@ package flight.text
 		{
 			super();
 			this.selectable = false;
-			flight.metadata.resolveCommitProperties(this);
+			resolveCommitProperties(this);
 		}
 		
 		/**
 		 * @private
 		 */
 		[CommitProperties(target="text")]
-		public function measure(event:Event):void {
+		public function measure(event:Event):void
+		{
 			var metrics:TextLineMetrics = this.getLineMetrics(0);
-			measured.width = metrics.width;
-			measured.height = 12;
+			measuredLayout.width = metrics.width;
+			measuredLayout.height = 12;
 		}
 		
 	}

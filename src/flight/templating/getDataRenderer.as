@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.templating
 {
 	import flash.display.DisplayObject;
 	
+	import flight.display.IDrawable;
+	
 	import mx.core.IDataRenderer;
 	import mx.core.IFactory;
-	
-	import flight.graphics.IDrawable;
 	
 	/**
 	 * Returns a renderer to be used for the given data according to the given template.
@@ -27,9 +33,9 @@ package flight.templating
 		if (instance is IDataRenderer) {
 			(instance as IDataRenderer).data = data;
 		}
-		if (data is IDrawable) {
-			(data as IDrawable).target = container;
-		}
+//		if (data is IDrawable) {
+//			(data as IDrawable).target = container;
+//		}
 		return instance != null ? instance : data;
 	}
 	

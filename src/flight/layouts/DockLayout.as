@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.layouts
 {
 	import flash.geom.Point;
@@ -33,8 +39,8 @@ package flight.layouts
 			var gap:Number = 5;
 			var point:Point = new Point(gap, 0);
 			for each(var child:Object in children) {
-				var width:Number = flight.measurement.resolveWidth(child);
-				var height:Number = flight.measurement.resolveHeight(child);
+				var width:Number = resolveWidth(child);
+				var height:Number = resolveHeight(child);
 				point.x += width + gap;
 				point.y = Math.max(point.y, height);
 			}
@@ -47,10 +53,10 @@ package flight.layouts
 			var length:int = children.length;
 			for (var i:int = 0; i < length; i++) {
 				var child:Object = children[i];
-				var width:Number = flight.measurement.resolveWidth(child);
-				var height:Number = flight.measurement.resolveHeight(child);
-				var dock:String = flight.styles.resolveStyle(child, "dock", null, NONE) as String;
-				var align:String = flight.styles.resolveStyle(child, "align", null, NONE) as String;
+				var width:Number = resolveWidth(child);
+				var height:Number = resolveHeight(child);
+				var dock:String = resolveStyle(child, "dock", null, NONE) as String;
+				var align:String = resolveStyle(child, "align", null, NONE) as String;
 				switch (dock) {
 					case LEFT :
 						child.x = rectangle.x;
@@ -95,8 +101,8 @@ package flight.layouts
 						break;
 					case CENTER :
 					default:
-						child.x = rectangle.width/2 - width/2;
-						child.y = rectangle.height/2 - height/2;
+						child.x = rectangle.width / 2 - width / 2;
+						child.y = rectangle.height / 2 - height / 2;
 						break;
 				}
 			}

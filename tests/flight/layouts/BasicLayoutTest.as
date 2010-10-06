@@ -6,7 +6,7 @@ package flight.layouts
 	
 	import org.flexunit.Assert;
 	
-	import flight.display.Display;
+	import flight.display.SpriteDisplay;
 
 	public class BasicLayoutTest extends EventDispatcher
 	{
@@ -17,8 +17,8 @@ package flight.layouts
 		
 		[Test]
 		public function testMeasurementXY():void {
-			var child1:Display = new Display();
-			var child2:Display = new Display();
+			var child1:SpriteDisplay = new SpriteDisplay();
+			var child2:SpriteDisplay = new SpriteDisplay();
 			
 			child1.x = 5;
 			child1.y = 5;
@@ -39,7 +39,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementLeft():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.width = 20;
 			child.setStyle("left", 5);
@@ -51,7 +51,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementRight():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.width = 20;
 			child.setStyle("right", 5);
@@ -63,7 +63,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementLeftRight():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.width = 20;
 			child.setStyle("left", 5);
@@ -76,7 +76,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementTop():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.height = 20;
 			child.setStyle("top", 5);
@@ -88,7 +88,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementBottom():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.height = 20;
 			child.setStyle("bottom", 5);
@@ -100,7 +100,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementTopBottom():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.height = 20;
 			child.setStyle("top", 5);
@@ -113,7 +113,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementHorizontalCenter():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.width = 20;
 			child.setStyle("horizontalCenter", -5);
@@ -125,7 +125,7 @@ package flight.layouts
 		[Test]
 		public function testMeasurementVerticalCenter():void {
 			var layout:BasicLayout = new BasicLayout();
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			
 			child.height = 20;
 			child.setStyle("verticalCenter", -5);
@@ -139,7 +139,7 @@ package flight.layouts
 		
 		[Test]
 		public function testLeft():void {
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child.setStyle("left", 5);
@@ -149,7 +149,7 @@ package flight.layouts
 		
 		[Test]
 		public function testRight():void {
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child.width = 20;
@@ -160,7 +160,7 @@ package flight.layouts
 		
 		[Test]
 		public function testLeftRight():void {
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child.setStyle("left", 5);
@@ -172,7 +172,7 @@ package flight.layouts
 		
 		[Test]
 		public function testTop():void {
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child.setStyle("top", 5);
@@ -182,7 +182,7 @@ package flight.layouts
 		
 		[Test]
 		public function testBottom():void {
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child.height = 20;
@@ -193,7 +193,7 @@ package flight.layouts
 		
 		[Test]
 		public function testTopBottom():void {
-			var child:Display = new Display();
+			var child:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child.setStyle("top", 5);
@@ -205,8 +205,8 @@ package flight.layouts
 		
 		[Test]
 		public function testHorizontalCenter():void {
-			var child1:Display = new Display();
-			var child2:Display = new Display();
+			var child1:SpriteDisplay = new SpriteDisplay();
+			var child2:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child1.width = 20;
@@ -220,8 +220,8 @@ package flight.layouts
 		
 		[Test]
 		public function testVerticalCenter():void {
-			var child1:Display = new Display();
-			var child2:Display = new Display();
+			var child1:SpriteDisplay = new SpriteDisplay();
+			var child2:SpriteDisplay = new SpriteDisplay();
 			var layout:BasicLayout = new BasicLayout();
 			layout.target = this;
 			child1.height = 20;

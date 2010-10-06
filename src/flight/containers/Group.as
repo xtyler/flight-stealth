@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.containers
 {
 	import flash.display.DisplayObject;
@@ -6,10 +12,10 @@ package flight.containers
 	import flash.geom.Rectangle;
 	
 	import flight.collections.SimpleCollection;
-	import flight.components.IStateful;
+	import flight.styles.IStateful;
 	import flight.data.DataChange;
-	import flight.display.Display;
-	import flight.events.RenderPhase;
+	import flight.display.SpriteDisplay;
+	import flight.display.RenderPhase;
 	import flight.layouts.ILayout;
 	import flight.templating.addItemsAt;
 	
@@ -26,7 +32,7 @@ package flight.containers
 	[Style(name="dock")]
 	[Style(name="align")]
 	
-	[Event(name="initialize", type="flight.events.RenderPhase")]
+	[Event(name="initialize", type="flight.display.RenderPhase")]
 	
 	[DefaultProperty("content")]
 	
@@ -35,7 +41,7 @@ package flight.containers
 	 * 
 	 * @alpha
 	 */
-	public class Group extends Display implements IContainer, IStateful
+	public class Group extends SpriteDisplay implements IContainer, IStateful
 	{
 		
 		static public const CREATE:String = "create";
@@ -43,10 +49,10 @@ package flight.containers
 		static public const MEASURE:String = "measure";
 		static public const LAYOUT:String = "layout";
 		
-		RenderPhase.registerPhase(CREATE, 0, true);
-		RenderPhase.registerPhase(INITIALIZE, 1, true);
-		RenderPhase.registerPhase(MEASURE, 2, true);
-		RenderPhase.registerPhase(LAYOUT, 3, false);
+		RenderPhase.registerPhase(CREATE, 3, true);
+		RenderPhase.registerPhase(INITIALIZE, 2, true);
+		RenderPhase.registerPhase(MEASURE, 1, true);
+		RenderPhase.registerPhase(LAYOUT, 0, false);
 		
 		private var _layout:ILayout;
 		private var _template:Object;
@@ -64,7 +70,8 @@ package flight.containers
 			addEventListener(LAYOUT, onLayout, false, 0, true);
 		}
 		
-		private function onSizeChange(event:Event):void {
+		private function onSizeChange(event:Event):void
+		{
 			RenderPhase.invalidate(this, LAYOUT);
 		}
 		
@@ -72,14 +79,16 @@ package flight.containers
 		
 		[Bindable(event="statesChange")]
 		public function get states():Array { return _states; }
-		public function set states(value:Array):void {
+		public function set states(value:Array):void
+		{
 			DataChange.change(this, "states", _states, _states = value);
 		}
 		
 		
 		[Bindable(event="currentStateChange")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void {
+		public function set currentState(value:String):void
+		{
 			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
@@ -88,7 +97,12 @@ package flight.containers
 		 */
 		[ArrayElementType("Object")]
 		[Bindable(event="contentChange")]
-		public function get content():IList { if (_content == null) _content = new SimpleCollection(); return _content; }
+		public function get content():IList
+		{
+			if (_content == null) _content = new SimpleCollection();
+			return _content;
+		}
+		
 		public function set content(value:*):void
 		{
 			if (_content == value) {
@@ -121,7 +135,7 @@ package flight.containers
 			}
 			RenderPhase.invalidate(this, MEASURE);
 			RenderPhase.invalidate(this, LAYOUT);
-			dispatchEvent( new Event("contentChange") );
+			dispatchEvent(new Event("contentChange"));
 		}
 		
 		/**
@@ -129,7 +143,8 @@ package flight.containers
 		 */
 		[Bindable(event="layoutChange")]
 		public function get layout():ILayout { return _layout; }
-		public function set layout(value:ILayout):void {
+		public function set layout(value:ILayout):void
+		{
 			if (_layout == value) {
 				return;
 			}
@@ -139,12 +154,13 @@ package flight.containers
 			if (_layout) { _layout.target = this; }
 			RenderPhase.invalidate(this, MEASURE);
 			RenderPhase.invalidate(this, LAYOUT);
-			dispatchEvent( new Event("layoutChange") );
+			dispatchEvent(new Event("layoutChange"));
 		}
 		
 		[Bindable(event="templateChange")]
 		public function get template():Object { return _template; }
-		public function set template(value:Object):void {
+		public function set template(value:Object):void
+		{
 			if (_template == value) {
 				return;
 			}
@@ -161,26 +177,29 @@ package flight.containers
 			}
 			RenderPhase.invalidate(this, MEASURE);
 			RenderPhase.invalidate(this, LAYOUT);
-			dispatchEvent( new Event("templateChange") );
+			dispatchEvent(new Event("templateChange"));
 		}
 		
-		private function onAdded(event:Event):void {
+		private function onAdded(event:Event):void
+		{
 			removeEventListener(Event.ADDED, onAdded, false);
 			RenderPhase.invalidate(this, CREATE);
 			RenderPhase.invalidate(this, INITIALIZE);
 		}
 		
-		private function onMeasure(event:Event):void {
+		private function onMeasure(event:Event):void
+		{
 			if ((isNaN(explicit.width) || isNaN(explicit.height)) && layout) {
 				var point:Point = layout.measure(renderers);
-				measured.width = point.x;
-				measured.height = point.y;
+				measuredLayout.width = point.x;
+				measuredLayout.height = point.y;
 			}
 		}
 		
-		private function onLayout(event:Event):void {
+		private function onLayout(event:Event):void
+		{
 			if (layout) {
-				var rectangle:Rectangle = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+				var rectangle:Rectangle = new Rectangle(0, 0, width, height);
 				layout.update(renderers, rectangle);
 			}
 		}
@@ -211,16 +230,18 @@ package flight.containers
 			RenderPhase.invalidate(this, LAYOUT);
 		}
 		
-		private function add(items:Array, index:int):void {
-			var children:Array = flight.templating.addItemsAt(this, items, index, _template);
+		private function add(items:Array, index:int):void
+		{
+			var children:Array = addItemsAt(this, items, index, _template);
 			renderers.concat(children); // todo: correct ordering
 		}
 		
-		private function reset(items:Array):void {
+		private function reset(items:Array):void
+		{
 			while (numChildren) {
-				removeChildAt(numChildren-1);
+				removeChildAt(numChildren - 1);
 			}
-			renderers = flight.templating.addItemsAt(this, items, 0, _template); // todo: correct ordering
+			renderers = addItemsAt(this, items, 0, _template); // todo: correct ordering
 			RenderPhase.invalidate(this, LAYOUT);
 		}
 		

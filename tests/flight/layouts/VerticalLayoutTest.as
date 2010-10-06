@@ -5,15 +5,15 @@ package flight.layouts
 	
 	import org.flexunit.Assert;
 	
-	import flight.display.Display;
+	import flight.display.SpriteDisplay;
 
 	public class VerticalLayoutTest extends EventDispatcher
 	{
 		
 		[Test]
 		public function testMeasurement():void {
-			var child1:Display = new Display();
-			var child2:Display = new Display();
+			var child1:SpriteDisplay = new SpriteDisplay();
+			var child2:SpriteDisplay = new SpriteDisplay();
 			
 			child1.width = 20;
 			child1.height = 20;

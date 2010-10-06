@@ -1,4 +1,10 @@
-﻿package flight.behaviors
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
+package flight.behaviors
 {
 	
 	import flash.display.InteractiveObject;
@@ -38,7 +44,8 @@
 		 */
 		[Bindable(event="targetChange")]
 		public function get target():IEventDispatcher { return _target; }
-		public function set target(value:IEventDispatcher):void {
+		public function set target(value:IEventDispatcher):void
+		{
 			_target = value;
 			dispatchEvent(new Event("targetChange"));
 		}
@@ -51,9 +58,9 @@
 		public function Behavior(target:IEventDispatcher = null)
 		{
 			this.target = target;
-			flight.metadata.resolveBindings(this);
-			flight.metadata.resolveDataListeners(this);
-			flight.metadata.resolveEventListeners(this);
+			resolveBindings(this);
+			resolveDataListeners(this);
+			resolveEventListeners(this);
 		}
 		
 		protected function getSkinPart(part:String):InteractiveObject

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	import flash.events.IEventDispatcher;
@@ -17,11 +23,12 @@ package flight.behaviors
 		[Bindable(event="selectedChange")]
 		[Binding(target="target.selected")]
 		public function get selected():Boolean { return _selected; }
-		public function set selected(value:Boolean):void {
+		public function set selected(value:Boolean):void
+		{
 			DataChange.change(this, "selected", _selected, _selected = value);
 		}
 		
-		public function SelectBehavior(target:IEventDispatcher= null)
+		public function SelectBehavior(target:IEventDispatcher = null)
 		{
 			super(target);
 		}

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.skins
 {
 	import flash.display.DisplayObject;
@@ -10,8 +16,8 @@ package flight.skins
 	import flight.containers.Group;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.events.RenderPhase;
-
+	import flight.display.RenderPhase;
+	
 	public class MovieClipSkin implements ISkin
 	{
 		protected var dataBind:DataBind = new DataBind();
@@ -28,7 +34,8 @@ package flight.skins
 		
 		[Bindable(event="currentStateChange")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void {
+		public function set currentState(value:String):void
+		{
 			DataChange.change(this, "currentState", _currentState, _currentState = value);
 			if (_movieclip is MovieClip) {
 				gotoState(_movieclip as MovieClip, _currentState);
@@ -45,7 +52,8 @@ package flight.skins
 		
 		[Bindable(event="targetChange")]
 		public function get target():Sprite { return _target; }
-		public function set target(value:Sprite):void {
+		public function set target(value:Sprite):void
+		{
 			if (_target) {
 				if (_movieclip) {
 					_target.removeChild(_movieclip);

@@ -1,16 +1,24 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.measurement
 {
-	
+	import flight.layouts.ILayoutBounds;
+	import flight.layouts.IBounds;
+
 	/**
 	 * @alpha
 	 */
 	public function resolveWidth(object:Object):Number
 	{
-		var explicit:IMeasurements;
-		var measured:IMeasurements;
-		if (object is IMeasurable) {
-			explicit = (object as IMeasurable).explicit;
-			measured = (object as IMeasurable).measured;
+		var explicit:IBounds;
+		var measured:IBounds;
+		if (object is ILayoutBounds) {
+			explicit = (object as ILayoutBounds).explicit;
+			measured = (object as ILayoutBounds).measured;
 			return isNaN(explicit.width) ? measured.width : explicit.width;
 		} /* else if (object is IMeasurements) {
 			measurements = (object as IMeasurements);

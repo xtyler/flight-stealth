@@ -4,7 +4,9 @@ package flight.measurement
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
-	
+
+	import flight.layouts.ILayoutBounds;
+
 	import org.flexunit.Assert;
 	import org.flexunit.async.Async;
 	
@@ -19,13 +21,13 @@ package flight.measurement
 		[Test(order=-1)]
 		public function testIMeasurable():void {
 			var instance:Object = new C();
-			Assert.assertTrue(instance is IMeasurable);
+			Assert.assertTrue(instance is ILayoutBounds);
 			Assert.assertTrue(instance is IEventDispatcher);
 		}
 		
 		[Test]
 		public function testDefaultSize():void {
-			var instance:IMeasurable = new C();
+			var instance:ILayoutBounds = new C();
 			Assert.assertNotNull(instance.explicit);
 			Assert.assertNotNull(instance.measured);
 			Assert.assertFalse(isNaN(instance.measured.width));
@@ -56,7 +58,7 @@ package flight.measurement
 		
 		[Test]
 		public function testexplicitWidth():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			instance.width = 100;
 			Assert.assertEquals(100, instance.width);
 			Assert.assertEquals(100, instance.explicit.width);
@@ -64,7 +66,7 @@ package flight.measurement
 		
 		[Test]
 		public function testexplicitHeight():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			instance.height = 100;
 			Assert.assertEquals(100, instance.height);
 			Assert.assertEquals(100, instance.explicit.height);
@@ -72,7 +74,7 @@ package flight.measurement
 		
 		[Test(async)]
 		public function testMeasuredWidth():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			var listener:Function = Async.asyncHandler(this, changeHandler, 500, "widthChange", timeoutHandler);
 			(instance as IEventDispatcher).addEventListener("widthChange", listener, false, 0, false);
 			
@@ -83,7 +85,7 @@ package flight.measurement
 		
 		[Test(async)]
 		public function testMeasuredHeight():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			var listener:Function = Async.asyncHandler(this, changeHandler, 500, "heightChange", timeoutHandler);
 			(instance as IEventDispatcher).addEventListener("heightChange", listener, false, 0, false);
 			
@@ -94,7 +96,7 @@ package flight.measurement
 		
 		[Test(async)]
 		public function testMeasuredWidthEvent():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			instance.width = 100; // there should be no change event for measured changes now
 			Async.failOnEvent(this, instance as IEventDispatcher, "widthChange", 500);
 			
@@ -105,7 +107,7 @@ package flight.measurement
 		
 		[Test(async)]
 		public function testMeasuredHeightEvent():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			instance.height = 100; // there should be no change event for measured changes now
 			Async.failOnEvent(this, instance as IEventDispatcher, "heightChange", 500);
 			
@@ -116,7 +118,7 @@ package flight.measurement
 		
 		[Test(async)] // binding events should fire for width/height changes, but explicit/measured should not be updated
 		public function testSetSize():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			var widthListener:Function = Async.asyncHandler(this, changeHandler, 500, "widthChange", timeoutHandler);
 			var heightListener:Function = Async.asyncHandler(this, changeHandler, 500, "heightChange", timeoutHandler);
 			(instance as IEventDispatcher).addEventListener("widthChange", widthListener, false, 0, false);
@@ -131,7 +133,7 @@ package flight.measurement
 		
 		[Test(async)] //  no events should fire if size hasn't changed
 		public function testSetSizeNotChanged():void {
-			var instance:IMeasurable = new C() as IMeasurable;
+			var instance:ILayoutBounds = new C() as ILayoutBounds;
 			instance.setSize(100, 100);
 			Async.failOnEvent(this, instance as IEventDispatcher, "widthChange", 500, timeoutHandler);
 			Async.failOnEvent(this, instance as IEventDispatcher, "heightChange", 500, timeoutHandler);

@@ -1,8 +1,10 @@
 package flight.measurement
 {
+	import flight.layouts.ILayoutBounds;
+
 	import org.flexunit.Assert;
 	
-	import flight.display.Display;
+	import flight.display.SpriteDisplay;
 
 	public class MeasurementFunctionsTest
 	{
@@ -16,7 +18,7 @@ package flight.measurement
 		
 		[Test]
 		public function testResolveWidthMeasured():void {
-			var instance:IMeasurable = new Display();
+			var instance:ILayoutBounds = new SpriteDisplay();
 			instance.measured.width = 100;
 			var v:Number = flight.measurement.resolveWidth(instance);
 			Assert.assertEquals(100, v);
@@ -24,7 +26,7 @@ package flight.measurement
 		
 		[Test]
 		public function testResolveWidthexplicit():void {
-			var instance:IMeasurable = new Display();
+			var instance:ILayoutBounds = new SpriteDisplay();
 			instance.measured.width = 5;
 			instance.explicit.width = 100;
 			var v:Number = flight.measurement.resolveWidth(instance);
@@ -40,7 +42,7 @@ package flight.measurement
 		
 		[Test]
 		public function testResolveHeightMeasured():void {
-			var instance:IMeasurable = new Display();
+			var instance:ILayoutBounds = new SpriteDisplay();
 			instance.measured.height = 100;
 			var v:Number = flight.measurement.resolveHeight(instance);
 			Assert.assertEquals(100, v);
@@ -48,7 +50,7 @@ package flight.measurement
 		
 		[Test]
 		public function testResolveHeightexplicit():void {
-			var instance:IMeasurable = new Display();
+			var instance:ILayoutBounds = new SpriteDisplay();
 			instance.measured.height= 5;
 			instance.explicit.height = 100;
 			var v:Number = flight.measurement.resolveHeight(instance);
@@ -65,7 +67,7 @@ package flight.measurement
 		
 		[Test]
 		public function testSetSizeMeasurable():void {
-			var instance:IMeasurable = new Display();
+			var instance:ILayoutBounds = new SpriteDisplay();
 			instance.measured.width = 5;
 			instance.measured.height = 5;
 			instance.explicit.width = 5;

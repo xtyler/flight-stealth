@@ -1,4 +1,10 @@
-﻿package flight.behaviors
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
+package flight.behaviors
 {
 	import flash.display.DisplayObject;
 	import flash.display.FrameLabel;
@@ -24,18 +30,20 @@
 		[Bindable(event="currentStateChange")]
 		[Binding(target="target.currentState")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void {
+		public function set currentState(value:String):void
+		{
 			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
 		[Bindable(event="movieclipChange")]
 		[Binding(target="target.skin")]
 		public function get movieclip():MovieClip { return _movieclip; }
-		public function set movieclip(value:MovieClip):void {
+		public function set movieclip(value:MovieClip):void
+		{
 			DataChange.change(this, "movieclip", _movieclip, _movieclip = value);
 		}
 		
-		public function MovieClipSkinBehavior(target:IEventDispatcher=null)
+		public function MovieClipSkinBehavior(target:IEventDispatcher = null)
 		{
 			super(target);
 		}
@@ -57,7 +65,8 @@
 		}
 		
 		// we'll update this for animated/play animations later
-		private function gotoState(clip:MovieClip, state:String):void {
+		private function gotoState(clip:MovieClip, state:String):void
+		{
 			var frames:Array = clip.currentLabels;
 			for each(var label:FrameLabel in frames) {
 				if (label.name == state) {

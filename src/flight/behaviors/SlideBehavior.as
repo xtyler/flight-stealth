@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
@@ -6,11 +12,10 @@ package flight.behaviors
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	import flight.data.IScroll;
 	import flight.data.IRange;
+	import flight.data.IScroll;
 	import flight.data.Range;
 	import flight.events.ButtonEvent;
-	import flight.events.RenderPhase;
 	import flight.measurement.resolveHeight;
 	
 	public class SlideBehavior extends Behavior// extends StepBehavior
@@ -75,7 +80,8 @@ package flight.behaviors
 		
 		[Bindable(event="snapThumbChange")]
 		public function get snapThumb():Boolean { return _snapThumb; }
-		public function set snapThumb(value:Boolean):void {
+		public function set snapThumb(value:Boolean):void
+		{
 			_snapThumb = value;
 			dispatchEvent(new Event("snapThumbChange"));
 		}
@@ -103,17 +109,17 @@ package flight.behaviors
 			if (snapThumb) {
 				thumb.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, thumb.mouseX, thumb.mouseY));
 				
-				_percent = (mousePoint - thumb.width/2) / size;
+				_percent = (mousePoint - thumb.width / 2) / size;
 				_percent = _percent <= 0 ? 0 : _percent >= 1 ? 1 : _percent;
 				position.percent = _percent;
 				updatePosition();
 				
-				dragPoint = horizontal ? thumb.x + thumb.width/2 : thumb.y + thumb.height/2;
+				dragPoint = horizontal ? thumb.x + thumb.width / 2 : thumb.y + thumb.height / 2;
 				dragPercent = _percent;
 				
 				dispatchEvent(new Event("percentChange"));
 			} else {
-				forwardPress = mousePoint > ((horizontal ? thumb.width/2 : thumb.height/2) + size*position.percent);
+				forwardPress = mousePoint > ((horizontal ? thumb.width / 2 : thumb.height / 2) + size * position.percent);
 				
 				var control:IScroll = position as IScroll;
 				
@@ -133,7 +139,7 @@ package flight.behaviors
 		{
 			var size:Number = horizontal ? track.width - thumb.width : track.height - thumb.height;
 			var mousePoint:Number = horizontal ? track.parent.mouseX - track.x : track.parent.mouseY - track.y;
-			var forwardHold:Boolean = mousePoint > ((horizontal ? thumb.width/2 : thumb.height/2) + size*position.percent);
+			var forwardHold:Boolean = mousePoint > ((horizontal ? thumb.width / 2 : thumb.height / 2) + size * position.percent);
 			
 			if (forwardPress != forwardHold) {
 				return;
@@ -197,13 +203,13 @@ package flight.behaviors
 				
 				if (horizontal) {
 					p.x = (track.width - thumb.width) * _percent + track.x;
-					p = thumb.parent.globalToLocal( track.parent.localToGlobal(p) );
+					p = thumb.parent.globalToLocal(track.parent.localToGlobal(p));
 					thumb.x = Math.round(p.x);
 				} else {
-					var trackHeight:Number = flight.measurement.resolveHeight(track);
-					var thumbHeight:Number = flight.measurement.resolveHeight(thumb);
+					var trackHeight:Number = resolveHeight(track);
+					var thumbHeight:Number = resolveHeight(thumb);
 					p.y = (trackHeight - thumbHeight) * _percent + track.y;
-					p = thumb.parent.globalToLocal( track.parent.localToGlobal(p) );
+					p = thumb.parent.globalToLocal(track.parent.localToGlobal(p));
 					thumb.y = Math.round(p.y);
 				}
 			}

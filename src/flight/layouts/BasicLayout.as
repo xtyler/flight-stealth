@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.layouts
 {
 	
@@ -91,7 +97,7 @@ package flight.layouts
 				} else if (hasStyle(child, "right")) {
 					child.x = rectangle.width - width - right;
 				} else if (hasStyle(child, "horizontalCenter")) {
-					child.x = rectangle.width/2 - width/2 + horizontalCenter;
+					child.x = rectangle.width / 2 - width / 2 + horizontalCenter;
 				}
 				
 				if (hasStyle(child, "top") && hasStyle(child, "bottom")) {
@@ -102,10 +108,10 @@ package flight.layouts
 				} else if (hasStyle(child, "bottom")) {
 					child.y = rectangle.height - height - bottom;
 				} else if (hasStyle(child, "verticalCenter")) {
-					child.y = rectangle.height/2 - height/2 + verticalCenter;
+					child.y = rectangle.height / 2 - height / 2 + verticalCenter;
 				}
 				
-				flight.measurement.setSize(child, width, height);
+				setSize(child, width, height);
 			}
 		}
 		

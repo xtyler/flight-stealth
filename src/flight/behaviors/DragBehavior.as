@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	
@@ -13,7 +19,7 @@ package flight.behaviors
 		private var startMouse:Point;
 		private var startPosition:Point;
 		
-		public function DragBehavior(target:InteractiveObject=null)
+		public function DragBehavior(target:InteractiveObject = null)
 		{
 			super(target);
 		}

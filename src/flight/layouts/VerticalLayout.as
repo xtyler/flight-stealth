@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.layouts
 {
 	
@@ -24,14 +30,14 @@ package flight.layouts
 		override public function measure(children:Array):Point
 		{
 			super.measure(children);
-			var point:Point = new Point(0, gap/2);
+			var point:Point = new Point(0, gap / 2);
 			for each(var child:Object in children) {
-				var width:Number = flight.measurement.resolveWidth(child);
-				var height:Number = flight.measurement.resolveHeight(child);
+				var width:Number = resolveWidth(child);
+				var height:Number = resolveHeight(child);
 				point.x = Math.max(point.x, width);
 				point.y += height + gap;
 			}
-			point.y -= gap/2;
+			point.y -= gap / 2;
 			return point;
 		}
 		
@@ -39,13 +45,13 @@ package flight.layouts
 		{
 			super.update(children, rectangle);
 			if (children) {
-				var position:Number = gap/2;
+				var position:Number = gap / 2;
 				var length:int = children.length;
 				for (var i:int = 0; i < length; i++) {
 					var child:Object = children[i];
-					var width:Number = flight.measurement.resolveWidth(child);
-					var height:Number = flight.measurement.resolveHeight(child);
-					child.x = rectangle.width/2 - width/2;
+					var width:Number = resolveWidth(child);
+					var height:Number = resolveHeight(child);
+					child.x = rectangle.width / 2 - width / 2;
 					child.y = position;
 					position += height + gap;
 				}

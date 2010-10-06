@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.skins
 {
 	
@@ -10,15 +16,15 @@ package flight.skins
 	import flash.geom.Rectangle;
 	
 	import flight.collections.SimpleCollection;
-	import flight.components.IStateful;
+	import flight.styles.IStateful;
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.events.RenderPhase;
+	import flight.display.RenderPhase;
 	import flight.layouts.ILayout;
-	import flight.measurement.IMeasurable;
-	import flight.measurement.IMeasurements;
-	import flight.measurement.Measurements;
+	import flight.layouts.ILayoutBounds;
+	import flight.layouts.IBounds;
+	import flight.layouts.Bounds;
 	import flight.templating.addItemsAt;
 	
 	import mx.collections.IList;
@@ -32,7 +38,7 @@ package flight.skins
 	 * @alpha
 	 */
 	[DefaultProperty("content")]
-	public class Skin extends EventDispatcher implements ISkin, IContainer, IStateful, IMeasurable
+	public class Skin extends EventDispatcher// implements ISkin, IContainer, IStateful, ILayoutBounds
 	{
 		
 		static public const MEASURE:String = "measure";
@@ -46,24 +52,23 @@ package flight.skins
 		private var renderers:Array = [];
 		private var _layout:ILayout;
 		private var _states:Array;
-		private var _currentState:String; 
+		private var _currentState:String;
 		//private var _transitions:Array;
 		private var _template:Object; // = new StealthDataTemplate();
 		
 		private var unscaledWidth:Number = 160;
 		private var unscaledHeight:Number = 22;
 		
-		private var _explicit:IMeasurements;
-		private var _measured:IMeasurements;
-		
-		//
+		private var _explicit:Bounds;
+		private var _measured:Bounds;
 		
 		/**
 		 * @inheritDoc
 		 */
 		[Bindable(event="widthChange")]
 		public function get width():Number { return unscaledWidth; }
-		public function set width(value:Number):void {
+		public function set width(value:Number):void
+		{
 			if (unscaledWidth == value) {
 				return;
 			}
@@ -77,7 +82,8 @@ package flight.skins
 		 */
 		[Bindable(event="heightChange")]
 		public function get height():Number { return unscaledHeight; }
-		public function set height(value:Number):void {
+		public function set height(value:Number):void
+		{
 			if (unscaledHeight == value) {
 				return;
 			}
@@ -90,18 +96,19 @@ package flight.skins
 		 * @inheritDoc
 		 */
 		[Bindable(event="explicitChange")]
-		public function get explicit():IMeasurements { return _explicit; }
+		public function get explicit():IBounds { return _explicit; }
 		
 		/**
 		 * @inheritDoc
 		 */
 		[Bindable(event="measuredChange")]
-		public function get measured():IMeasurements { return _measured; }
+		public function get measured():IBounds { return _measured; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		public function setSize(width:Number, height:Number):void {
+		public function setSize(width:Number, height:Number):void
+		{
 			RenderPhase.invalidate(target, LAYOUT);
 			DataChange.queue(this, "width", unscaledWidth, unscaledWidth = width);
 			DataChange.change(this, "height", unscaledHeight, unscaledHeight = height);
@@ -112,7 +119,8 @@ package flight.skins
 		 */
 		[Bindable(event="layoutChange")]
 		public function get layout():ILayout { return _layout; }
-		public function set layout(value:ILayout):void {
+		public function set layout(value:ILayout):void
+		{
 			if (_layout == value) {
 				return;
 			}
@@ -128,19 +136,22 @@ package flight.skins
 		
 		[Bindable(event="templateChange")]
 		public function get template():Object { return _template; }
-		public function set template(value:Object):void {
+		public function set template(value:Object):void
+		{
 			DataChange.change(this, "template", _template, _template = value);
 		}
 		
 		[Bindable(event="currentStateChange")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void {
+		public function set currentState(value:String):void
+		{
 			DataChange.change(this, "currentState", _currentState, _currentState = value);
 		}
 		
 		[Bindable(event="statesChange")]
 		public function get states():Array { return _states; }
-		public function set states(value:Array):void {
+		public function set states(value:Array):void
+		{
 			DataChange.change(this, "states", _states, _states = value);
 		}
 		
@@ -151,8 +162,8 @@ package flight.skins
 		{
 			super();
 			_content = new SimpleCollection();
-			_explicit = new Measurements(this);
-			_measured = new Measurements(this, 160, 22);
+			_explicit = new Bounds();
+			_measured = new Bounds(160, 22);
 			_content.addEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
 			addEventListener(LAYOUT, onLayout, false, 0, true);
 		}
@@ -203,6 +214,7 @@ package flight.skins
 		{
 			return _content;
 		}
+		
 		public function set content(value:*):void
 		{
 			if (_content == value) {
@@ -256,7 +268,7 @@ package flight.skins
 					break;
 				case CollectionEventKind.REMOVE :
 					for each (child in event.items) {
-					_target.removeChild(child);
+						_target.removeChild(child);
 					}
 					break;
 				case CollectionEventKind.REPLACE :
@@ -271,24 +283,27 @@ package flight.skins
 		}
 		
 		
-		private function add(items:Array, index:int):void {
-			var children:Array = flight.templating.addItemsAt(_target, items, index, template);
+		private function add(items:Array, index:int):void
+		{
+			var children:Array = addItemsAt(_target, items, index, template);
 			renderers.concat(children); // todo: correct ordering
 		}
 		
-		private function reset(items:Array):void {
+		private function reset(items:Array):void
+		{
 			if (_target) {
 				while (_target.numChildren) {
-					_target.removeChildAt(_target.numChildren-1);
+					_target.removeChildAt(_target.numChildren - 1);
 				}
-				renderers = flight.templating.addItemsAt(_target, items, 0, template); // todo: correct ordering
+				renderers = addItemsAt(_target, items, 0, template); // todo: correct ordering
 				RenderPhase.invalidate(_target, MEASURE);
 				RenderPhase.invalidate(_target, LAYOUT);
 			}
 		}
 		
-		private function onMeasure(event:Event):void {
-			var target:IMeasurable= this.target as IMeasurable;
+		private function onMeasure(event:Event):void
+		{
+			var target:ILayoutBounds = this.target as ILayoutBounds;
 			if (layout && target && (isNaN(target.explicit.width) || isNaN(target.explicit.height))) {
 				var items:Array = [];
 				var length:int = _content.length;
@@ -299,7 +314,8 @@ package flight.skins
 			}
 		}
 		
-		private function onLayout(event:Event):void {
+		private function onLayout(event:Event):void
+		{
 			if (layout) {
 				var items:Array = [];
 				var length:int = _content.length;

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.layouts
 {
 	import flash.display.DisplayObject;
@@ -9,7 +15,7 @@ package flight.layouts
 	
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.events.RenderPhase;
+	import flight.display.RenderPhase;
 	import flight.metadata.resolveBindings;
 	import flight.metadata.resolveDataListeners;
 	import flight.metadata.resolveEventListeners;
@@ -32,40 +38,45 @@ package flight.layouts
 		
 		[Bindable(event="targetChange")]
 		public function get target():IEventDispatcher { return _target; }
-		public function set target(value:IEventDispatcher):void {
+		public function set target(value:IEventDispatcher):void
+		{
 			DataChange.change(this, "target", _target, _target = value);
 		}
 		
-		public function Layout() {
-			flight.metadata.resolveBindings(this);
-			flight.metadata.resolveEventListeners(this);
-			flight.metadata.resolveDataListeners(this);
+		public function Layout()
+		{
+			resolveBindings(this);
+			resolveEventListeners(this);
+			resolveDataListeners(this);
 			dataBind.bindSetter(onInvalidateLayout, this, "target.width");
 			dataBind.bindSetter(onInvalidateLayout, this, "target.height");
 		}
 		
-		public function measure(children:Array):Point {
+		public function measure(children:Array):Point
+		{
 			// this method of listening for layout invalidating changes is very much experimental
 			for each(var child:IEventDispatcher in children) {
 				if (attached[child] != true) {
-					flight.metadata.resolveLayoutProperties(this, child, onInvalidateLayout);
+					resolveLayoutProperties(this, child, onInvalidateLayout);
 					attached[child] = true;
 				}
 			}
 			return new Point(0, 0);
 		}
 		
-		public function update(children:Array, rectangle:Rectangle):void {
+		public function update(children:Array, rectangle:Rectangle):void
+		{
 			// this method of listening for layout invalidating changes is very much experimental
 			for each(var child:IEventDispatcher in children) {
 				if (attached[child] != true) {
-					flight.metadata.resolveLayoutProperties(this, child, onInvalidateLayout);
+					resolveLayoutProperties(this, child, onInvalidateLayout);
 					attached[child] = true;
 				}
 			}
 		}
 		
-		private function onInvalidateLayout(object:*):void {
+		private function onInvalidateLayout(object:*):void
+		{
 			if (target is DisplayObject) {
 				RenderPhase.invalidate(target as DisplayObject, "measure");
 				RenderPhase.invalidate(target as DisplayObject, "layout");

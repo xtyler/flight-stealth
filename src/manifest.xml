@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <componentPackage>
 	
-	<!-- components -->
-	<component id="Button" class="flight.components.Button"/>
-	<component id="Component" class="flight.components.Component"/>
-	<component id="List" class="flight.components.List"/>
-	<component id="ScrollBar" class="flight.components.ScrollBar"/>
-	<component id="Stepper" class="flight.components.Stepper"/>
-	
 	<!-- data -->
 	<component id="Range" class="flight.data.Range"/>
 	<component id="Scroll" class="flight.data.Scroll"/>
@@ -44,7 +37,7 @@
 	
 	<!-- display -->
 	<component id="BitmapDisplay" class="flight.display.BitmapDisplay"/>
-	<component id="Display" class="flight.display.Display"/>
+	<component id="Display" class="flight.display.SpriteDisplay"/>
 	
 	<!-- text -->
 	<component id="Text" class="flight.text.Text"/>

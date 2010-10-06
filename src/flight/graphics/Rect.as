@@ -1,196 +1,113 @@
 package flight.graphics
 {
-	
-	import flash.display.Graphics;
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	
+	import flash.display.GraphicsPathCommand;
+
 	import flight.data.DataChange;
-	import flight.metadata.resolveCommitProperties;
-	import flight.styles.IStyleable;
-	
-	import mx.events.PropertyChangeEvent;
-	
-	[Style(name="left")]
-	[Style(name="right")]
-	[Style(name="top")]
-	[Style(name="bottom")]
-	[Style(name="horizontalCenter")]
-	[Style(name="verticalCenter")]
-	[Style(name="dock")]
-	[Style(name="align")]
-	public class Rect extends EventDispatcher implements IDrawable, IStyleable
+
+	public class Rect extends GraphicShape
 	{
-		// todo: drawing still needs invalidation, but InvalidationEvent is based on DisplayObject
+		public function Rect()
+		{
+			
+		}
 		
-		private var _id:String;
-		private var _styleName:String;
-		private var _style:Object;
-		
-		private var _x:Number = 0;
-		private var _y:Number = 0;
-		private var _width:Number = 0;
-		private var _height:Number = 0;
+		[Bindable(event="radiusXChange", style="weak")]
+		public function get radiusX():Number { return _radiusX }
+		public function set radiusX(value:Number):void
+		{
+			DataChange.change(this, "radiusX", _radiusX, _radiusX = value);
+		}
 		private var _radiusX:Number = 0;
+		
+		[Bindable(event="radiusYChange", style="weak")]
+		public function get radiusY():Number { return _radiusY }
+		public function set radiusY(value:Number):void
+		{
+			DataChange.change(this, "radiusY", _radiusY, _radiusY = value);
+		}
 		private var _radiusY:Number = 0;
 		
-		[Bindable(event="xChange")]
-		public function get x():Number { return _x; }
-		public function set x(value:Number):void {
-			DataChange.change(this, "x", _x, _x = value);
-			//render();
-		}
-		
-		[Bindable(event="yChange")]
-		public function get y():Number { return _y; }
-		public function set y(value:Number):void {
-			DataChange.change(this, "y", _y, _y = value);
-			//render();
-		}
-		
-		
-		[Bindable(event="widthChange")]
-		public function get width():Number { return _width; }
-		public function set width(value:Number):void {
-			DataChange.change(this, "width", _width, _width = value);
-			//render();
-		}
-		
-		[Bindable(event="heightChange")]
-		public function get height():Number { return _height; }
-		public function set height(value:Number):void {
-			DataChange.change(this, "height", _height, _height = value);
-			//render();
-		}
-		
-		[Bindable(event="radiusXChange")]
-		public function get radiusX():Number { return _radiusX; }
-		public function set radiusX(value:Number):void {
-			DataChange.change(this, "radiusX", _radiusX, _radiusX = value);
-			//render();
-		}
-		
-		[Bindable(event="radiusYChange")]
-		public function get radiusY():Number { return _radiusY; }
-		public function set radiusY(value:Number):void {
-			DataChange.change(this, "radiusY", _radiusY, _radiusY = value);
-			//render();
-		}
-		
-		// topLeftRadiusX
-		// topLeftRadiusY
-		// topRightRadiusX
-		// topRightRadiusY
-		// bottomRightRadiusX
-		// botomRightRadiusY
-		// bottomLeftRadiusX
-		// bottomLeftRadiusY
-		
-		// IStyleable implementation
-		
-		[Bindable(event="idChange")]
-		public function get id():String { return _id; }
-		public function set id(value:String):void {
-			DataChange.change(this, "id", _id, _id = value);
-		}
-		
-		[Bindable(event="styleNameChange")]
-		public function get styleName():String { return _styleName;}
-		public function set styleName(value:String):void {
-			DataChange.change(this, "styleName", _styleName, _styleName= value);
-		}
-		
-		[Bindable(event="styleChange")]
-		public function get style():Object { return _style; }
-		public function set style(value:*):void { // this needs expanding in the future
-			if (value is String) {
-				var token:String = value as String;
-				var assignments:Array = token.split(";");
-				for each(var assignment:String in assignments) {
-					var split:Array = assignment.split(":");
-					if (split.length == 2) {
-						var property:String = split[0].replace(/\s+/g, "");
-						var v:String = split[1].replace(/\s+/g, "");
-						_style[property] = v;
-					}
-				}
-			}
-		}
-		
-		public function getStyle(property:String):* {
-			return style[property];
-		}
-		
-		public function setStyle(property:String, value:*):void {
-			style[property] = value;
-		}
-		
-		// rect
-		
-		private var _fill:*;
-		public function get fill():* { return _fill; }
-		public function set fill(value:*):void {
-			_fill = value;
-			// update this to use binding correctly
-			(_fill as IEventDispatcher).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, propertyChangeHandler);
-			//render();
-		}
-		
-		private var _stroke:*;
-		public function get stroke():* { return _stroke; }
-		public function set stroke(value:*):void {
-			_stroke = value;
-			//render();
-		}
-		
-		private var _target:Object;
-		public function get target():Object { return _target; }
-		public function set target(value:Object):void {
-			_target = value;
-			if (_target != null) { // this needs to handle reassignment better (to clean up old bindings/listeners)
-				flight.metadata.resolveCommitProperties(this);
-			}
-			//render();
-		}
-		
-		public function Rect(target:Object = null)
+		[Bindable(event="topLeftRadiusXChange", style="weak")]
+		public function get topLeftRadiusX():Number { return _topLeftRadiusX }
+		public function set topLeftRadiusX(value:Number):void
 		{
-			this.target = target;
-			_style = {};
+			DataChange.change(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
 		}
+		private var _topLeftRadiusX:Number = NaN;
 		
-		/**
-		 * @private
-		 */
-		[CommitProperties(target="x, y, width, height, radiusX, radiusY, fill, stroke, target")]
-		public function updateRender(event:Event):void {
-			render();
+		[Bindable(event="topLeftRadiusYChange", style="weak")]
+		public function get topLeftRadiusY():Number { return _topLeftRadiusY }
+		public function set topLeftRadiusY(value:Number):void
+		{
+			DataChange.change(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
 		}
+		private var _topLeftRadiusY:Number = NaN;
 		
-		public function render():void {
-			var graphics:Vector.<Graphics> = flight.graphics.resolveGraphics(target);
-			for each(var g:Graphics in graphics) {
-				g.clear();
-				drawTo(g);
-			}
+		[Bindable(event="topRightRadiusXChange", style="weak")]
+		public function get topRightRadiusX():Number { return _topRightRadiusX }
+		public function set topRightRadiusX(value:Number):void
+		{
+			DataChange.change(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
 		}
+		private var _topRightRadiusX:Number = NaN;
 		
-		private function drawTo(graphics:Graphics):void {
-			if (width > 0 && height > 0) {
-				var rectangle:Rectangle = new Rectangle(0, 0, width, height);
-				if (stroke != null) { stroke.apply(graphics, rectangle, new Point()); }
-				if (fill != null) { fill.begin(graphics, rectangle, new Point()); }
-				graphics.drawRoundRect(_x, _y, _width, _height, _radiusX, _radiusY);
-				if (fill != null) { fill.end(graphics); }
-			}
+		[Bindable(event="topRightRadiusYChange", style="weak")]
+		public function get topRightRadiusY():Number { return _topRightRadiusY }
+		public function set topRightRadiusY(value:Number):void
+		{
+			DataChange.change(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
 		}
+		private var _topRightRadiusY:Number = NaN;
 		
-		private function propertyChangeHandler(event:PropertyChangeEvent):void {
-			render();
+		[Bindable(event="bottomLeftRadiusXChange", style="weak")]
+		public function get bottomLeftRadiusX():Number { return _bottomLeftRadiusX }
+		public function set bottomLeftRadiusX(value:Number):void
+		{
+			DataChange.change(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
 		}
+		private var _bottomLeftRadiusX:Number = NaN;
 		
+		[Bindable(event="bottomLeftRadiusYChange", style="weak")]
+		public function get bottomLeftRadiusY():Number { return _bottomLeftRadiusY }
+		public function set bottomLeftRadiusY(value:Number):void
+		{
+			DataChange.change(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
+		}
+		private var _bottomLeftRadiusY:Number = NaN;
+		
+		[Bindable(event="bottomRightRadiusXChange", style="weak")]
+		public function get bottomRightRadiusX():Number { return _bottomRightRadiusX }
+		public function set bottomRightRadiusX(value:Number):void
+		{
+			DataChange.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
+		}
+		private var _bottomRightRadiusX:Number = NaN;
+		
+		[Bindable(event="bottomRightRadiusYChange", style="weak")]
+		public function get bottomRightRadiusY():Number { return _bottomRightRadiusY }
+		public function set bottomRightRadiusY(value:Number):void
+		{
+			DataChange.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
+		}
+		private var _bottomRightRadiusY:Number = NaN;
+		
+		
+		override public function update():void
+		{
+			super.update();
+			var cmds:Vector.<int> = graphicsPath.commands = new Vector.<int>();
+			var data:Vector.<Number> = graphicsPath.data = new Vector.<Number>();
+			
+			cmds.push(GraphicsPathCommand.MOVE_TO);
+			data.push(0, 0);
+			cmds.push(GraphicsPathCommand.LINE_TO);
+			data.push(width, 0);
+			cmds.push(GraphicsPathCommand.LINE_TO);
+			data.push(width, height);
+			cmds.push(GraphicsPathCommand.LINE_TO);
+			data.push(0, height);
+			cmds.push(GraphicsPathCommand.LINE_TO);
+			data.push(0, 0);
+		}
 	}
 }

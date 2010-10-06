@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.behaviors
 {
 	import flash.display.DisplayObjectContainer;
@@ -30,7 +36,8 @@ package flight.behaviors
 		[Bindable(event="currentStateChange")]
 		[Binding(target="target.currentState")]
 		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void {
+		public function set currentState(value:String):void
+		{
 			if (value == DISABLED) {
 				disabled = true;
 			} else if (_disabled) {
@@ -46,7 +53,8 @@ package flight.behaviors
 		[Bindable(event="disabledChange")]
 		[Binding(target="target.disabled")]
 		public function get disabled():Boolean { return _disabled; }
-		public function set disabled(value:Boolean):void {
+		public function set disabled(value:Boolean):void
+		{
 			_disabled = value;
 			_currentState = _disabled ? DISABLED : mouseState;
 			dispatchEvent(new Event("disabledChange"));
@@ -58,7 +66,8 @@ package flight.behaviors
 		[Bindable(event="holdPressChange")]
 		[Binding(target="target.holdPress")]
 		public function get holdPress():Boolean { return _holdPress; }
-		public function set holdPress(value:Boolean):void {
+		public function set holdPress(value:Boolean):void
+		{
 			_holdPress = value;
 			if (_holdPress) {
 				if (target) {
