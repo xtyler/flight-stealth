@@ -5,6 +5,9 @@ package flight.graphics
 	import flash.display.IGraphicsData;
 	import flash.events.Event;
 
+	import flash.geom.Matrix;
+
+	import flight.display.DrawPhase;
 	import flight.display.RenderPhase;
 	import flight.display.ShapeDisplay;
 	import flight.graphics.paint.IFill;
@@ -12,19 +15,20 @@ package flight.graphics
 	
 	public class GraphicShape extends ShapeDisplay implements IGraphicShape
 	{
-		public static const DRAW:String = "draw";
-		RenderPhase.registerPhase(DRAW, 0xFF);
-		
 		// TODO: naming?
 		public var canvas:Graphics;
+		public var canvasTransform:Matrix;
 		
 		public var graphicsPath:GraphicsPath;
 		public var graphicsData:Vector.<IGraphicsData>;
 		
+		// TODO: path should draw before measure, rect/ellipse should draw after layout
 		public function GraphicShape()
 		{
 			graphicsData = new Vector.<IGraphicsData>;
 			graphicsPath = new GraphicsPath();
+			addEventListener(DrawPhase.DRAW, onDraw);
+			invalidate(DrawPhase.DRAW);
 		}
 		
 		public function get stroke():IStroke { return _stroke; }

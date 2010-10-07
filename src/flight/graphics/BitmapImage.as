@@ -90,8 +90,8 @@ package flight.graphics
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete, false, 0, true);
 			} else if (source is Class) {
 				var display:Bitmap = new (source as Class)();
-				measuredLayout.width = display.width;
-				measuredLayout.height = display.height;
+				measured.width = display.width;
+				measured.height = display.height;
 				original = display.bitmapData;
 				draw();
 			}
@@ -99,8 +99,8 @@ package flight.graphics
 		
 		private function onComplete(event:Event):void
 		{
-			measuredLayout.width = loader.content.width;
-			measuredLayout.height = loader.content.height;
+			measured.width = loader.content.width;
+			measured.height = loader.content.height;
 			original = (loader.content as Bitmap).bitmapData;
 			draw();
 		}

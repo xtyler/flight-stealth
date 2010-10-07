@@ -27,19 +27,6 @@ package flight.text
 		{
 			super();
 			this.selectable = false;
-			resolveCommitProperties(this);
 		}
-		
-		/**
-		 * @private
-		 */
-		[CommitProperties(target="text")]
-		public function measure(event:Event):void
-		{
-			var metrics:TextLineMetrics = this.getLineMetrics(0);
-			measuredLayout.width = metrics.width;
-			measuredLayout.height = 12;
-		}
-		
 	}
 }

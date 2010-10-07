@@ -12,27 +12,15 @@ package flight.containers
 	import flash.geom.Rectangle;
 	
 	import flight.collections.SimpleCollection;
-	import flight.styles.IStateful;
-	import flight.data.DataChange;
-	import flight.display.SpriteDisplay;
+	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
+	import flight.display.SpriteDisplay;
 	import flight.layouts.ILayout;
 	import flight.templating.addItemsAt;
 	
 	import mx.collections.IList;
 	import mx.events.CollectionEvent;
 	import mx.events.CollectionEventKind;
-	
-	[Style(name="left")]
-	[Style(name="right")]
-	[Style(name="top")]
-	[Style(name="bottom")]
-	[Style(name="horizontalCenter")]
-	[Style(name="verticalCenter")]
-	[Style(name="dock")]
-	[Style(name="align")]
-	
-	[Event(name="initialize", type="flight.display.RenderPhase")]
 	
 	[DefaultProperty("content")]
 	
@@ -41,55 +29,17 @@ package flight.containers
 	 * 
 	 * @alpha
 	 */
-	public class Group extends SpriteDisplay implements IContainer, IStateful
+	public class Group extends SpriteDisplay implements IContainer
 	{
-		
-		static public const CREATE:String = "create";
-		static public const INITIALIZE:String = "initialize";
-		static public const MEASURE:String = "measure";
-		static public const LAYOUT:String = "layout";
-		
-		RenderPhase.registerPhase(CREATE, 3, true);
-		RenderPhase.registerPhase(INITIALIZE, 2, true);
-		RenderPhase.registerPhase(MEASURE, 1, true);
-		RenderPhase.registerPhase(LAYOUT, 0, false);
-		
 		private var _layout:ILayout;
 		private var _template:Object;
 		private var _content:IList;
 		private var renderers:Array;
 		
-		private var _states:Array;
-		private var _currentState:String;
-		
-		
 		public function Group()
 		{
-			addEventListener(Event.ADDED, onAdded, false, 0, true);
-			addEventListener(MEASURE, onMeasure, false, 0, true);
-			addEventListener(LAYOUT, onLayout, false, 0, true);
-		}
-		
-		private function onSizeChange(event:Event):void
-		{
-			RenderPhase.invalidate(this, LAYOUT);
-		}
-		
-		// IStateful implementation
-		
-		[Bindable(event="statesChange")]
-		public function get states():Array { return _states; }
-		public function set states(value:Array):void
-		{
-			DataChange.change(this, "states", _states, _states = value);
-		}
-		
-		
-		[Bindable(event="currentStateChange")]
-		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
-		{
-			DataChange.change(this, "currentState", _currentState, _currentState = value);
+			addEventListener(LayoutPhase.MEASURE, onMeasure, false, 0, true);
+			addEventListener(LayoutPhase.LAYOUT, onLayout, false, 0, true);
 		}
 		
 		/**
@@ -108,8 +58,6 @@ package flight.containers
 			if (_content == value) {
 				return;
 			}
-			
-			var oldContent:IList = _content;
 			
 			if (_content) {
 				_content.removeEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
@@ -133,8 +81,8 @@ package flight.containers
 				}
 				reset(items);
 			}
-			RenderPhase.invalidate(this, MEASURE);
-			RenderPhase.invalidate(this, LAYOUT);
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 			dispatchEvent(new Event("contentChange"));
 		}
 		
@@ -152,8 +100,8 @@ package flight.containers
 			if (_layout) { _layout.target = null; }
 			_layout = value;
 			if (_layout) { _layout.target = this; }
-			RenderPhase.invalidate(this, MEASURE);
-			RenderPhase.invalidate(this, LAYOUT);
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 			dispatchEvent(new Event("layoutChange"));
 		}
 		
@@ -175,24 +123,17 @@ package flight.containers
 				}
 				reset(items);
 			}
-			RenderPhase.invalidate(this, MEASURE);
-			RenderPhase.invalidate(this, LAYOUT);
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 			dispatchEvent(new Event("templateChange"));
-		}
-		
-		private function onAdded(event:Event):void
-		{
-			removeEventListener(Event.ADDED, onAdded, false);
-			RenderPhase.invalidate(this, CREATE);
-			RenderPhase.invalidate(this, INITIALIZE);
 		}
 		
 		private function onMeasure(event:Event):void
 		{
 			if ((isNaN(explicit.width) || isNaN(explicit.height)) && layout) {
 				var point:Point = layout.measure(renderers);
-				measuredLayout.width = point.x;
-				measuredLayout.height = point.y;
+				measured.width = point.x;
+				measured.height = point.y;
 			}
 		}
 		
@@ -227,7 +168,7 @@ package flight.containers
 					reset(event.items);
 					break;
 			}
-			RenderPhase.invalidate(this, LAYOUT);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 		}
 		
 		private function add(items:Array, index:int):void
@@ -242,7 +183,7 @@ package flight.containers
 				removeChildAt(numChildren - 1);
 			}
 			renderers = addItemsAt(this, items, 0, _template); // todo: correct ordering
-			RenderPhase.invalidate(this, LAYOUT);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 		}
 		
 		

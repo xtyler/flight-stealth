@@ -69,8 +69,8 @@ package flight.containers
 		public function onContainerChange(event:Event):void
 		{
 			horizontal.min = vertical.min = 0;
-			measuredLayout.width = horizontal.max = resolveWidth(container);
-			measuredLayout.height = vertical.max = resolveHeight(container);
+			measured.width = horizontal.max = resolveWidth(container);
+			measured.height = vertical.max = resolveHeight(container);
 			if (horizontal is IScroll) {
 				(horizontal as IScroll).pageSize = width;
 			}

@@ -8,23 +8,22 @@ package flight.components
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-	
+
 	import flight.behaviors.CompositeBehavior;
 	import flight.behaviors.IBehavior;
 	import flight.behaviors.IBehavioral;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.SpriteDisplay;
 	import flight.display.RenderPhase;
+	import flight.display.SpriteDisplay;
 	import flight.measurement.resolveHeight;
 	import flight.measurement.resolveWidth;
+	import flight.measurement.setSize;
 	import flight.metadata.resolveCommitProperties;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
 	import flight.templating.addItem;
-	
-	import mx.core.IDataRenderer;
-	
+
 	[Style(name="left")]
 	[Style(name="right")]
 	[Style(name="top")]
@@ -37,11 +36,11 @@ package flight.components
 	/**
 	 * @alpha
 	 */
-	public class Component extends SpriteDisplay implements IBehavioral, ISkinnable, IDataRenderer
+	public class Component extends SpriteDisplay implements IBehavioral, ISkinnable	// TODO: determine if ISkinnable is IStateful and IDataRenderer
 	{
 		
 		static public const MEASURE:String = "measure";
-		RenderPhase.registerPhase(MEASURE, 0, true);
+		RenderPhase.registerPhase(MEASURE, 0);
 		
 		protected var dataBind:DataBind = new DataBind();
 		
@@ -49,9 +48,6 @@ package flight.components
 		
 		private var _skin:Object;
 		private var _behaviors:CompositeBehavior;
-		
-		private var _states:Array;
-		private var _currentState:String;
 		
 		private var _enabled:Boolean = true;
 		
@@ -72,7 +68,6 @@ package flight.components
 			_data = value;
 			dispatchEvent(new Event("dataChange"));
 		}
-		
 		
 		[ArrayElementType("flight.behaviors.IBehavior")]
 		[Bindable(event="behaviorsChange")]
@@ -123,7 +118,7 @@ package flight.components
 			} else if (_skin is DisplayObject) {
 				addItem(this, _skin);
 			}
-			flight.measurement.setSize(skin, width, height);
+			setSize(skin, width, height);
 			dispatchEvent(new Event("skinChange"));
 			RenderPhase.invalidate(this, MEASURE);
 		}
@@ -156,32 +151,41 @@ package flight.components
 				_skin.currentState = _currentState;
 			}
 		}
+		private var _currentState:String;
+		
+		[Bindable(event="statesChange", style="weak")]
+		public function get states():Array { return _states }
+		public function set states(value:Array):void
+		{
+			DataChange.change(this, "states", _states, _states = value);
+		}
+		private var _states:Array;
 		
 		// needs more thought
 		
 		override public function set width(value:Number):void
 		{
 			super.width = value;
-			flight.measurement.setSize(skin, value, height);
+			setSize(skin, value, height);
 		}
 		
 		override public function set height(value:Number):void
 		{
 			super.height = value;
-			flight.measurement.setSize(skin, width, value);
+			setSize(skin, width, value);
 		}
 		
 		override public function setLayoutSize(width:Number, height:Number):void
 		{
 			super.setLayoutSize(width, height);
-			flight.measurement.setSize(skin, width, height);
+			setSize(skin, width, height);
 		}
 		
 		private function onMeasure(event:Event):void
 		{
 			if ((isNaN(explicit.width) || isNaN(explicit.height)) && skin) {
-				measuredLayout.width = resolveWidth(skin); // explicit width of skin becomes measured width of component
-				measuredLayout.height = resolveHeight(skin); // explicit height of skin becomes measured height of component
+				measured.width = resolveWidth(skin); // explicit width of skin becomes measured width of component
+				measured.height = resolveHeight(skin); // explicit height of skin becomes measured height of component
 			}
 		}
 		

@@ -13,69 +13,89 @@ package flight.display
 	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
 	
-	/**
-	 * @alpha
-	 **/
+	import flight.metadata.getClassName;
+	
 	public class RenderPhase
 	{
+		// the 'render' event is dispatched by Flash through which order of
+		// resolution is not guaranteed
+		public static const VALIDATE:String = "validate";
+		RenderPhase.registerPhase(VALIDATE);
 		
 		private static var rendering:Boolean = false;
 		private static var phaseList:Array = [];
 		private static var phaseIndex:Object = {};
-		private static var displayDepths:Dictionary = new Dictionary(true);
+		private static var displayNodeDepths:Dictionary = new Dictionary(true);
 		private static var invalidStages:Dictionary = new Dictionary(true);
 		
-		public static function registerPhase(type:String, priority:int = 0, ascending:Boolean = true):Boolean
+		public static function registerPhase(phase:String, priority:int = 0, ascending:Boolean = true):void
 		{
-			var phase:RenderPhase;
-			if (phaseIndex[type] != null) {
-				phase = phaseIndex[type];
-				phase.priority = priority;
-				phase.ascending = ascending;
-			} else {
-				phase = new RenderPhase(type, priority, ascending);
-				phaseIndex[type] = phase;
-				phaseList.push(phase);
+			var renderPhase:RenderPhase = phaseIndex[phase];
+			if (!renderPhase) {
+				renderPhase = new RenderPhase(phase);
+				phaseIndex[phase] = renderPhase;
+				phaseList.push(renderPhase);
 			}
 			
-			phaseList.sortOn("priority", [Array.DESCENDING, Array.NUMERIC]);
-			return true;
+			renderPhase.priority = priority;
+			renderPhase.ascending = ascending;
+			phaseList.sortOn("priority", Array.DESCENDING | Array.NUMERIC);
 		}
 		
-		public static function invalidate(display:DisplayObject, type:String):void
+		public static function invalidate(display:DisplayObject, phase:String):void
 		{
-			if (display == null) {
+			if (!display) {
+				return;
+			} else if (!phaseIndex[phase]) {
+				throw new Error(getClassName(display) + " cannot be invalidated in unknown phase '" + phase + "'.");
+			}
+			
+			var renderPhase:RenderPhase = phaseIndex[phase];
+			if (renderPhase.hasDisplay(display)) {
 				return;
 			}
 			
-			if (phaseIndex[type] == null) {
-				throw new Error("DisplayObject cannot be invalidated in unknown phase '" + type + "'.");
-			}
-			
-			var phase:RenderPhase = phaseIndex[type];
-			if (phase.hasDisplay(display)) {
-				return;
-			}
-			
-			display.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 0xF, true);
-			display.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 0xF, true);
+			display.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 50, true);
+			display.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 50, true);
 			
 			if (display.stage == null) {
-				phase.addDisplay(display, -1);
+				renderPhase.addDisplay(display, -1);
+			} else {
+				
+				var nodeDepth:int = displayNodeDepths[display] != null ?
+					displayNodeDepths[display] :
+					displayNodeDepths[display] = getDepth(display);
+				
+				renderPhase.addDisplay(display, nodeDepth);
+				
+				if (!rendering) {
+					invalidateStage(display.stage);
+				} else if ((renderPhase.ascending && nodeDepth >= renderPhase.renderingDepth) ||
+						  (!renderPhase.ascending && nodeDepth <= renderPhase.renderingDepth)) {
+					setTimeout(invalidateStage, 0, display.stage);
+				}
+			}
+		}
+		
+		public static function validateNow(display:DisplayObject, phase:String = null):void
+		{
+			if (phase && !phaseIndex[phase]) {
+				throw new Error(getClassName(display) + " cannot be invalidated in unknown phase '" + phase + "'.");
+			} else if (!display) {
 				return;
 			}
 			
-			var depth:int = displayDepths[display] != null ?
-				displayDepths[display] :
-				displayDepths[display] = getDepth(display);
-			
-			phase.addDisplay(display, depth);
-			
-			if (!rendering) {
-				invalidateStage(display.stage);
-			} else if ((phase.ascending && depth <= phase.renderingDepth) ||
-				(!phase.ascending && depth >= phase.renderingDepth)) {
-				setTimeout(invalidateStage, 0, display.stage);
+			var renderPhase:RenderPhase = phaseIndex[phase];
+			if (renderPhase) {
+				renderPhase.removeDisplay(display);
+				display.dispatchEvent(new Event(renderPhase.type));
+			} else {
+				for each (renderPhase in phaseList) {
+					if (renderPhase.hasDisplay(display)) {
+						renderPhase.removeDisplay(display);
+						display.dispatchEvent(new Event(renderPhase.type));
+					}
+				}
 			}
 		}
 		
@@ -83,32 +103,34 @@ package flight.display
 		{
 			rendering = true;
 			validateStages();
-			for each (var phase:RenderPhase in phaseList) {
-				phase.render();
+			for each (var renderPhase:RenderPhase in phaseList) {
+				renderPhase.render();
 			}
 			rendering = false;
 		}
 		
 		private static function getDepth(display:DisplayObject):int
 		{
-			var depth:int = 0;
+			var nodeDepth:int = 0;
 			while ((display = display.parent) != null) {
-				depth++;
-				// if a parent already has depth defined, take the shortcut
-				if (displayDepths[display] != null) {
-					depth += displayDepths[display];
+				nodeDepth++;
+				// if a parent already has nodeDepth defined, take the shortcut
+				if (displayNodeDepths[display] != null) {
+					nodeDepth += displayNodeDepths[display];
 					break;
 				}
 			}
-			return depth;
+			return nodeDepth;
 		}
 		
 		private static function invalidateStage(stage:Stage):void
 		{
-			invalidStages[stage] = true;
-			stage.invalidate();
-			stage.addEventListener(Event.RENDER, onRender, false, -0xF, true);
-			stage.addEventListener(Event.RESIZE, onRender, false, -0xF, true);
+			if (!invalidStages[stage]) {
+				invalidStages[stage] = true;
+				stage.invalidate();
+				stage.addEventListener(Event.RENDER, onRender, false, 50, true);
+				stage.addEventListener(Event.RESIZE, onRender, false, 50, true);
+			}
 		}
 		
 		private static function validateStages():void
@@ -128,12 +150,12 @@ package flight.display
 		private static function onAddedToStage(event:Event):void
 		{
 			var display:DisplayObject = DisplayObject(event.target);
-			displayDepths[display] = getDepth(display);
+			displayNodeDepths[display] = getDepth(display);
 			
-			for each (var phase:RenderPhase in phaseList) {
-				if (phase.hasDisplay(display)) {
-					phase.removeDisplay(display);
-					invalidate(display, phase.type);
+			for each (var renderPhase:RenderPhase in phaseList) {
+				if (renderPhase.hasDisplay(display)) {
+					renderPhase.removeDisplay(display);
+					invalidate(display, renderPhase.type);
 				}
 			}
 		}
@@ -141,18 +163,18 @@ package flight.display
 		private static function onRemovedFromStage(event:Event):void
 		{
 			var display:DisplayObject = DisplayObject(event.target);
-			delete displayDepths[display];
+			delete displayNodeDepths[display];
 			
-			for each (var phase:RenderPhase in phaseList) {
-				if (phase.hasDisplay(display)) {
-					phase.removeDisplay(display);
-					phase.addDisplay(display, -1);
+			for each (var renderPhase:RenderPhase in phaseList) {
+				if (renderPhase.hasDisplay(display)) {
+					renderPhase.removeDisplay(display);
+					renderPhase.addDisplay(display, -1);
 				}
 			}
 		}
 		
 		
-		public var ascending:Boolean = true;
+		public var ascending:Boolean = false;
 		public var priority:int = 0;
 		
 		private var _type:String;
@@ -161,11 +183,9 @@ package flight.display
 		private var current:Dictionary = new Dictionary(true);
 		private var invalidated:Dictionary = new Dictionary(true);
 		
-		public function RenderPhase(type:String, priority:int = 0, ascending:Boolean = true)
+		public function RenderPhase(type:String)
 		{
 			_type = type;
-			this.ascending = ascending;
-			this.priority = priority;
 		}
 		
 		public function get type():String
@@ -186,13 +206,13 @@ package flight.display
 			
 			var beg:int, end:int, vel:int;
 			if (ascending) {
-				beg = -1;
-				end = depths.length;
-				vel = 1;
-			} else {
 				beg = depths.length;
 				end = 0;
 				vel = -1;
+			} else {
+				beg = -1;
+				end = depths.length;
+				vel = 1;
 			}
 			var pre:Dictionary;
 			
@@ -216,13 +236,13 @@ package flight.display
 			pos = -1;
 		}
 		
-		public function addDisplay(display:DisplayObject, depth:int):void
+		public function addDisplay(display:DisplayObject, nodeDepth:int):void
 		{
-			if (depths[depth] == null) {
-				depths[depth] = new Dictionary(true);
+			if (depths[nodeDepth] == null) {
+				depths[nodeDepth] = new Dictionary(true);
 			}
-			depths[depth][display] = true;
-			invalidated[display] = depth;
+			depths[nodeDepth][display] = true;
+			invalidated[display] = nodeDepth;
 		}
 		
 		public function removeDisplay(display:DisplayObject):void

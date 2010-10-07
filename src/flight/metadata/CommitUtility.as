@@ -35,7 +35,7 @@ package flight.metadata
 		public function register(instance:Object, method:String, properties:Array, resolver:Function):void
 		{
 			var token:String = getQualifiedClassName(instance) + "_" + method + "Commit";
-			RenderPhase.registerPhase(token, 0, true);
+			RenderPhase.registerPhase(token, 0, false);
 			for each(var sourcePath:String in properties) {
 				var sourceToken:String = getQualifiedClassName(instance) + "_" + sourcePath;
 				var array:Array = dictionary[sourceToken];

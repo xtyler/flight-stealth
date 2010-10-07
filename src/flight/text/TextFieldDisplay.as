@@ -6,25 +6,52 @@
 
 package flight.text
 {
+	import flash.events.Event;
 	import flash.text.TextField;
-
+	import flash.text.TextLineMetrics;
+	
 	import flight.data.DataChange;
+	import flight.display.IInvalidating;
 	import flight.display.ITransform;
+	import flight.display.InitializePhase;
+	import flight.display.LayoutPhase;
+	import flight.display.RenderPhase;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyle;
 	import flight.styles.IStyleClient;
 	import flight.styles.Style;
-
+	
 	import mx.core.IMXMLObject;
-
+	
+	[Style(name="left")]
+	[Style(name="top")]
+	[Style(name="right")]
+	[Style(name="bottom")]
+	[Style(name="horizontal")]
+	[Style(name="vertical")]
+	[Style(name="dock")]
+	[Style(name="tile")]
+	
+	[Event(name="ready", type="flash.events.Event")]
+	[Event(name="initialize", type="flash.events.Event")]
+	[Event(name="move", type="flash.events.Event")]
+	[Event(name="resize", type="flash.events.Event")]
+	
 	/**
 	 * Advanced TextField implementation providing styling, transformation and
 	 * simple layout properties, also making the display bindable.
 	 */
-	public class TextFieldDisplay extends TextField implements IStyleClient, ITransform, ILayoutBounds, IMXMLObject
+	public class TextFieldDisplay extends TextField implements IStyleClient, ITransform, ILayoutBounds, IInvalidating, IMXMLObject
 	{
+		public function TextFieldDisplay()
+		{
+			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			invalidate(LayoutPhase.MEASURE);
+		}
+		
 		// ====== IStyleClient implementation ====== //
 		// TODO: resolve styling solutoin (data split between styleclient and style object
 		
@@ -138,7 +165,7 @@ package flight.text
 		override public function get width():Number { return _width; }
 		override public function set width(value:Number):void
 		{
-			explicitLayout.width = value;
+			explicit.width = value;
 			value = !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth;
 			value = constrainWidth(value);
 			DataChange.change(this, "width", _width, _width = value);
@@ -153,7 +180,7 @@ package flight.text
 		override public function get height():Number { return _height; }
 		override public function set height(value:Number):void
 		{
-			explicitLayout.height = value;
+			explicit.height = value;
 			value = !isNaN(_layoutHeight) ? _layoutHeight : preferredHeight;
 			value = constrainHeight(value);
 			DataChange.change(this, "height", _height, _height = value);
@@ -288,7 +315,7 @@ package flight.text
 		 */
 		public function get preferredWidth():Number
 		{
-			return !isNaN(explicitLayout.width) ? explicitLayout.width : measuredLayout.width;
+			return !isNaN(explicit.width) ? explicit.width : measured.width;
 		}
 		
 		/**
@@ -296,7 +323,7 @@ package flight.text
 		 */
 		public function get preferredHeight():Number
 		{
-			return !isNaN(explicitLayout.height) ? explicitLayout.height : measuredLayout.height;
+			return !isNaN(explicit.height) ? explicit.height : measured.height;
 		}
 		
 		/**
@@ -307,11 +334,11 @@ package flight.text
 		public function get minWidth():Number { return _minWidth;}
 		public function set minWidth(value:Number):void
 		{
-			explicitLayout.minWidth = value;
-			if (explicitLayout.maxWidth < value) {
-				explicitLayout.maxWidth = value;
+			explicit.minWidth = value;
+			if (explicit.maxWidth < value) {
+				explicit.maxWidth = value;
 			}
-			value = measuredLayout.constrainWidth(value);
+			value = measured.constrainWidth(value);
 			DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
 		}
 		private var _minWidth:Number = 0;
@@ -324,11 +351,11 @@ package flight.text
 		public function get minHeight():Number { return _minHeight;}
 		public function set minHeight(value:Number):void
 		{
-			explicitLayout.minHeight = value;
-			if (explicitLayout.maxHeight < value) {
-				explicitLayout.maxHeight = value;
+			explicit.minHeight = value;
+			if (explicit.maxHeight < value) {
+				explicit.maxHeight = value;
 			}
-			value = measuredLayout.constrainHeight(value);
+			value = measured.constrainHeight(value);
 			DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
 		}
 		private var _minHeight:Number = 0;
@@ -341,11 +368,11 @@ package flight.text
 		public function get maxWidth():Number { return _maxWidth;}
 		public function set maxWidth(value:Number):void
 		{
-			if (explicitLayout.minWidth > value) {
-				explicitLayout.minWidth = value;
+			if (explicit.minWidth > value) {
+				explicit.minWidth = value;
 			}
-			explicitLayout.maxWidth = value;
-			value = measuredLayout.constrainWidth(value);
+			explicit.maxWidth = value;
+			value = measured.constrainWidth(value);
 			DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
 		}
 		private var _maxWidth:Number = 0xFFFFFF;
@@ -358,11 +385,11 @@ package flight.text
 		public function get maxHeight():Number { return _maxHeight;}
 		public function set maxHeight(value:Number):void
 		{
-			if (explicitLayout.minHeight > value) {
-				explicitLayout.minHeight = value;
+			if (explicit.minHeight > value) {
+				explicit.minHeight = value;
 			}
-			explicitLayout.maxHeight = value;
-			value = measuredLayout.constrainHeight(value);
+			explicit.maxHeight = value;
+			value = measured.constrainHeight(value);
 			DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
@@ -370,14 +397,14 @@ package flight.text
 		/**
 		 * @inheritDoc
 		 */
-		public function get explicit():IBounds { return explicitLayout || (explicitLayout = new Bounds(NaN, NaN)); }
-		protected var explicitLayout:Bounds;
+		public function get explicit():IBounds { return _explicit || (_explicit = new Bounds(NaN, NaN)); }
+		private var _explicit:Bounds;
 		
 		/**
 		 * @inheritDoc
 		 */
-		public function get measured():IBounds { return measuredLayout || (measuredLayout = new Bounds(0, 0)); }
-		protected var measuredLayout:Bounds;
+		public function get measured():IBounds { return _measured || (_measured = new Bounds(0, 0)); }
+		private var _measured:Bounds;
 		
 		/**
 		 * @inheritDoc
@@ -423,6 +450,22 @@ package flight.text
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		public function invalidate(phase:String = null):void
+		{
+			RenderPhase.invalidate(this, phase || RenderPhase.VALIDATE);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function validateNow(phase:String = null):void
+		{
+			RenderPhase.validateNow(this, phase);
+		}
+		
+		/**
 		 * Specialized method for MXML, called after the display has been
 		 * created and all of its properties specified in MXML have been
 		 * initialized.
@@ -435,6 +478,25 @@ package flight.text
 		public function initialized(document:Object, id:String):void
 		{
 			this.id = super.name = id;
+		}
+		
+		protected function measure():void
+		{
+			var metrics:TextLineMetrics = getLineMetrics(0);
+			measured.width = metrics.width;
+			measured.height = metrics.height;
+		}
+		
+		private function onMeasure(event:Event):void
+		{
+			measure();
+		}
+		
+		private function onAddedToStage(event:Event):void
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			invalidate(InitializePhase.INITIALIZE);
+			invalidate(InitializePhase.READY);
 		}
 	}
 }

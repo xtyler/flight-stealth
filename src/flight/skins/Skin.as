@@ -44,8 +44,8 @@ package flight.skins
 		static public const MEASURE:String = "measure";
 		static public const LAYOUT:String = "layout";
 		
-		RenderPhase.registerPhase(MEASURE, 0, true);
-		RenderPhase.registerPhase(LAYOUT, 0, true);
+		RenderPhase.registerPhase(MEASURE, 0);
+		RenderPhase.registerPhase(LAYOUT, 0, false);
 		
 		protected var dataBind:DataBind = new DataBind();
 		

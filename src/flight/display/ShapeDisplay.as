@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.display
 {
 	import flash.display.Shape;
-
+	import flash.events.Event;
+	import flash.geom.Rectangle;
+	
 	import flight.data.DataChange;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
@@ -9,15 +17,36 @@ package flight.display
 	import flight.styles.IStyle;
 	import flight.styles.IStyleClient;
 	import flight.styles.Style;
-
+	
 	import mx.core.IMXMLObject;
-
+	
+	[Style(name="left")]
+	[Style(name="top")]
+	[Style(name="right")]
+	[Style(name="bottom")]
+	[Style(name="horizontal")]
+	[Style(name="vertical")]
+	[Style(name="dock")]
+	[Style(name="tile")]
+	
+	[Event(name="ready", type="flash.events.Event")]
+	[Event(name="initialize", type="flash.events.Event")]
+	[Event(name="move", type="flash.events.Event")]
+	[Event(name="resize", type="flash.events.Event")]
+	
 	/**
 	 * Advanced Shape implementation providing styling, transformation and
 	 * simple layout properties, also making the display bindable.
 	 */
-	public class ShapeDisplay extends Shape implements IStyleClient, ITransform, ILayoutBounds, IMXMLObject
+	public class ShapeDisplay extends Shape implements IStyleClient, ITransform, ILayoutBounds, IInvalidating, IMXMLObject
 	{
+		public function ShapeDisplay()
+		{
+			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			invalidate(LayoutPhase.MEASURE);
+		}
+		
 		// ====== IStyleClient implementation ====== //
 		// TODO: resolve styling solutoin (data split between styleclient and style object
 		
@@ -364,13 +393,13 @@ package flight.display
 		 * @inheritDoc
 		 */
 		public function get explicit():IBounds { return _explicit || (_explicit = new Bounds(NaN, NaN)); }
-		protected var _explicit:Bounds;
+		private var _explicit:Bounds;
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured || (_measured = new Bounds(0, 0)); }
-		protected var _measured:Bounds;
+		private var _measured:Bounds;
 		
 		/**
 		 * @inheritDoc
@@ -416,6 +445,22 @@ package flight.display
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		public function invalidate(phase:String = null):void
+		{
+			RenderPhase.invalidate(this, phase || RenderPhase.VALIDATE);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function validateNow(phase:String = null):void
+		{
+			RenderPhase.validateNow(this, phase);
+		}
+		
+		/**
 		 * Specialized method for MXML, called after the display has been
 		 * created and all of its properties specified in MXML have been
 		 * initialized.
@@ -430,9 +475,23 @@ package flight.display
 			this.id = super.name = id;
 		}
 		
-		public function invalidate(phase:String):void
+		protected function measure():void
 		{
-			RenderPhase.invalidate(this, phase);
+			var rect:Rectangle = getRect(this);
+			measured.width = rect.width;
+			measured.height = rect.height;
+		}
+		
+		private function onMeasure(event:Event):void
+		{
+			measure();
+		}
+		
+		private function onAddedToStage(event:Event):void
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			invalidate(InitializePhase.INITIALIZE);
+			invalidate(InitializePhase.READY);
 		}
 	}
 }

@@ -6,8 +6,6 @@
 
 package flight.graphics
 {
-	import flash.geom.Matrix;
-
 	import flight.display.IDrawable;
 	import flight.graphics.paint.IFill;
 	import flight.graphics.paint.IStroke;
@@ -23,7 +21,6 @@ package flight.graphics
 		function get stroke():IStroke;
 		function get fill():IFill;
 		
-		// TODO: transform can change frequently without path changing, extract transform out into the draw method? (post-update)
-		function update(transform:Matrix = null):void;
+		function update():void;
 	}
 }

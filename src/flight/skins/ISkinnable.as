@@ -6,11 +6,14 @@
 
 package flight.skins
 {
-	
+	import flight.styles.IStateful;
+
+	import mx.core.IDataRenderer;
+
 	/**
 	 * @alpha
 	 **/
-	public interface ISkinnable
+	public interface ISkinnable extends IStateful, IDataRenderer
 	{
 		/*
 		function get data():Object;
@@ -21,8 +24,8 @@ package flight.skins
 		 * The component's current state.
 		 **/
 		
-		function get currentState():String;
-		function set currentState(value:String):void;
+//		function get currentState():String;
+//		function set currentState(value:String):void;
 		
 		/**
 		 * An Object to be used for the component's visual display.

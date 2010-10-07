@@ -16,6 +16,7 @@ package flight.skins
 	import flight.containers.Group;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
+	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	
 	public class MovieClipSkin implements ISkin
@@ -58,14 +59,14 @@ package flight.skins
 				if (_movieclip) {
 					_target.removeChild(_movieclip);
 				}
-				_target.removeEventListener(Group.LAYOUT, onSizeChange);
+				_target.removeEventListener(LayoutPhase.LAYOUT, onSizeChange);
 			}
 			DataChange.change(this, "target", _target, _target = value);
 			if (_target) {
 				if (_movieclip) {
 					_target.addChild(_movieclip);
 				}
-				_target.addEventListener(Group.LAYOUT, onSizeChange);
+				_target.addEventListener(LayoutPhase.LAYOUT, onSizeChange);
 				onSizeChange(null);
 			}
 		}
@@ -89,7 +90,7 @@ package flight.skins
 		public function set width(value:Number):void
 		{
 			DataChange.change(this, "width", _width, _width = value);
-			RenderPhase.invalidate(_target, Group.LAYOUT);
+			RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
 		}
 		
 		[Bindable(event="heightChange")]
@@ -97,7 +98,7 @@ package flight.skins
 		public function set height(value:Number):void
 		{
 			DataChange.change(this, "height", _height, _height = value);
-			RenderPhase.invalidate(_target, Group.LAYOUT);
+			RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
 		}
 		
 		public function getSkinPart(part:String):InteractiveObject
