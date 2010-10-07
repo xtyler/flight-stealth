@@ -6,7 +6,9 @@
 
 package flight.data
 {
-	public interface IRange
+	import flash.events.IEventDispatcher;
+	
+	public interface IRange extends IEventDispatcher
 	{
 		function get min():Number;
 		function set min(value:Number):void;
