@@ -6,10 +6,14 @@
 
 package flight.text
 {
+	import flash.display.DisplayObject;
 	import flash.events.Event;
+	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	import flash.text.TextField;
+
 	import flash.text.TextLineMetrics;
-	
+
 	import flight.data.DataChange;
 	import flight.display.IInvalidating;
 	import flight.display.ITransform;
@@ -19,8 +23,7 @@ package flight.text
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayoutBounds;
-	import flight.styles.IStyle;
-	import flight.styles.IStyleClient;
+	import flight.styles.IStyleable;
 	import flight.styles.Style;
 	
 	import mx.core.IMXMLObject;
@@ -31,29 +34,31 @@ package flight.text
 	[Style(name="bottom")]
 	[Style(name="horizontal")]
 	[Style(name="vertical")]
+	[Style(name="margin")]
 	[Style(name="dock")]
 	[Style(name="tile")]
 	
-	[Event(name="ready", type="flash.events.Event")]
 	[Event(name="initialize", type="flash.events.Event")]
+	[Event(name="style", type="flash.events.Event")]
 	[Event(name="move", type="flash.events.Event")]
 	[Event(name="resize", type="flash.events.Event")]
+	[Event(name="ready", type="flash.events.Event")]
 	
 	/**
 	 * Advanced TextField implementation providing styling, transformation and
 	 * simple layout properties, also making the display bindable.
 	 */
-	public class TextFieldDisplay extends TextField implements IStyleClient, ITransform, ILayoutBounds, IInvalidating, IMXMLObject
+	public class TextFieldDisplay extends TextField implements IStyleable, ITransform, ILayoutBounds, IInvalidating, IMXMLObject
 	{
 		public function TextFieldDisplay()
 		{
+			_explicit = new Bounds(NaN, NaN);
+			_measured = new Bounds(0, 0);
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			addEventListener(LayoutPhase.MEASURE, onMeasure);
-			invalidate(LayoutPhase.MEASURE);
 		}
 		
-		// ====== IStyleClient implementation ====== //
-		// TODO: resolve styling solutoin (data split between styleclient and style object
+		// ====== IStyleable implementation ====== //
 		
 		/**
 		 * @inheritDoc
@@ -90,19 +95,7 @@ package flight.text
 		/**
 		 * @inheritDoc
 		 */
-		[Inspectable(category="General")]
-		[Bindable(event="elementTypeChange", style="weak")]
-		public function get elementType():String { return _elementType;}
-		public function set elementType(value:String):void
-		{
-			DataChange.change(this, "elementType", _elementType, _elementType = value);
-		}
-		private var _elementType:String;
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function get style():IStyle { return _style || (_style = new Style()); }
+		public function get style():Object { return _style || (_style = new Style(this)); }
 		private var _style:Style;
 		
 		/**
@@ -110,7 +103,7 @@ package flight.text
 		 */
 		public function getStyle(property:String):*
 		{
-			return style.getStyle(property);
+			return _style[property];
 		}
 		
 		/**
@@ -118,7 +111,7 @@ package flight.text
 		 */
 		public function setStyle(property:String, value:*):void
 		{
-			style.setStyle(property, value);
+			_style[property] = value;
 		}
 		
 		
@@ -127,7 +120,7 @@ package flight.text
 //		/**
 //		 * @inheritDoc
 //		 */
-//		[Bindable(event="parentTransformChange", style="weak")]
+//		[Bindable(event="parentTransformChange", style="weak")]	// TODO: implement support from layout for non-children
 //		public function get parentTransform():ITransform { return _parentTransform; }
 //		public function set parentTransform(value:ITransform):void
 //		{
@@ -142,8 +135,12 @@ package flight.text
 		[Bindable(event="xChange", style="weak")]
 		override public function set x(value:Number):void
 		{
-			// TODO: udpate registration point if transformX/Y != 0
-			DataChange.change(this, "x", super.x, super.x = value);
+			if (super.x != value) {
+				// TODO: update registration point if transformX/Y != 0
+				invalidateLayout();
+				RenderPhase.invalidate(this, LayoutPhase.MOVE);
+				DataChange.change(this, "x", super.x, super.x = value);
+			}
 		}
 		
 		/**
@@ -153,8 +150,12 @@ package flight.text
 		[Bindable(event="yChange", style="weak")]
 		override public function set y(value:Number):void
 		{
-			// TODO: udpate registration point if transformX/Y != 0
-			DataChange.change(this, "y", super.y, super.y = value);
+			if (super.y != value) {
+				// TODO: update registration point if transformX/Y != 0
+				invalidateLayout();
+				RenderPhase.invalidate(this, LayoutPhase.MOVE);
+				DataChange.change(this, "y", super.y, super.y = value);
+			}
 		}
 		
 		/**
@@ -165,10 +166,8 @@ package flight.text
 		override public function get width():Number { return _width; }
 		override public function set width(value:Number):void
 		{
-			explicit.width = value;
-			value = !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth;
-			value = constrainWidth(value);
-			DataChange.change(this, "width", _width, _width = value);
+			_explicit.width = value;
+			updateWidth();
 		}
 		private var _width:Number = 0;
 		
@@ -180,10 +179,8 @@ package flight.text
 		override public function get height():Number { return _height; }
 		override public function set height(value:Number):void
 		{
-			explicit.height = value;
-			value = !isNaN(_layoutHeight) ? _layoutHeight : preferredHeight;
-			value = constrainHeight(value);
-			DataChange.change(this, "height", _height, _height = value);
+			_explicit.height = value;
+			updateHeight();
 		}
 		private var _height:Number = 0;
 		
@@ -198,7 +195,10 @@ package flight.text
 		public function get nativeWidth():Number { return super.width; }
 		public function set nativeWidth(value:Number):void
 		{
-			DataChange.change(this, "nativeWidth", super.width, super.width = value);
+			if (super.width != value) {
+				invalidateLayout();
+				DataChange.change(this, "nativeWidth", super.width, super.width = value);
+			}
 		}
 		
 		/**
@@ -212,7 +212,10 @@ package flight.text
 		public function get nativeHeight():Number { return super.height; }
 		public function set nativeHeight(value:Number):void
 		{
-			DataChange.change(this, "nativeHeight", super.height, super.height = value);
+			if (super.height != value) {
+				invalidateLayout();
+				DataChange.change(this, "nativeHeight", super.height, super.height = value);
+			}
 		}
 		
 		
@@ -250,8 +253,11 @@ package flight.text
 		[Bindable(event="scaleXChange", style="weak")]
 		override public function set scaleX(value:Number):void
 		{
-			// TODO: udpate position based on registration point if transformX/Y != 0
-			DataChange.change(this, "scaleX", super.scaleX, super.scaleX = value);
+			if (super.scaleX != value) {
+				// TODO: udpate position based on registration point if transformX/Y != 0
+				invalidateLayout();
+				DataChange.change(this, "scaleX", super.scaleX, super.scaleX = value);
+			}
 		}
 		
 		/**
@@ -261,8 +267,11 @@ package flight.text
 		[Bindable(event="scaleYChange", style="weak")]
 		override public function set scaleY(value:Number):void
 		{
-			// TODO: udpate position based on registration point if transformX/Y != 0
-			DataChange.change(this, "scaleY", super.scaleY, super.scaleY = value);
+			if (super.scaleY != value) {
+				// TODO: udpate position based on registration point if transformX/Y != 0
+				invalidateLayout();
+				DataChange.change(this, "scaleY", super.scaleY, super.scaleY = value);
+			}
 		}
 		
 		/**
@@ -272,28 +281,35 @@ package flight.text
 		[Bindable(event="rotationChange", style="weak")]
 		override public function set rotation(value:Number):void
 		{
-			// TODO: udpate position based on registration point if transformX/Y != 0
-			DataChange.change(this, "rotation", super.rotation, super.rotation = value);
+			if (super.rotation != value) {
+				// TODO: udpate position based on registration point if transformX/Y != 0
+				invalidateLayout();
+				DataChange.change(this, "rotation", super.rotation, super.rotation = value);
+			}
 		}
 
-//		/**
-//		 * @inheritDoc
-//		 */
-//		[Inspectable(category="General")]
-//		[Bindable(event="matrixChange", style="weak")]
-//		public function get matrix():Matrix
-//		{
-//			return _matrix || transform.matrix;
-//		}
-//		public function set matrix(value:Matrix):void
-//		{
+		/**
+		 * @inheritDoc
+		 */
+		[Bindable(event="matrixChange", style="weak")]
+		public function get matrix():Matrix
+		{
+			return _matrix || transform.matrix;
+		}
+		public function set matrix(value:Matrix):void
+		{
 //			if (_parentTransform == parent) {
-//				transform.matrix = value;
+				transform.matrix = value;
 //			} else { // TODO: implement
 //				_matrix = value;
 //			}
-//		}
-//		private var _matrix:Matrix;
+		}
+		private var _matrix:Matrix;
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get display():DisplayObject { return this; }
 		
 		// ====== ILayoutBounds implementation ====== //
 		
@@ -315,7 +331,7 @@ package flight.text
 		 */
 		public function get preferredWidth():Number
 		{
-			return !isNaN(explicit.width) ? explicit.width : measured.width;
+			return !isNaN(_explicit.width) ? _explicit.width : _measured.width;
 		}
 		
 		/**
@@ -323,7 +339,7 @@ package flight.text
 		 */
 		public function get preferredHeight():Number
 		{
-			return !isNaN(explicit.height) ? explicit.height : measured.height;
+			return !isNaN(_explicit.height) ? _explicit.height : _measured.height;
 		}
 		
 		/**
@@ -334,12 +350,15 @@ package flight.text
 		public function get minWidth():Number { return _minWidth;}
 		public function set minWidth(value:Number):void
 		{
-			explicit.minWidth = value;
-			if (explicit.maxWidth < value) {
-				explicit.maxWidth = value;
+			_explicit.minWidth = value;
+			if (_explicit.maxWidth < value) {
+				_explicit.maxWidth = value;
 			}
-			value = measured.constrainWidth(value);
-			DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
+			value = _measured.constrainWidth(value);
+			if (_minWidth != value) {
+				invalidateLayout(true);
+				DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
+			}
 		}
 		private var _minWidth:Number = 0;
 		
@@ -351,12 +370,15 @@ package flight.text
 		public function get minHeight():Number { return _minHeight;}
 		public function set minHeight(value:Number):void
 		{
-			explicit.minHeight = value;
-			if (explicit.maxHeight < value) {
-				explicit.maxHeight = value;
+			_explicit.minHeight = value;
+			if (_explicit.maxHeight < value) {
+				_explicit.maxHeight = value;
 			}
-			value = measured.constrainHeight(value);
-			DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
+			value = _measured.constrainHeight(value);
+			if (_minHeight != value) {
+				invalidateLayout(true);
+				DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
+			}
 		}
 		private var _minHeight:Number = 0;
 		
@@ -368,12 +390,15 @@ package flight.text
 		public function get maxWidth():Number { return _maxWidth;}
 		public function set maxWidth(value:Number):void
 		{
-			if (explicit.minWidth > value) {
-				explicit.minWidth = value;
+			if (_explicit.minWidth > value) {
+				_explicit.minWidth = value;
 			}
-			explicit.maxWidth = value;
-			value = measured.constrainWidth(value);
-			DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
+			_explicit.maxWidth = value;
+			value = _measured.constrainWidth(value);
+			if (_maxWidth != value) {
+				invalidateLayout(true);
+				DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
+			}
 		}
 		private var _maxWidth:Number = 0xFFFFFF;
 		
@@ -385,25 +410,28 @@ package flight.text
 		public function get maxHeight():Number { return _maxHeight;}
 		public function set maxHeight(value:Number):void
 		{
-			if (explicit.minHeight > value) {
-				explicit.minHeight = value;
+			if (_explicit.minHeight > value) {
+				_explicit.minHeight = value;
 			}
-			explicit.maxHeight = value;
-			value = measured.constrainHeight(value);
-			DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
+			_explicit.maxHeight = value;
+			value = _measured.constrainHeight(value);
+			if (_maxHeight != value) {
+				invalidateLayout(true);
+				DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
+			}
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
 		
 		/**
 		 * @inheritDoc
 		 */
-		public function get explicit():IBounds { return _explicit || (_explicit = new Bounds(NaN, NaN)); }
+		public function get explicit():IBounds { return _explicit; }
 		private var _explicit:Bounds;
 		
 		/**
 		 * @inheritDoc
 		 */
-		public function get measured():IBounds { return _measured || (_measured = new Bounds(0, 0)); }
+		public function get measured():IBounds { return _measured; }
 		private var _measured:Bounds;
 		
 		/**
@@ -411,8 +439,17 @@ package flight.text
 		 */
 		public function setLayoutPosition(x:Number, y:Number):void
 		{
+			if (rotation) {
+				var m:Matrix = matrix, d:Number;
+				d = m.a * _width + m.c * _height;
+				if (d < 0) x -= d;
+				d = m.d * _height + m.b * _width;
+				if (d < 0) y -= d;
+			}
+			
 			DataChange.queue(this, "x", super.x, super.x = x);
 			DataChange.change(this, "y", super.y, super.y = y);
+			RenderPhase.invalidate(this, LayoutPhase.RESIZE);
 		}
 		
 		/**
@@ -420,16 +457,78 @@ package flight.text
 		 */
 		public function setLayoutSize(width:Number, height:Number):void
 		{
-			_layoutWidth = width;
-			width = constrainWidth(!isNaN(width) ? width : preferredWidth);
-			DataChange.queue(this, "width", _width, _width = width);
+			if (rotation) {
+				var m:Matrix = matrix;
+				if (isNaN(width)) {
+					width = Math.abs(m.a * preferredWidth + m.c * preferredHeight);
+				}
+				if (isNaN(height)) {
+					height = Math.abs(m.d * preferredHeight + m.b * preferredWidth);
+				}
+				
+				m.invert();
+				_layoutWidth = Math.abs(m.a * width + m.c * height);
+				_layoutHeight = Math.abs(m.d * height + m.b * width);
+			} else {
+				_layoutWidth = isNaN(width) ? NaN : width * scaleX;
+				_layoutHeight = isNaN(height) ? NaN : height * scaleY;
+			}
 			
-			_layoutHeight = height;
-			height = constrainHeight(!isNaN(height) ? height : preferredHeight);
-			DataChange.change(this, "height", _height, _height = height);
+			updateWidth(true);
+			updateHeight(true);
+			
 		}
 		private var _layoutWidth:Number;
 		private var _layoutHeight:Number;
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function getLayoutRect(width:Number = NaN, height:Number = NaN):Rectangle
+		{
+			if (isNaN(width)) width = _width;
+			if (isNaN(height)) height = _height;
+			
+			if (rotation) {
+				var m:Matrix = matrix;
+				var x:Number, y:Number, tx:Number, ty:Number;
+				var minX:Number, minY:Number, maxX:Number, maxY:Number;
+				
+				x = this.x;
+				y = this.y;
+				tx = m.a * x + m.c * y + m.tx;
+				ty = m.d * y + m.b * x + m.ty;
+				minX = maxX = tx;
+				minY = maxY = ty;
+				x += width;
+				tx = m.a * x + m.c * y + m.tx;
+				ty = m.d * y + m.b * x + m.ty;
+				if (tx < minX) minX = tx else if (tx > maxX) maxX = tx;
+				if (ty < minY) minY = ty else if (ty > maxY) maxY = ty;
+				y += height;
+				tx = m.a * x + m.c * y + m.tx;
+				ty = m.d * y + m.b * x + m.ty;
+				if (tx < minX) minX = tx else if (tx > maxX) maxX = tx;
+				if (ty < minY) minY = ty else if (ty > maxY) maxY = ty;
+				x = this.x;
+				tx = m.a * x + m.c * y + m.tx;
+				ty = m.d * y + m.b * x + m.ty;
+				if (tx < minX) minX = tx else if (tx > maxX) maxX = tx;
+				if (ty < minY) minY = ty else if (ty > maxY) maxY = ty;
+				
+				rect.x = minX;
+				rect.y = minY;
+				rect.width = maxX - minX;
+				rect.height = maxY - minY;
+			} else {
+				rect.x = this.x;
+				rect.y = this.y;
+				rect.width = width * scaleX;
+				rect.height = height * scaleY;
+			}
+			return rect;
+		}
+		private var rect:Rectangle = new Rectangle();
 		
 		/**
 		 * @inheritDoc
@@ -464,7 +563,7 @@ package flight.text
 		{
 			RenderPhase.validateNow(this, phase);
 		}
-		
+				
 		/**
 		 * Specialized method for MXML, called after the display has been
 		 * created and all of its properties specified in MXML have been
@@ -483,20 +582,62 @@ package flight.text
 		protected function measure():void
 		{
 			var metrics:TextLineMetrics = getLineMetrics(0);
-			measured.width = metrics.width;
-			measured.height = metrics.height;
+			_measured.width = metrics.width;
+			_measured.height = metrics.height;
+		}
+		
+		protected function invalidateLayout(measureOnly:Boolean = false):void
+		{
+			if (!_freeform) {
+				RenderPhase.invalidate(parent, LayoutPhase.MEASURE);
+				if (!measureOnly) {
+					RenderPhase.invalidate(parent, LayoutPhase.LAYOUT);
+				}
+			}
+		}
+		
+		private function updateWidth(layout:Boolean = false):void
+		{
+			var w:Number = !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth;
+			w = constrainWidth(w);
+			if (_width != w) {
+				if (!layout) {
+					invalidateLayout();
+				}
+				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				DataChange.change(this, "width", _width, _width = w);
+				dispatchEvent(new Event(Event.RESIZE));
+			}
+		}
+		
+		private function updateHeight(layout:Boolean = false):void
+		{
+			var h:Number = !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth;
+			h = constrainWidth(h);
+			if (_width != h) {
+				if (!layout) {
+					invalidateLayout();
+				}
+				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				DataChange.change(this, "width", _width, _width = h);
+			}
 		}
 		
 		private function onMeasure(event:Event):void
 		{
 			measure();
+			updateWidth();
+			updateHeight();
 		}
 		
 		private function onAddedToStage(event:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			invalidate(InitializePhase.INITIALIZE);
-			invalidate(InitializePhase.READY);
+			RenderPhase.invalidate(this, InitializePhase.INITIALIZE);
+			RenderPhase.invalidate(this, InitializePhase.READY);
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
 		}
 	}
 }

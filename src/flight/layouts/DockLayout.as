@@ -9,20 +9,9 @@ package flight.layouts
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
 	import flight.styles.resolveStyle;
 	
-	[LayoutProperty(name="style.dock", measure="true")]
-	[LayoutProperty(name="width", measure="true")]
-	[LayoutProperty(name="height", measure="true")]
-	
-	/**
-	 * Provides a docking layout for common use cases which might otherwise require nested containers.
-	 * 
-	 * @alpha
-	 */
-	public class DockLayout extends Layout implements ILayout
+	public class DockLayout extends Layout
 	{
 		
 		static public const NONE:String = null;

@@ -12,10 +12,10 @@ package flight.display
 		RenderPhase.registerPhase(READY, -10);
 		
 		public static const INITIALIZE:String = "initialize";
-		RenderPhase.registerPhase(INITIALIZE, 150);
+		RenderPhase.registerPhase(INITIALIZE, 200);
 		
 		public static const CREATE:String = "create";
-		RenderPhase.registerPhase(CREATE, 200);
+		RenderPhase.registerPhase(CREATE, 250);
 		
 	}
 }

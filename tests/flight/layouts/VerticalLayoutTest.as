@@ -22,7 +22,7 @@ package flight.layouts
 			child2.height = 20;
 			
 			var layout:VerticalLayout = new VerticalLayout();
-			layout.gap = 10;
+			layout.paddingVertical = 10;
 			var point:Point = layout.measure([child1, child2]);
 			Assert.assertEquals(20, point.x);
 			Assert.assertEquals(60, point.y);

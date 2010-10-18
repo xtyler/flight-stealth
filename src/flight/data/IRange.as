@@ -16,8 +16,8 @@ package flight.data
 		function get max():Number;
 		function set max(value:Number):void;
 		
-		function get position():Number;
-		function set position(value:Number):void;
+		function get value():Number;
+		function set value(value:Number):void;
 		
 		function get percent():Number;
 		function set percent(value:Number):void;
@@ -28,6 +28,5 @@ package flight.data
 		function stepBackward():Number;
 		
 		function stepForward():Number;
-		
 	}
 }

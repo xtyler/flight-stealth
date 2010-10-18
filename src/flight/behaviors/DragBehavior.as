@@ -6,14 +6,13 @@
 
 package flight.behaviors
 {
-	
+
 	import flash.display.InteractiveObject;
-	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	
+
 	import flight.events.ButtonEvent;
-	
+
 	public class DragBehavior extends Behavior
 	{
 		private var startMouse:Point;
@@ -24,7 +23,7 @@ package flight.behaviors
 			super(target);
 		}
 		
-		override public function set target(value:IEventDispatcher):void
+		override public function set target(value:InteractiveObject):void
 		{
 			if (value != null) {
 				ButtonEvent.initialize(value);

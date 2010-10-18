@@ -6,82 +6,68 @@
 
 package flight.layouts
 {
-	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	import flash.utils.Dictionary;
 	
+	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.RenderPhase;
-	import flight.metadata.resolveBindings;
-	import flight.metadata.resolveDataListeners;
-	import flight.metadata.resolveEventListeners;
-	import flight.metadata.resolveLayoutProperties;
+	import flight.display.LayoutPhase;
 	
-	//[LayoutProperty(name="layout", measure="true")]
-	//[LayoutProperty(name="measurements", measure="true")]
-	/**
-	 * The Layout class provides automated metadata handling for layouts which extend it.
-	 * It is recommended that you extend this class to create custom layouts, but it's not required.
-	 * 
-	 * @alpha
-	 **/
 	public class Layout extends EventDispatcher implements ILayout
 	{
+		public var paddingLeft:Number = 0;
+		public var paddingTop:Number = 0;
+		public var paddingRight:Number = 0;
+		public var paddingBottom:Number = 0;
+		public var paddingHorizontal:Number = 0;
+		public var paddingVertical:Number = 0;
 		
-		private var attached:Dictionary = new Dictionary(true);
-		private var _target:IEventDispatcher;
 		protected var dataBind:DataBind = new DataBind();
 		
-		[Bindable(event="targetChange")]
-		public function get target():IEventDispatcher { return _target; }
-		public function set target(value:IEventDispatcher):void
+		public function Layout(target:IContainer = null)
 		{
+			this.target = target;
+		}
+		
+		[Bindable(event="targetChange", style="weak")]
+		public function get target():IContainer { return _target; }
+		public function set target(value:IContainer):void
+		{
+			if (_target == value) {
+				return;
+			}
+			if (_target) {
+				_target.display.removeEventListener(LayoutPhase.MEASURE, onMeasure);
+				_target.display.removeEventListener(LayoutPhase.LAYOUT, onLayout);
+			}
 			DataChange.change(this, "target", _target, _target = value);
-		}
-		
-		public function Layout()
-		{
-			resolveBindings(this);
-			resolveEventListeners(this);
-			resolveDataListeners(this);
-			dataBind.bindSetter(onInvalidateLayout, this, "target.width");
-			dataBind.bindSetter(onInvalidateLayout, this, "target.height");
-		}
-		
-		public function measure(children:Array):Point
-		{
-			// this method of listening for layout invalidating changes is very much experimental
-			for each(var child:IEventDispatcher in children) {
-				if (attached[child] != true) {
-					resolveLayoutProperties(this, child, onInvalidateLayout);
-					attached[child] = true;
-				}
-			}
-			return new Point(0, 0);
-		}
-		
-		public function update(children:Array, rectangle:Rectangle):void
-		{
-			// this method of listening for layout invalidating changes is very much experimental
-			for each(var child:IEventDispatcher in children) {
-				if (attached[child] != true) {
-					resolveLayoutProperties(this, child, onInvalidateLayout);
-					attached[child] = true;
-				}
+			if (_target) {
+				_target.display.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 50, true);
+				_target.display.addEventListener(LayoutPhase.LAYOUT, onLayout, false, 50, true);
 			}
 		}
+		private var _target:IContainer;
 		
-		private function onInvalidateLayout(object:*):void
+		
+		public function measure():void
 		{
-			if (target is DisplayObject) {
-				RenderPhase.invalidate(target as DisplayObject, "measure");
-				RenderPhase.invalidate(target as DisplayObject, "layout");
-			}
+			if (!target) return;
 		}
 		
+		public function update():void
+		{
+			if (!target) return;
+		}
+		
+		private function onMeasure(event:Event):void
+		{
+			measure();
+		}
+		
+		private function onLayout(event:Event):void
+		{
+			update();
+		}
 	}
 }

@@ -6,15 +6,11 @@
 
 package flight.behaviors
 {
-	
-	import flash.events.IEventDispatcher;
-	
-	/**
-	 * @beta
-	 */
+	import flash.display.InteractiveObject;
+
 	public interface IBehavior
 	{
-		function get target():IEventDispatcher;
-		function set target(value:IEventDispatcher):void;
+		function get target():InteractiveObject;
+		function set target(value:InteractiveObject):void;
 	}
 }

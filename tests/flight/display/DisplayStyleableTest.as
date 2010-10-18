@@ -2,7 +2,7 @@ package flight.display
 {
 	import org.flexunit.Assert;
 	
-	import flight.styles.IStyleClient;
+	import flight.styles.IStyleable;
 	import flight.styles.StyleableTestBase;
 	
 	public class DisplayStyleableTest extends StyleableTestBase

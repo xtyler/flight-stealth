@@ -4,18 +4,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.text
+package flight.data
 {
-	
-	import flash.events.Event;
-	import flash.text.TextLineMetrics;
-	
-	public class Text extends TextFieldDisplay
+	public interface IDataRenderer
 	{
-		public function Text()
-		{
-			super();
-			this.selectable = false;
-		}
+		function get data():Object;
+		
+		// TODO: implement data map as a common data renderer property
+		//function get dataMap():Object;
 	}
 }

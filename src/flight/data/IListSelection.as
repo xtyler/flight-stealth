@@ -4,17 +4,15 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.containers
+package flight.data
 {
-	import flight.layouts.ILayout;
-	import flight.layouts.ILayoutBounds;
 	import flight.list.IList;
 	
-	public interface IContainer extends ILayoutBounds
+	public interface IListSelection extends ISelection
 	{
-		function get content():IList;
+		function get index():int;
+		function set index(value:int):void;
 		
-		function get layout():ILayout;
-		function set layout(value:ILayout):void;
+		function get indices():IList;
 	}
 }

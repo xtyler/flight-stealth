@@ -7,10 +7,10 @@
 package flight.styles
 {
 	/**
-	 * A style object from which dynamic style data is retrieved and stored,
-	 * utilizing identifiers and methods to select specific styles.
+	 * A styleable element with identifiers and methods that allow it to collect
+	 * and use style data.
 	 */
-	public interface IStyle
+	public interface IStyleable
 	{
 		/**
 		 * The instance name of the element, allowing styles to target the
@@ -27,17 +27,15 @@ package flight.styles
 		function set styleName(value:String):void;
 		
 		/**
-		 * The elements type or class, allowing styles to target the element by
-		 * its general type or inheritance.
+		 * The style object where dynamic style data is stored.
 		 */
-    	function get elementType():String;
-    	function set elementType(value:String):void;
+		function get style():Object;
 
 		/**
 		 * Retrieves style data under a specific property that has been set
 		 * in this element's styling.
 		 * 
-		 * @param		property	The style property to retrive style data.
+		 * @param		property	The style property to retrieve style data.
 		 * @return					The style data stored under the property.
 		 */
 		function getStyle(property:String):*;
@@ -51,4 +49,5 @@ package flight.styles
 		 */
 		function setStyle(property:String, value:*):void;
 	}
+	
 }

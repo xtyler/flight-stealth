@@ -15,7 +15,6 @@ package flight.graphics
 	
 	import flight.data.DataChange;
 	import flight.display.BitmapDisplay;
-	import flight.metadata.resolveCommitProperties;
 	
 	[Style(name="left")]
 	[Style(name="right")]
@@ -74,7 +73,6 @@ package flight.graphics
 		public function BitmapImage()
 		{
 			super();
-			resolveCommitProperties(this, resolve);
 		}
 		
 		/**

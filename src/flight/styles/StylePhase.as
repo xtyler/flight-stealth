@@ -4,18 +4,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.text
+package flight.styles
 {
-	
-	import flash.events.Event;
-	import flash.text.TextLineMetrics;
-	
-	public class Text extends TextFieldDisplay
+	import flight.display.RenderPhase;
+
+	public class StylePhase
 	{
-		public function Text()
-		{
-			super();
-			this.selectable = false;
-		}
+		public static const STYLE:String = "style";
+		RenderPhase.registerPhase(STYLE, 150);
 	}
 }

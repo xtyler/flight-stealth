@@ -7,7 +7,6 @@
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
-	import flash.events.IEventDispatcher;
 	
 	import flight.cursors.Cursor;
 	
@@ -16,7 +15,7 @@ package flight.behaviors
 		[Bindable]
 		public var cursor:Object;
 		
-		public function CursorBehavior(target:IEventDispatcher = null)
+		public function CursorBehavior(target:InteractiveObject = null)
 		{
 			super(target);
 			dataBind.bindSetter(cursorChange, this, "cursor");

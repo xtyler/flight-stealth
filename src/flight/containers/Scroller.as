@@ -14,9 +14,6 @@ package flight.containers
 	import flight.data.DataChange;
 	import flight.data.IScroll;
 	import flight.data.Scroll;
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
-	import flight.metadata.resolveCommitProperties;
 	
 	public class Scroller extends Group
 	{
@@ -56,7 +53,6 @@ package flight.containers
 		{
 			horizontal = new Scroll();
 			vertical = new Scroll();
-			resolveCommitProperties(this);
 			dataBind.bindSetter(onHorizontalScroll, this, "horizontal.position");
 			dataBind.bindSetter(onVerticalScroll, this, "vertical.position");
 		}
@@ -69,8 +65,8 @@ package flight.containers
 		public function onContainerChange(event:Event):void
 		{
 			horizontal.min = vertical.min = 0;
-			measured.width = horizontal.max = resolveWidth(container);
-			measured.height = vertical.max = resolveHeight(container);
+			measured.width = horizontal.max = container.width;
+			measured.height = vertical.max = container.height;
 			if (horizontal is IScroll) {
 				(horizontal as IScroll).pageSize = width;
 			}
@@ -88,9 +84,9 @@ package flight.containers
 		private function onVerticalScroll(value:Object):void
 		{
 			if (vertical && container) {
-				var height:Number = resolveHeight(container);
+				var height:Number = container.height;
 				var potential:Number = height - height;
-				var percent:Number = (vertical.position - vertical.min) / (vertical.max - vertical.min);
+				var percent:Number = (vertical.value - vertical.min) / (vertical.max - vertical.min);
 				container.y = potential * percent * -1; // ui specific calcs are here, where the ui specific code is.
 			}
 		}
@@ -98,9 +94,9 @@ package flight.containers
 		private function onHorizontalScroll(value:Object):void
 		{
 			if (horizontal && container) {
-				var width:Number = resolveWidth(container);
+				var width:Number = container.width;
 				var potential:Number = width - width;
-				var percent:Number = (horizontal.position - horizontal.min) / (horizontal.max - horizontal.min);
+				var percent:Number = (horizontal.value - horizontal.min) / (horizontal.max - horizontal.min);
 				container.x = potential * percent * -1; // ui specific calcs are here, where the ui specific code is.
 			}
 		}

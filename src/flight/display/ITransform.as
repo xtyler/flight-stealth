@@ -6,6 +6,9 @@
 
 package flight.display
 {
+	import flash.display.DisplayObject;
+	import flash.geom.Matrix;
+	
 	/**
 	 * Coordinate transformation defining position, scale and rotation, also
 	 * including basic width and height values.
@@ -110,12 +113,19 @@ package flight.display
 		function get rotation():Number;
 		function set rotation(value:Number):void;
 
-//		/**
-//		 * The matrix that represents the position, scale and rotation of this
-//		 * transform in the the local coordinates of the parent.
-//		 */
-//		function get matrix():Matrix;
-//		function set matrix(value:Matrix):void;
+		/**
+		 * The matrix that represents the position, scale and rotation of this
+		 * transform in the the local coordinates of the parent.
+		 */
+		function get matrix():Matrix;
+		function set matrix(value:Matrix):void;
+		
+		/**
+		 * The Flash display object associated with this transform. This
+		 * reference is often self-assigned to the implementing display class
+		 * instance.
+		 */
+		function get display():DisplayObject;
 		
 	}
 }

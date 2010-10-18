@@ -8,54 +8,25 @@ package flight.components
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-
-	import flight.behaviors.CompositeBehavior;
+	
 	import flight.behaviors.IBehavior;
-	import flight.behaviors.IBehavioral;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
+	import flight.data.IDataRenderer;
+	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
-	import flight.measurement.setSize;
-	import flight.metadata.resolveCommitProperties;
 	import flight.skins.ISkin;
-	import flight.skins.ISkinnable;
+	import flight.styles.IStateful;
 	import flight.templating.addItem;
-
-	[Style(name="left")]
-	[Style(name="right")]
-	[Style(name="top")]
-	[Style(name="bottom")]
-	[Style(name="horizontalCenter")]
-	[Style(name="verticalCenter")]
-	[Style(name="dock")]
-	[Style(name="align")]
 	
-	/**
-	 * @alpha
-	 */
-	public class Component extends SpriteDisplay implements IBehavioral, ISkinnable	// TODO: determine if ISkinnable is IStateful and IDataRenderer
+	public class Component extends SpriteDisplay implements IStateful, IDataRenderer
 	{
-		
-		static public const MEASURE:String = "measure";
-		RenderPhase.registerPhase(MEASURE, 0);
-		
 		protected var dataBind:DataBind = new DataBind();
-		
-		private var _data:Object;
-		
-		private var _skin:Object;
-		private var _behaviors:CompositeBehavior;
-		
-		private var _enabled:Boolean = true;
 		
 		public function Component()
 		{
-			_behaviors = new CompositeBehavior(this);
-			resolveCommitProperties(this);
-			addEventListener(MEASURE, onMeasure, false, 0, true);
+			_behaviors = {};
 		}
 		
 		[Bindable(event="dataChange")]
@@ -68,6 +39,7 @@ package flight.components
 			_data = value;
 			dispatchEvent(new Event("dataChange"));
 		}
+		private var _data:Object;
 		
 		[ArrayElementType("flight.behaviors.IBehavior")]
 		[Bindable(event="behaviorsChange")]
@@ -86,7 +58,7 @@ package flight.components
 		 *   &lt;/behaviors&gt;
 		 * &lt;/Component&gt;
 		 */
-		public function get behaviors():CompositeBehavior { return _behaviors; }
+		public function get behaviors():Object { return _behaviors; }
 		public function set behaviors(value:*):void
 		{
 			/*
@@ -102,6 +74,7 @@ package flight.components
 			//change.commit();
 			dispatchEvent(new Event("behaviorsChange"));
 		}
+		private var _behaviors:Object;
 		
 		[Bindable(event="skinChange")]
 		[Inspectable(name="Skin", type=Class)]
@@ -118,10 +91,10 @@ package flight.components
 			} else if (_skin is DisplayObject) {
 				addItem(this, _skin);
 			}
-			setSize(skin, width, height);
 			dispatchEvent(new Event("skinChange"));
-			RenderPhase.invalidate(this, MEASURE);
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
 		}
+		private var _skin:Object;
 		
 		[Bindable(event="enabledChange")]
 		public function get enabled():Boolean { return _enabled; }
@@ -129,6 +102,7 @@ package flight.components
 		{
 			DataChange.change(this, "enabled", _enabled, _enabled = value);
 		}
+		private var _enabled:Boolean = true;
 		
 		// IStateful implementation
 		/*
@@ -160,34 +134,6 @@ package flight.components
 			DataChange.change(this, "states", _states, _states = value);
 		}
 		private var _states:Array;
-		
-		// needs more thought
-		
-		override public function set width(value:Number):void
-		{
-			super.width = value;
-			setSize(skin, value, height);
-		}
-		
-		override public function set height(value:Number):void
-		{
-			super.height = value;
-			setSize(skin, width, value);
-		}
-		
-		override public function setLayoutSize(width:Number, height:Number):void
-		{
-			super.setLayoutSize(width, height);
-			setSize(skin, width, height);
-		}
-		
-		private function onMeasure(event:Event):void
-		{
-			if ((isNaN(explicit.width) || isNaN(explicit.height)) && skin) {
-				measured.width = resolveWidth(skin); // explicit width of skin becomes measured width of component
-				measured.height = resolveHeight(skin); // explicit height of skin becomes measured height of component
-			}
-		}
 		
 	}
 }

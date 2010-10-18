@@ -6,14 +6,14 @@
 
 package flight.behaviors
 {
-	
-	import flash.events.IEventDispatcher;
+
+	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
 	
 	import flight.data.DataChange;
 	import flight.data.IRange;
 	import flight.events.ButtonEvent;
-	
+
 	public class DragStepBehavior extends Behavior
 	{
 		
@@ -33,12 +33,12 @@ package flight.behaviors
 		
 		private var startDragPosition:Number;
 		
-		public function DragStepBehavior(target:IEventDispatcher = null)
+		public function DragStepBehavior(target:InteractiveObject = null)
 		{
 			super(target);
 		}
 		
-		override public function set target(value:IEventDispatcher):void
+		override public function set target(value:InteractiveObject):void
 		{
 			super.target = value;
 			
@@ -52,16 +52,16 @@ package flight.behaviors
 		[EventListener(type="mouseDown", target="target")]
 		public function onDragStart(event:MouseEvent):void
 		{
-			startDragPosition = position.position;
+			startDragPosition = position.value;
 		}
 		
 		[EventListener(type="drag", target="target")]
 		public function onDrag(event:ButtonEvent):void
 		{
 			if (dragging) {
-				position.position = Math.round((startDragPosition + event.deltaX) / increment) * increment;
+				position.value = Math.round((startDragPosition + event.deltaX) / increment) * increment;
 			} else if (Math.abs(startDragPosition - event.deltaX) > dragTolerance) {
-				position.position = Math.round((startDragPosition + event.deltaX) / increment) * increment;
+				position.value = Math.round((startDragPosition + event.deltaX) / increment) * increment;
 				dragging = true;
 			}
 		}

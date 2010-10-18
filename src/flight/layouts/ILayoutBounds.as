@@ -6,12 +6,16 @@
 
 package flight.layouts
 {
+	import flash.display.DisplayObject;
+	import flash.geom.Rectangle;
+	
 	/**
 	 * A simple box-model layout element containing size and bounds logic,
 	 * including measured and explicit sizing.
 	 */
 	public interface ILayoutBounds extends IBounds
 	{
+		
 		/**
 		 * Specifies whether this instance will participate in layout or will
 		 * remain freeform. If false its size and position may be controlled
@@ -105,6 +109,23 @@ package flight.layouts
 		 */
 		function setLayoutSize(width:Number, height:Number):void;
 		
+		/**
+		 * Calculates a bounding rectangle surrounding the layout based on the
+		 * supplied width and height, relative to the local coordinates of the
+		 * parent. The width and height can be any dimensions desired, such as
+		 * min or preferred, defaulting to the actual width and height of the
+		 * layout if no values are supplied.
+		 * 
+		 * @param		width		The layout width around which to calculate
+		 * 							a bounding rectangle.
+		 * @param		height		The layout width around which to calculate
+		 * 							a bounding rectangle.
+		 * @return					The bounding rectangle in the parent's
+		 * 							coordinates. Note that the rectangle
+		 * 							instance returned may be singular to this
+		 * 							layout for purposes of reuse.
+		 */
+		function getLayoutRect(width:Number = NaN, height:Number = NaN):Rectangle
 		
 		// TODO: implement baseline and anchor features
 		
@@ -167,5 +188,11 @@ package flight.layouts
 //		 */
 //		function get veritical():Number;
 		
+		/**
+		 * The Flash display object associated with these layout properties.
+		 * This reference is often self assigned to the implementing display
+		 * class instance.
+		 */
+		function get display():DisplayObject;
 	}
 }

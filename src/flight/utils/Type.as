@@ -4,7 +4,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.metadata
+package flight.utils
 {
 	import flash.net.registerClassAlias;
 	import flash.utils.Dictionary;

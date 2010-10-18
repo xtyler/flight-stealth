@@ -6,18 +6,13 @@
 
 package flight.behaviors
 {
-	
+
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
-	
+
 	import flight.data.DataBind;
-	import flight.metadata.resolveBindings;
-	import flight.metadata.resolveDataListeners;
-	import flight.metadata.resolveEventListeners;
-	import flight.skins.ISkinnable;
-	
+
 	/**
 	 * Behavior is a convenient base class for various behavior implementations.
 	 * These classes represent added features and functionality to a target
@@ -37,42 +32,21 @@ package flight.behaviors
 	{
 		protected var dataBind:DataBind = new DataBind();
 		
-		private var _target:IEventDispatcher;
-		
 		/**
 		 * The object this behavior acts upon.
 		 */
 		[Bindable(event="targetChange")]
-		public function get target():IEventDispatcher { return _target; }
-		public function set target(value:IEventDispatcher):void
+		public function get target():InteractiveObject { return _target; }
+		public function set target(value:InteractiveObject):void
 		{
 			_target = value;
 			dispatchEvent(new Event("targetChange"));
 		}
+		private var _target:InteractiveObject;
 		
-		// TODO: add SkinParts with support for adding child behaviors to them // bleh?
-		// registration of Behavior instances (via styling?) for instantiation
-		// skins ability to pull behavior data for state and other use
-		// skins also need data such as labels and images? (localization?)
-		// and dynamic data for it's content-area (component children)
-		public function Behavior(target:IEventDispatcher = null)
+		public function Behavior(target:InteractiveObject = null)
 		{
 			this.target = target;
-			resolveBindings(this);
-			resolveDataListeners(this);
-			resolveEventListeners(this);
 		}
-		
-		protected function getSkinPart(part:String):InteractiveObject
-		{
-			if (target is ISkinnable && ISkinnable(target).skin != null) {
-				return ISkinnable(target).skin.getSkinPart(part) as InteractiveObject;
-			} else if (part in target) {
-				return target[part] as InteractiveObject;
-			} else {
-				return null;
-			}
-		}
-		
 	}
 }

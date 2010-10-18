@@ -8,16 +8,17 @@ package flight.display
 {
 	public class LayoutPhase
 	{
+		
+		public static const RESIZE:String = "resize";
+		RenderPhase.registerPhase(RESIZE, 70);
+		
+		public static const MOVE:String = "move";
+		RenderPhase.registerPhase(MOVE, 80);
+		
 		public static const LAYOUT:String = "layout";
-		RenderPhase.registerPhase(LAYOUT, 80);
+		RenderPhase.registerPhase(LAYOUT, 90);
 		
 		public static const MEASURE:String = "measure";
 		RenderPhase.registerPhase(MEASURE, 100);
-		
-		public static const RESIZE:String = "resize";
-		RenderPhase.registerPhase(RESIZE, 110);
-		
-		public static const MOVE:String = "move";
-		RenderPhase.registerPhase(MOVE, 120);
 	}
 }

@@ -10,8 +10,8 @@ package flight.styles
 	{
 		//if (child.hasOwnProperty("style") && child["style"] != null) {
 		//	return (child.style[property] != null);
-		if (child is IStyleClient) {
-			var v:* = (child as IStyleClient).getStyle(property);
+		if (child is IStyleable) {
+			var v:* = (child as IStyleable).getStyle(property);
 			return v != null;
 		} else {
 			return false;

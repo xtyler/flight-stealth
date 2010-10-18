@@ -6,7 +6,7 @@
 
 package flight.behaviors
 {
-	import flash.events.IEventDispatcher;
+	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
 	
 	import flight.data.DataChange;
@@ -28,7 +28,7 @@ package flight.behaviors
 			DataChange.change(this, "selected", _selected, _selected = value);
 		}
 		
-		public function SelectBehavior(target:IEventDispatcher = null)
+		public function SelectBehavior(target:InteractiveObject = null)
 		{
 			super(target);
 		}

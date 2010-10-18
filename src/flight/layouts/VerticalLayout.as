@@ -6,56 +6,28 @@
 
 package flight.layouts
 {
-	
-	import flash.geom.Point;
+	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
 	
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
-	
-	[LayoutProperty(name="width", measure="true")]
-	[LayoutProperty(name="height", measure="true")]
-	
-	/**
-	 * Provides a measured layout from top to bottom.
-	 * 
-	 * @alpha
-	 **/
-	public class VerticalLayout extends Layout implements ILayout
+	public class VerticalLayout extends Layout
 	{
-		
-		
-		public var gap:Number = 5;
-		
-		override public function measure(children:Array):Point
+		override public function measure():void
 		{
-			super.measure(children);
-			var point:Point = new Point(0, gap / 2);
-			for each(var child:Object in children) {
-				var width:Number = resolveWidth(child);
-				var height:Number = resolveHeight(child);
-				point.x = Math.max(point.x, width);
-				point.y += height + gap;
+			if (!target) return;
+			
+			target.measured.minWidth = paddingLeft + paddingRight;
+			target.measured.minHeight = paddingTop + paddingBottom;
+			target.measured.maxWidth = target.measured.maxHeight = 0xFFFFFF;
+			
+			for each (var child:DisplayObject in target.content) {
+				var rect:Rectangle = child is ILayoutBounds ? ILayoutBounds(child).getLayoutRect() : child.getRect(child.parent);
+				
+				target.measured.minHeight += rect.height;
 			}
-			point.y -= gap / 2;
-			return point;
 		}
 		
-		override public function update(children:Array, rectangle:Rectangle):void
+		override public function update():void
 		{
-			super.update(children, rectangle);
-			if (children) {
-				var position:Number = gap / 2;
-				var length:int = children.length;
-				for (var i:int = 0; i < length; i++) {
-					var child:Object = children[i];
-					var width:Number = resolveWidth(child);
-					var height:Number = resolveHeight(child);
-					child.x = rectangle.width / 2 - width / 2;
-					child.y = position;
-					position += height + gap;
-				}
-			}
 		}
 		
 	}

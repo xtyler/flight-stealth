@@ -8,12 +8,11 @@ package flight.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
-	import flash.events.IEventDispatcher;
-	
+
 	import flight.data.IRange;
 	import flight.data.Range;
 	import flight.events.ButtonEvent;
-	
+
 	public class StepBehavior extends Behavior
 	{
 		public var fwdBehavior:ButtonBehavior;
@@ -33,7 +32,7 @@ package flight.behaviors
 			super(target);
 		}
 		
-		override public function set target(value:IEventDispatcher):void
+		override public function set target(value:InteractiveObject):void
 		{
 			super.target = value;
 			
@@ -41,8 +40,8 @@ package flight.behaviors
 				return;
 			}
 			
-			fwdBtn = getSkinPart("fwdBtn");
-			bwdBtn = getSkinPart("bwdBtn");
+//			fwdBtn = getSkinPart("fwdBtn");
+//			bwdBtn = getSkinPart("bwdBtn");
 			fwdBehavior = new ButtonBehavior(fwdBtn);
 			bwdBehavior = new ButtonBehavior(bwdBtn);
 			if (fwdBtn is MovieClip) {

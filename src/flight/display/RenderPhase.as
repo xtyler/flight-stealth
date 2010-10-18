@@ -13,7 +13,7 @@ package flight.display
 	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
 	
-	import flight.metadata.getClassName;
+	import flight.utils.getClassName;
 	
 	public class RenderPhase
 	{
@@ -77,11 +77,12 @@ package flight.display
 			}
 		}
 		
-		public static function validateNow(display:DisplayObject, phase:String = null):void
+		public static function validateNow(display:DisplayObject = null, phase:String = null):void
 		{
 			if (phase && !phaseIndex[phase]) {
 				throw new Error(getClassName(display) + " cannot be invalidated in unknown phase '" + phase + "'.");
 			} else if (!display) {
+				render();
 				return;
 			}
 			
@@ -137,6 +138,7 @@ package flight.display
 		{
 			for (var i:* in invalidStages) {
 				var stage:Stage = i;
+				delete invalidStages[stage];
 				stage.removeEventListener(Event.RENDER, onRender);
 				stage.removeEventListener(Event.RESIZE, onRender);
 			}

@@ -8,184 +8,140 @@ package flight.containers
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
-	import flight.collections.SimpleCollection;
+	import flight.data.DataChange;
 	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
+	import flight.events.ListEvent;
+	import flight.events.ListEventKind;
 	import flight.layouts.ILayout;
-	import flight.templating.addItemsAt;
+	import flight.list.ArrayList;
+	import flight.list.IList;
 	
-	import mx.collections.IList;
-	import mx.events.CollectionEvent;
-	import mx.events.CollectionEventKind;
+	[Style(name="padding")]
+	[Style(name="background")]	// TODO: implement limited drawing feature
 	
 	[DefaultProperty("content")]
-	
-	/**
-	 * Used to contain and layout children.
-	 * 
-	 * @alpha
-	 */
 	public class Group extends SpriteDisplay implements IContainer
 	{
-		private var _layout:ILayout;
-		private var _template:Object;
-		private var _content:IList;
-		private var renderers:Array;
+		private var changing:Boolean;
 		
 		public function Group()
 		{
-			addEventListener(LayoutPhase.MEASURE, onMeasure, false, 0, true);
-			addEventListener(LayoutPhase.LAYOUT, onLayout, false, 0, true);
+			_content = new ArrayList();
+			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
+			addEventListener(Event.ADDED, onChildAdded, true);
+			addEventListener(Event.REMOVED, onChildRemoved, true);
 		}
 		
 		/**
 		 * @inheritDoc
 		 */
-		[ArrayElementType("Object")]
-		[Bindable(event="contentChange")]
-		public function get content():IList
-		{
-			if (_content == null) _content = new SimpleCollection();
-			return _content;
-		}
-		
+		[ArrayElementType("flash.display.DisplayObject")]
+		[Bindable(event="contentChange", style="weak")]
+		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
-			if (_content == value) {
-				return;
-			}
-			
-			if (_content) {
-				_content.removeEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
-			}
-			
-			if (value == null) {
-				_content = null;
+			_content.removeItems();
+			if (value is DisplayObject) {
+				_content.addItem(value);
+			} else if (value is Array) {
+				_content.addItems(value);
 			} else if (value is IList) {
-				_content = value as IList;
-			} else if (value is Array || value is Vector) {
-				_content = new SimpleCollection(value);
-			} else {
-				_content = new SimpleCollection([value]);
+				_content.addItems( IList(value).getItems() );
 			}
-			
-			if (_content) {
-				_content.addEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
-				var items:Array = [];
-				for (var i:int = 0; i < _content.length; i++) {
-					items.push(_content.getItemAt(i));
-				}
-				reset(items);
-			}
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-			dispatchEvent(new Event("contentChange"));
+			DataChange.change(this, "content", _content, _content, true);
 		}
+		private var _content:IList;
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="layoutChange")]
+		[Bindable(event="layoutChange", style="weak")]
 		public function get layout():ILayout { return _layout; }
 		public function set layout(value:ILayout):void
 		{
 			if (_layout == value) {
 				return;
 			}
-			var oldLayout:ILayout = _layout;
+			
 			if (_layout) { _layout.target = null; }
-			_layout = value;
+			DataChange.queue(this, "layout", _layout, _layout = value);
 			if (_layout) { _layout.target = this; }
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-			dispatchEvent(new Event("layoutChange"));
+			DataChange.change();
+		}
+		private var _layout:ILayout;
+		
+		override protected function measure():void
+		{
+			if (!layout) {
+				super.measure();
+			}
 		}
 		
-		[Bindable(event="templateChange")]
-		public function get template():Object { return _template; }
-		public function set template(value:Object):void
+		private function onContentChange(event:ListEvent):void
 		{
-			if (_template == value) {
+			if (changing) {
 				return;
 			}
-			var oldTemplate:Object = _template;
-			_template = value;
-			if (_content != null) {
-				var items:Array = [];
-				var length:int = _content.length;
-				for (var i:int = 0; i < length; i++) {
-					var child:Object = _content.getItemAt(i);
-					items.push(child);
-				}
-				reset(items);
-			}
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-			dispatchEvent(new Event("templateChange"));
-		}
-		
-		private function onMeasure(event:Event):void
-		{
-			if ((isNaN(explicit.width) || isNaN(explicit.height)) && layout) {
-				var point:Point = layout.measure(renderers);
-				measured.width = point.x;
-				measured.height = point.y;
-			}
-		}
-		
-		private function onLayout(event:Event):void
-		{
-			if (layout) {
-				var rectangle:Rectangle = new Rectangle(0, 0, width, height);
-				layout.update(renderers, rectangle);
-			}
-		}
-		
-		private function onChildrenChange(event:CollectionEvent):void
-		{
+			
+			changing = true;
 			var child:DisplayObject;
-			var loc:int = event.location;
+			var location:int = event.location1;
 			switch (event.kind) {
-				//case ListEventKind.ADD :
-				case CollectionEventKind.ADD :
-					add(event.items, loc);
+				case ListEventKind.ADD :
+					for each (child in event.items) {
+						addChildAt(child, location++);
+					}
 					break;
-				case CollectionEventKind.REMOVE :
+				case ListEventKind.REMOVE :
 					for each (child in event.items) {
 						removeChild(child);
 					}
 					break;
-				case CollectionEventKind.REPLACE :
+				case ListEventKind.MOVE :
+					addChildAt(event.items[0], location);
+					break;
+				case ListEventKind.REPLACE :
 					removeChild(event.items[1]);
-					//addChildAt(event.items[0], loc);
+					addChildAt(event.items[0], location);
 					break;
-				case CollectionEventKind.RESET :
-				default:
-					reset(event.items);
-					break;
+				default:	// ListEventKind.RESET
+					while (numChildren) {
+						removeChildAt(numChildren-1);
+					}
+					for (var i:int = 0; i < content.length; i++) {
+						addChildAt(content.getItemAt(i) as DisplayObject, i);
+					}
 			}
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			changing = false;
+			
+			invalidate(LayoutPhase.MEASURE);
+			invalidate(LayoutPhase.LAYOUT);
 		}
 		
-		private function add(items:Array, index:int):void
+		private function onChildAdded(event:Event):void
 		{
-			var children:Array = addItemsAt(this, items, index, _template);
-			renderers.concat(children); // todo: correct ordering
-		}
-		
-		private function reset(items:Array):void
-		{
-			while (numChildren) {
-				removeChildAt(numChildren - 1);
+			var child:DisplayObject = DisplayObject(event.target);
+			if (changing || child.parent != this) {
+				return;
 			}
-			renderers = addItemsAt(this, items, 0, _template); // todo: correct ordering
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			
+			changing = true;
+			content.addItemAt(child, getChildIndex(child));
+			changing = false;
 		}
 		
-		
+		private function onChildRemoved(event:Event):void
+		{
+			var child:DisplayObject = DisplayObject(event.target);
+			if (changing || child.parent != this) {
+				return;
+			}
+			
+			changing = true;
+			content.removeItem(child);
+			changing = false;
+		}
 	}
 }

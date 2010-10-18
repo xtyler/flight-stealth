@@ -8,8 +8,8 @@ package flight.behaviors
 {
 	import flash.display.DisplayObject;
 	import flash.display.FrameLabel;
+	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
-	import flash.events.IEventDispatcher;
 	
 	import flight.data.DataChange;
 	
@@ -43,7 +43,7 @@ package flight.behaviors
 			DataChange.change(this, "movieclip", _movieclip, _movieclip = value);
 		}
 		
-		public function MovieClipSkinBehavior(target:IEventDispatcher = null)
+		public function MovieClipSkinBehavior(target:InteractiveObject = null)
 		{
 			super(target);
 		}

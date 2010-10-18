@@ -6,7 +6,6 @@
 
 package flight.skins
 {
-	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
@@ -14,22 +13,21 @@ package flight.skins
 	import flash.events.EventDispatcher;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import flight.collections.SimpleCollection;
-	import flight.styles.IStateful;
+
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
+	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
+	import flight.events.ListEvent;
+	import flight.events.ListEventKind;
+	import flight.layouts.Bounds;
+	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
 	import flight.layouts.ILayoutBounds;
-	import flight.layouts.IBounds;
-	import flight.layouts.Bounds;
+	import flight.list.ArrayList;
+	import flight.list.IList;
 	import flight.templating.addItemsAt;
-	
-	import mx.collections.IList;
-	import mx.events.CollectionEvent;
-	import mx.events.CollectionEventKind;
 	
 	/**
 	 * Skin is a convenient base class for many skins, a swappable graphical
@@ -40,13 +38,6 @@ package flight.skins
 	[DefaultProperty("content")]
 	public class Skin extends EventDispatcher// implements ISkin, IContainer, IStateful, ILayoutBounds
 	{
-		
-		static public const MEASURE:String = "measure";
-		static public const LAYOUT:String = "layout";
-		
-		RenderPhase.registerPhase(MEASURE, 0);
-		RenderPhase.registerPhase(LAYOUT, 0, false);
-		
 		protected var dataBind:DataBind = new DataBind();
 		
 		private var renderers:Array = [];
@@ -73,7 +64,7 @@ package flight.skins
 				return;
 			}
 			_explicit.width = value;
-			RenderPhase.invalidate(target, LAYOUT);
+			RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
 			DataChange.change(this, "width", unscaledWidth, unscaledWidth = value);
 		}
 		
@@ -88,7 +79,7 @@ package flight.skins
 				return;
 			}
 			_explicit.height = value;
-			RenderPhase.invalidate(target, LAYOUT);
+			RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
 			DataChange.change(this, "height", unscaledHeight, unscaledHeight = value);
 		}
 		
@@ -109,7 +100,7 @@ package flight.skins
 		 */
 		public function setSize(width:Number, height:Number):void
 		{
-			RenderPhase.invalidate(target, LAYOUT);
+			RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
 			DataChange.queue(this, "width", unscaledWidth, unscaledWidth = width);
 			DataChange.change(this, "height", unscaledHeight, unscaledHeight = height);
 		}
@@ -126,10 +117,10 @@ package flight.skins
 			}
 			if (_layout) { _layout.target = null; }
 			DataChange.queue(this, "layout", _layout, _layout = value);
-			_layout.target = target;
+			_layout.target = IContainer(target);
 			if (target) {
-				RenderPhase.invalidate(target, MEASURE);
-				RenderPhase.invalidate(target, LAYOUT);
+				RenderPhase.invalidate(target, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
 			}
 			DataChange.change();
 		}
@@ -161,11 +152,11 @@ package flight.skins
 		public function Skin()
 		{
 			super();
-			_content = new SimpleCollection();
+			_content = new ArrayList();
 			_explicit = new Bounds();
 			_measured = new Bounds(160, 22);
-			_content.addEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
-			addEventListener(LAYOUT, onLayout, false, 0, true);
+			_content.addEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
+			addEventListener(LayoutPhase.LAYOUT, onLayout, false, 0, true);
 		}
 		
 		
@@ -179,7 +170,7 @@ package flight.skins
 			
 			DataChange.queue(this, "target", _target, _target = value);
 			if (layout) {
-				layout.target = _target;
+				layout.target = IContainer(_target);
 			}
 			
 			if (this.hasOwnProperty('hostComponent')) {
@@ -187,10 +178,10 @@ package flight.skins
 			}
 			
 			if (_target != null) {
-				target.addEventListener(MEASURE, onMeasure, false, 0, true);
-				target.addEventListener(LAYOUT, onLayout, false, 0, true);
-				RenderPhase.invalidate(target, MEASURE);
-				RenderPhase.invalidate(target, LAYOUT);
+				target.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 0, true);
+				target.addEventListener(LayoutPhase.LAYOUT, onLayout, false, 0, true);
+				RenderPhase.invalidate(target, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
 			}
 			
 			var items:Array = [];
@@ -224,7 +215,7 @@ package flight.skins
 			var oldContent:IList = _content;
 			
 			if (_content) {
-				_content.removeEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
+				_content.removeEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
 			}
 			
 			if (value == null) {
@@ -232,13 +223,13 @@ package flight.skins
 			} else if (value is IList) {
 				_content = value as IList;
 			} else if (value is Array || value is Vector) {
-				_content = new SimpleCollection(value);
+				_content = new ArrayList(value);
 			} else {
-				_content = new SimpleCollection([value]);
+				_content = new ArrayList([value]);
 			}
 			
 			if (_content) {
-				_content.addEventListener(CollectionEvent.COLLECTION_CHANGE, onChildrenChange);
+				_content.addEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
 				var items:Array = [];
 				for (var i:int = 0; i < _content.length; i++) {
 					items.push(_content.getItemAt(i));
@@ -255,27 +246,27 @@ package flight.skins
 			return (part in this) ? this[part] : null;
 		}
 		
-		private function onChildrenChange(event:CollectionEvent):void
+		private function onChildrenChange(event:ListEvent):void
 		{
 			if (_target == null) {
 				return;
 			}
 			var child:DisplayObject;
-			var loc:int = event.location;
+			var loc:int = event.location1;
 			switch (event.kind) {
-				case CollectionEventKind.ADD :
+				case ListEventKind.ADD :
 					add(event.items, loc++);
 					break;
-				case CollectionEventKind.REMOVE :
+				case ListEventKind.REMOVE :
 					for each (child in event.items) {
 						_target.removeChild(child);
 					}
 					break;
-				case CollectionEventKind.REPLACE :
+				case ListEventKind.REPLACE :
 					_target.removeChild(event.items[1]);
 					_target.addChildAt(event.items[0], loc);
 					break;
-				case CollectionEventKind.RESET :
+				case ListEventKind.RESET :
 				default:
 					reset(event.items);
 					break;
@@ -296,8 +287,8 @@ package flight.skins
 					_target.removeChildAt(_target.numChildren - 1);
 				}
 				renderers = addItemsAt(_target, items, 0, template); // todo: correct ordering
-				RenderPhase.invalidate(_target, MEASURE);
-				RenderPhase.invalidate(_target, LAYOUT);
+				RenderPhase.invalidate(_target, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
 			}
 		}
 		
@@ -310,7 +301,7 @@ package flight.skins
 				for (var i:int = 0; i < length; i++) {
 					items.push(_content.getItemAt(i));
 				}
-				var point:Point = layout.measure(items);
+//				var point:Point = layout.measure(items);
 			}
 		}
 		
@@ -324,7 +315,7 @@ package flight.skins
 				}
 				
 				var rectangle:Rectangle = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
-				layout.update(items, rectangle);
+//				layout.update(items, rectangle);
 			}
 		}
 		

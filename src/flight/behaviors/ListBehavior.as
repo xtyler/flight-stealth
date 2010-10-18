@@ -7,8 +7,7 @@
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
-	import flash.events.IEventDispatcher;
-	
+
 	public class ListBehavior extends Behavior
 	{
 		public var hScrollBar:InteractiveObject;
@@ -21,7 +20,7 @@ package flight.behaviors
 		{
 		}
 		
-		override public function set target(value:IEventDispatcher):void
+		override public function set target(value:InteractiveObject):void
 		{
 			super.target = value;
 			
@@ -31,8 +30,8 @@ package flight.behaviors
 			
 			//var skin:ISkin = ISkinnable(target).skin;
 			
-			hScrollBar = getSkinPart('hScrollBar');
-			vScrollBar = getSkinPart('vScrollBar');
+//			hScrollBar = getSkinPart('hScrollBar');
+//			vScrollBar = getSkinPart('vScrollBar');
 			
 			hSlideBehavior = new SlideBehavior();
 			vSlideBehavior = new SlideBehavior();

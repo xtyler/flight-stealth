@@ -6,30 +6,14 @@
 
 package flight.layouts
 {
-	
+
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
-	import flight.measurement.setSize;
+
 	import flight.styles.hasStyle;
 	import flight.styles.resolveStyle;
 	
-	[LayoutProperty(name="style.left", measure="true")]
-	[LayoutProperty(name="style.right", measure="true")]
-	[LayoutProperty(name="style.top", measure="true")]
-	[LayoutProperty(name="style.bottom", measure="true")]
-	[LayoutProperty(name="style.horizontalCenter", measure="true")]
-	[LayoutProperty(name="style.verticalCenter", measure="true")]
-	[LayoutProperty(name="width", measure="true")]
-	[LayoutProperty(name="height", measure="true")]
-	/**
-	 * Recognizes style elements familiar to Flex developers such as left, right, top, bottom, horizontalCenter and verticalCenter.
-	 * 
-	 * @alpha
-	 **/
-	public class BasicLayout extends Layout implements ILayout
+	public class BasicLayout extends Layout
 	{
 		
 		override public function measure(children:Array):Point

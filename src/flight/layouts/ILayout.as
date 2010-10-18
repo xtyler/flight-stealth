@@ -6,24 +6,21 @@
 
 package flight.layouts
 {
-	import flash.events.IEventDispatcher;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	
-	/**
-	 * This interface is used to Integrate custom layouts into the Stealth layout and measurement system.
-	 * You must implement this interface when creating a custom layout.
-	 * 
-	 * @alpha
-	 */
+	import flight.containers.IContainer;
+
 	public interface ILayout
 	{
+		function get target():IContainer;
+		function set target(value:IContainer):void;
 		
-		function get target():IEventDispatcher;
-		function set target(value:IEventDispatcher):void;
+		// TODO: implement support for virtualization in layout
+//		function get shift():Number;
+//		function set shift(value:Number):void;
+//		
+//		function get shiftSize():Number;
+//		function set shiftSize(value:Number):void;
 		
-		function measure(children:Array):Point;
-		
-		function update(children:Array, rectangle:Rectangle):void;
+		function measure():void;
+		function update():void;
 	}
 }

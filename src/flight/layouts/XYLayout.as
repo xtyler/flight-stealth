@@ -9,20 +9,7 @@ package flight.layouts
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
-	
-	[LayoutProperty(name="x", measure="true")]
-	[LayoutProperty(name="y", measure="true")]
-	[LayoutProperty(name="width", measure="true")]
-	[LayoutProperty(name="height", measure="true")]
-	
-	/**
-	 * Provides basic measurement for containers which want to adjust children manually using x/y coordinates.
-	 * 
-	 * @alpha
-	 **/
-	public class XYLayout extends Layout implements ILayout
+	public class XYLayout extends Layout
 	{
 		
 		

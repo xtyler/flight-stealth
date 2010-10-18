@@ -8,16 +8,14 @@ package flight.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	
+
 	import flight.data.IRange;
 	import flight.data.IScroll;
 	import flight.data.Range;
 	import flight.events.ButtonEvent;
-	import flight.measurement.resolveHeight;
-	
+
 	public class SlideBehavior extends Behavior// extends StepBehavior
 	{
 		
@@ -55,7 +53,7 @@ package flight.behaviors
 			return _percent;
 		}
 		
-		override public function set target(value:IEventDispatcher):void
+		override public function set target(value:InteractiveObject):void
 		{
 			super.target = value;
 			
@@ -63,8 +61,8 @@ package flight.behaviors
 				return;
 			}
 			
-			track = getSkinPart("track");
-			thumb = getSkinPart("thumb");
+//			track = getSkinPart("track");
+//			thumb = getSkinPart("thumb");
 			if (track) { ButtonEvent.initialize(track); }
 			if (thumb) { ButtonEvent.initialize(thumb); }
 			
@@ -206,9 +204,9 @@ package flight.behaviors
 					p = thumb.parent.globalToLocal(track.parent.localToGlobal(p));
 					thumb.x = Math.round(p.x);
 				} else {
-					var trackHeight:Number = resolveHeight(track);
-					var thumbHeight:Number = resolveHeight(thumb);
-					p.y = (trackHeight - thumbHeight) * _percent + track.y;
+//					var trackHeight:Number = resolveHeight(track);
+//					var thumbHeight:Number = resolveHeight(thumb);
+//					p.y = (trackHeight - thumbHeight) * _percent + track.y;
 					p = thumb.parent.globalToLocal(track.parent.localToGlobal(p));
 					thumb.y = Math.round(p.y);
 				}

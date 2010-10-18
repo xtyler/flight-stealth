@@ -13,7 +13,6 @@ package flight.skins
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
-	import flight.containers.Group;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
 	import flight.display.LayoutPhase;
@@ -22,11 +21,7 @@ package flight.skins
 	public class MovieClipSkin implements ISkin
 	{
 		protected var dataBind:DataBind = new DataBind();
-		private var _currentState:String = "default";
-		private var _target:Sprite;
 		private var _movieclip:Sprite;
-		private var _width:Number = 0;
-		private var _height:Number = 0;
 		
 		public function MovieClipSkin(movieclip:Sprite)
 		{
@@ -50,26 +45,15 @@ package flight.skins
 				}
 			}
 		}
+		private var _currentState:String = "default";
 		
 		[Bindable(event="targetChange")]
 		public function get target():Sprite { return _target; }
 		public function set target(value:Sprite):void
 		{
-			if (_target) {
-				if (_movieclip) {
-					_target.removeChild(_movieclip);
-				}
-				_target.removeEventListener(LayoutPhase.LAYOUT, onSizeChange);
-			}
 			DataChange.change(this, "target", _target, _target = value);
-			if (_target) {
-				if (_movieclip) {
-					_target.addChild(_movieclip);
-				}
-				_target.addEventListener(LayoutPhase.LAYOUT, onSizeChange);
-				onSizeChange(null);
-			}
 		}
+		private var _target:Sprite;
 		
 		[Bindable(event="movieclipChange")]
 		public function get movieclip():Sprite { return _movieclip; }
@@ -84,6 +68,7 @@ package flight.skins
 				onSizeChange(null);
 			}
 		}
+		private var _width:Number = 0;
 		
 		[Bindable(event="widthChange")]
 		public function get width():Number { return _width; }
@@ -100,6 +85,7 @@ package flight.skins
 			DataChange.change(this, "height", _height, _height = value);
 			RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
 		}
+		private var _height:Number = 0;
 		
 		public function getSkinPart(part:String):InteractiveObject
 		{

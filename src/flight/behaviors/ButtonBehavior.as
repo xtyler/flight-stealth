@@ -9,11 +9,10 @@ package flight.behaviors
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
-	
+
 	import flight.events.ButtonEvent;
-	
+
 	[SkinState("up")]
 	[SkinState("over")]
 	[SkinState("down")]
@@ -89,7 +88,7 @@ package flight.behaviors
 			super(target);
 		}
 		
-		override public function set target(value:IEventDispatcher):void
+		override public function set target(value:InteractiveObject):void
 		{
 			if (value != null) {
 				if (value is DisplayObjectContainer) {

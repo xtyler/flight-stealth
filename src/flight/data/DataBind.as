@@ -9,9 +9,9 @@ package flight.data
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 	
-	import flight.metadata.Type;
-	import flight.metadata.getClassName;
-	import flight.metadata.getType;
+	import flight.utils.Type;
+	import flight.utils.getClassName;
+	import flight.utils.getType;
 	
 	public class DataBind
 	{

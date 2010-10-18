@@ -10,18 +10,7 @@ package flight.layouts
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import flight.measurement.resolveHeight;
-	import flight.measurement.resolveWidth;
-	
-	[LayoutProperty(name="width", measure="true")]
-	[LayoutProperty(name="height", measure="true")]
-	
-	/**
-	 * Provides a measured layout from left to right.
-	 * 
-	 * @alpha
-	 **/
-	public class HorizontalLayout extends Layout implements ILayout
+	public class HorizontalLayout extends Layout
 	{
 		
 		public var gap:Number = 5;
