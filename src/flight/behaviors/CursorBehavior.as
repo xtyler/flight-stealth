@@ -12,7 +12,7 @@ package flight.behaviors
 	
 	public class CursorBehavior extends Behavior
 	{
-		[Bindable]
+//		[Bindable]
 		public var cursor:Object;
 		
 		public function CursorBehavior(target:InteractiveObject = null)

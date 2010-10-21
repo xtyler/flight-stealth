@@ -6,96 +6,140 @@
 
 package flight.layouts
 {
+	import flash.display.DisplayObject;
 
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
+	import flight.styles.IStyleable;
 
-	import flight.styles.hasStyle;
-	import flight.styles.resolveStyle;
-	
 	public class BasicLayout extends Layout
 	{
-		
-		override public function measure(children:Array):Point
+		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
-			super.measure(children);
-			var point:Point = new Point(0, 0);
-			for each(var child:Object in children) {
-				
-				var width:Number = resolveWidth(child);
-				var height:Number = resolveHeight(child);
-				var left:Number = resolveStyle(child, "left") as Number;
-				var right:Number = resolveStyle(child, "right") as Number;
-				var top:Number = resolveStyle(child, "top") as Number;
-				var bottom:Number = resolveStyle(child, "bottom") as Number;
-				var horizontalCenter:Number = resolveStyle(child, "horizontalCenter") as Number;
-				var verticalCenter:Number = resolveStyle(child, "verticalCenter") as Number;
-				
-				var xp:Number = child.x + width;
-				var yp:Number = child.y + height;
-				
-				if (hasStyle(child, "left") && hasStyle(child, "right")) {
-					xp = left + width + right;
-				} else if (hasStyle(child, "left")) {
-					xp = left + width;
-				} else if (hasStyle(child, "right")) {
-					xp = width + right;
-				} else if (hasStyle(child, "horizontalCenter")) {
-					xp = width + Math.abs(horizontalCenter);
-				}
-				
-				if (hasStyle(child, "top") && hasStyle(child, "bottom")) {
-					yp = top + height + bottom;
-				} else if (hasStyle(child, "top")) {
-					yp = top + height;
-				} else if (hasStyle(child, "bottom")) {
-					yp = height + bottom;
-				} else if (hasStyle(child, "verticalCenter")) {
-					yp = height + Math.abs(verticalCenter);
-				}
-				
-				if (!isNaN(xp)) { point.x = Math.max(point.x, xp); }
-				if (!isNaN(yp)) { point.y = Math.max(point.y, yp); }
+			if (!(child is IStyleable)) {
+				return;
 			}
-			return point;
+			
+			var style:Object = IStyleable(child).style;
+			var offsetX:Number = !isNaN(style.offsetX) ? style.offsetX : 0;
+			var offsetY:Number = !isNaN(style.offsetY) ? style.offsetY : 0;
+			var measured:IBounds = target.measured;
+			var space:Number;
+			if ( !isNaN(style.left) ) {
+				if ( !isNaN(style.right) ) {
+					space = style.left + style.right;
+					measured.minWidth = measured.constrainWidth(space + childMin.width);
+					measured.maxWidth = measured.constrainWidth(space + childMax.width);
+				} else if ( !isNaN(style.horizontal) ) {
+					space = style.left - offsetX;
+					measured.minWidth = measured.constrainWidth((space + childMin.width)/style.horizontal);
+					measured.maxWidth = measured.constrainWidth((space + childMax.width)/style.horizontal);
+				} else {
+					space = style.left;
+					measured.minWidth = measured.constrainWidth(space + childRect.width);
+				}
+			} else if ( !isNaN(style.right) ) {
+				if ( !isNaN(style.horizontal) ) {
+					space = style.right + offsetX;
+					measured.minWidth = measured.constrainWidth((space + childMin.width)/style.horizontal);
+					measured.maxWidth = measured.constrainWidth((space + childMax.width)/style.horizontal);
+				} else {
+					space = style.right;
+					measured.minWidth = measured.constrainWidth(offsetX + childRect.width);
+				}
+			} else if ( !isNaN(style.horizontal) ) {
+				measured.minWidth = measured.constrainWidth(Math.abs(offsetX) + childRect.width);
+			} else {
+				measured.minWidth = measured.constrainWidth(childRect.x + childRect.width);
+			}
+			
+			if ( !isNaN(style.top) ) {
+				if ( !isNaN(style.bottom) ) {
+					space = style.top + style.bottom;
+					measured.minHeight = measured.constrainHeight(space + childMin.height);
+					measured.maxHeight = measured.constrainHeight(space + childMax.height);
+				} else if ( !isNaN(style.vertical) ) {
+					space = style.top - offsetY;
+					measured.minHeight = measured.constrainHeight((space + childMin.height)/style.vertical);
+					measured.maxHeight = measured.constrainHeight((space + childMax.height)/style.vertical);
+				} else {
+					space = style.top;
+					measured.minHeight = measured.constrainHeight(space + childRect.height);
+				}
+			} else if ( !isNaN(style.bottom) ) {
+				if ( !isNaN(style.vertical) ) {
+					space = style.bottom + offsetY;
+					measured.minHeight = measured.constrainHeight((space + childMin.height)/style.vertical);
+					measured.maxHeight = measured.constrainHeight((space + childMax.height)/style.vertical);
+				} else {
+					space = style.bottom;
+					measured.minHeight = measured.constrainHeight(space + childRect.height);
+				}
+			} else if ( !isNaN(style.vertical) ) {
+				measured.minHeight = measured.constrainHeight(Math.abs(offsetY) + childRect.height);
+			} else {
+				measured.minHeight = measured.constrainHeight(childRect.y + childRect.height);
+			}
 		}
 		
-		override public function update(children:Array, rectangle:Rectangle):void
+		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{
-			super.update(children, rectangle);
-			for each(var child:Object in children) {
-				var width:Number = resolveWidth(child);
-				var height:Number = resolveHeight(child);
-				var left:Number = resolveStyle(child, "left") as Number;
-				var right:Number = resolveStyle(child, "right") as Number;
-				var top:Number = resolveStyle(child, "top") as Number;
-				var bottom:Number = resolveStyle(child, "bottom") as Number;
-				var horizontalCenter:Number = resolveStyle(child, "horizontalCenter") as Number;
-				var verticalCenter:Number = resolveStyle(child, "verticalCenter") as Number;
-				
-				if (hasStyle(child, "left") && hasStyle(child, "right")) {
-					child.x = left;
-					width = rectangle.width - child.x - right;
-				} else if (hasStyle(child, "left")) {
-					child.x = left;
-				} else if (hasStyle(child, "right")) {
-					child.x = rectangle.width - width - right;
-				} else if (hasStyle(child, "horizontalCenter")) {
-					child.x = rectangle.width / 2 - width / 2 + horizontalCenter;
+			if (!(child is IStyleable)) {
+				return;
+			}
+			
+			var style:Object = IStyleable(child).style;
+			var offsetX:Number = !isNaN(style.offsetX) ? style.offsetX : 0;
+			var offsetY:Number = !isNaN(style.offsetY) ? style.offsetY : 0;
+			if ( !isNaN(style.left) ) {
+				if ( !isNaN(style.right) ) {
+					childRect.width = target.width - style.left - style.right;
+				} else if ( !isNaN(style.horizontal) ) {
+					childRect.width = (style.horizontal * target.width) - style.left + offsetX;
+				} else if (!isNaN(percentWidth)) {
+					childRect.width = percentWidth * (target.width - style.left);
 				}
 				
-				if (hasStyle(child, "top") && hasStyle(child, "bottom")) {
-					child.y = top;
-					height = rectangle.height - child.y - bottom;
-				} else if (hasStyle(child, "top")) {
-					child.y = top;
-				} else if (hasStyle(child, "bottom")) {
-					child.y = rectangle.height - height - bottom;
-				} else if (hasStyle(child, "verticalCenter")) {
-					child.y = rectangle.height / 2 - height / 2 + verticalCenter;
+				childRect.x = style.left;
+			} else if ( !isNaN(style.right) ) {
+				if ( !isNaN(style.horizontal) ) {
+					childRect.width = (style.horizontal * target.width) - style.right - offsetX;
+				} else if (!isNaN(percentWidth)) {
+					childRect.width = percentWidth * (target.width - style.right);
 				}
 				
-				setSize(child, width, height);
+				childRect.x = target.width - childRect.width - style.right;
+			} else if ( !isNaN(style.horizontal) ) {
+				if (!isNaN(percentWidth)) {
+					childRect.width = percentWidth * target.width;
+				}
+				
+				childRect.x = style.horizontal * (target.width - childRect.width) + offsetX;
+			}
+			
+			
+			if ( !isNaN(style.top) ) {
+				if ( !isNaN(style.bottom) ) {
+					childRect.height = target.height - style.top - style.bottom;
+				} else if ( !isNaN(style.vertical) ) {
+					childRect.height = (style.vertical * target.height) - style.top + offsetY;
+				} else if (!isNaN(percentHeight)) {
+					childRect.height = percentHeight * (target.height - style.top);
+				}
+				
+				childRect.y = style.top;
+			} else if ( !isNaN(style.bottom) ) {
+				if ( !isNaN(style.vertical) ) {
+					childRect.height = (style.vertical * target.height) - style.bottom - offsetY;
+				} else if (!isNaN(percentHeight)) {
+					childRect.height = percentHeight * (target.height - style.bottom);
+				}
+				
+				childRect.y = target.height - childRect.height - style.bottom;
+			} else if ( !isNaN(style.vertical) ) {
+				if (!isNaN(percentHeight)) {
+					childRect.height = percentHeight * target.height;
+				}
+				
+				childRect.y = style.vertical * (target.height - childRect.height) + offsetY;
 			}
 		}
 		

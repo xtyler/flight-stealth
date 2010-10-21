@@ -30,7 +30,6 @@
 	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
 	<component id="Layout" class="flight.layouts.Layout"/>
 	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
-	<component id="XYLayout" class="flight.layouts.XYLayout"/>
 	
 	<!-- graphics -->
 	<component id="BitmapImage" class="flight.graphics.BitmapImage"/>

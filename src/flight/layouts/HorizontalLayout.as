@@ -6,41 +6,75 @@
 
 package flight.layouts
 {
-	
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	
+	import flash.display.DisplayObject;
+
 	public class HorizontalLayout extends Layout
 	{
-		
-		public var gap:Number = 5;
-		
-		override public function measure(children:Array):Point
+		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
-			super.measure(children);
-			var point:Point = new Point(gap / 2, 0);
-			for each(var child:Object in children) {
-				var width:Number = resolveWidth(child);
-				var height:Number = resolveHeight(child);
-				point.x += width + gap;
-				point.y = Math.max(point.y, height);
+			var measured:IBounds = target.measured;
+			
+			// vertical size
+			var space:Number = childMargin.top + childMargin.bottom;
+			if (verticalAlign == Align.JUSTIFY || !isNaN(percentHeight)) {
+				measured.minHeight = measured.constrainHeight(childMin.height + space);
+				measured.maxHeight = measured.constrainHeight(childMax.height + space);
+			} else {
+				space += childRect.height;
+				if (measured.height < space) {
+					measured.height = space;
+					measured.minHeight = measured.constrainHeight(measured.height);
+				}
 			}
-			point.x -= gap / 2;
-			return point;
+			
+			// horizontal size
+			if (last) {
+				space = childMargin.left + childMargin.right;
+			} else {
+				space = childMargin.left + padding.horizontal;
+				contentMargin.left = childMargin.right;
+			}
+			if (!isNaN(percentWidth)) {
+				percentHorizontal += percentWidth;
+				measured.width += space;
+			} else {
+				measured.width += childRect.width + space;
+			}
+			measured.minWidth += childRect.width + space;
 		}
 		
-		override public function update(children:Array, rectangle:Rectangle):void
+		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{
-			super.update(children, rectangle);
-			var position:Number = gap / 2;
-			var length:int = children.length;
-			for (var i:int = 0; i < length; i++) {
-				var child:Object = children[i];
-				var width:Number = resolveWidth(child);
-				var height:Number = resolveHeight(child);
-				child.x = position;
-				child.y = rectangle.height / 2 - height / 2;
-				position += width + gap;
+			if (!isNaN(percentWidth)) {
+				childRect.width = constrainChildWidth(contentRect.width * percentWidth * 1/percentHorizontal);
+			}
+			if (!isNaN(percentHeight)) {
+				childRect.height = constrainChildHeight(contentRect.height * percentHeight * 1/percentVertical);
+			}
+			
+			// vertical layout
+			switch (verticalAlign) {
+				case Align.TOP:
+					childRect.y = contentRect.y + childMargin.top;
+					break;
+				case Align.CENTER:
+					childRect.y = contentRect.y + (childMargin.top + contentRect.height - childRect.height - childMargin.bottom) / 2;
+					break;
+				case Align.RIGHT:
+					childRect.y = contentRect.y + (contentRect.height - childRect.height - childMargin.bottom);
+					break;
+				case Align.JUSTIFY:
+					childRect.y = contentRect.y + childMargin.top;
+					childRect.height = contentRect.height - childMargin.top - childMargin.bottom;
+					break;
+			}
+			
+			// horizontal layout
+			childRect.x = contentRect.x + childMargin.left;
+			if (last) {
+			} else {
+				contentRect.left = childRect.x + childRect.width + padding.horizontal;
+				contentMargin.left = childMargin.right;
 			}
 		}
 		

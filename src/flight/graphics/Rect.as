@@ -7,14 +7,18 @@
 package flight.graphics
 {
 	import flash.display.GraphicsPathCommand;
-
+	import flash.events.Event;
+	
 	import flight.data.DataChange;
+	import flight.display.DrawPhase;
+	import flight.display.LayoutPhase;
+	import flight.display.RenderPhase;
 
 	public class Rect extends GraphicShape
 	{
 		public function Rect()
 		{
-			
+			addEventListener(LayoutPhase.RESIZE, onResize);
 		}
 		
 		[Bindable(event="radiusXChange", style="weak")]
@@ -114,6 +118,11 @@ package flight.graphics
 			data.push(0, height);
 			cmds.push(GraphicsPathCommand.LINE_TO);
 			data.push(0, 0);
+		}
+		
+		private function onResize(event:Event):void
+		{
+			RenderPhase.invalidate(this, DrawPhase.DRAW);
 		}
 	}
 }

@@ -19,19 +19,19 @@ package flight.behaviors
 	public class SlideBehavior extends Behavior// extends StepBehavior
 	{
 		
-		[Bindable]
+//		[Bindable]
 		[Binding(target="target.skin.track")]
 		public var track:InteractiveObject;
 		
-		[Bindable]
+//		[Bindable]
 		[Binding(target="target.skin.thumb")]
 		public var thumb:InteractiveObject;
 		
-		[Bindable]
+//		[Bindable]
 		[Binding(target="target.horizontal")]
 		public var horizontal:Boolean = false;
 		
-		[Bindable]
+//		[Bindable]
 		[Binding(target="target.position")]
 		public var position:IRange = new Range();		// TODO: implement lazy instantiation of position
 		

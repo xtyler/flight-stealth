@@ -13,76 +13,86 @@ package flight.data
 	import flight.list.ArrayList;
 	import flight.list.IList;
 	
-	[Bindable]
 	public class ListSelection extends EventDispatcher implements IListSelection
 	{
-		public var multiselect:Boolean = false;
-		
 		private var list:IList;
 		private var updatingLists:Boolean;
-		private var _index:int = -1;
-		private var _item:Object = null;
-		private var _indices:ArrayList = new ArrayList();
-		private var _items:ArrayList = new ArrayList();
 		
 		public function ListSelection(list:IList)
 		{
 			this.list = list;
-			list.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 0xF);
-			_indices.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 0xF);
-			_items.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 0xF);
+			list.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 10);
 		}
 		
-		public function get index():int
+		
+		[Bindable(event="mutliselectChange", style="weak")]
+		public function get multiselect():Boolean { return _multiselect }
+		public function set multiselect(value:Boolean):void
 		{
-			return _index;
+			DataChange.change(this, "multiselect", _multiselect, _multiselect = value);
 		}
+		private var _multiselect:Boolean = false;
+		
+		
+		[Bindable(event="indexChange", style="weak")]
+		public function get index():int { return _index; }
 		public function set index(value:int):void
 		{
-			value = Math.max(-1, Math.min(list.length-1, value));
-			if (_index == value) {
-				return;
+			// restrict value within -1 (deselect) and highest possible index
+			value = value < -1 ? -1 : (value > list.length - 1 ? list.length - 1 : value);
+			if (_index != value) {
+				DataChange.queue(this, "item", _item, _item = list.getItemAt(value));
+				DataChange.queue(this, "index", _index, _index = value);
+				// TODO: optimize list selection
+				updatingLists = true;
+				_indices.source = [_index];
+				_items.source = [_item];
+				updatingLists = false;
+				DataChange.change();
 			}
-			_index = value;
-			item = list.getItemAt(_index);
-			
-			updatingLists = true;
-			_indices.source = [_index];
-			_items.source = [_item];
-			updatingLists = false;
 		}
+		private var _index:int = -1;
 		
-		public function get item():Object
-		{
-			return _item;
-		}
+		[Bindable(event="itemChange", style="weak")]
+		public function get item():Object { return _item; }
 		public function set item(value:Object):void
 		{
 			var i:int = list.getItemIndex(value);
 			if (i == -1) {
 				value = null;
 			}
-			if (_item == value) {
-				return;
+			if (_item != value) {
+				DataChange.queue(this, "item", _item, _item = value);
+				DataChange.queue(this, "index", _index, _index = i);
+				updatingLists = true;
+				_items.source = [_item];
+				_indices.source = [_index];
+				updatingLists = false;
 			}
-			_item = value;
-			index = i;
-			
-			updatingLists = true;
-			_items.source = [_item];
-			_indices.source = [_index];
-			updatingLists = false;
 		}
+		private var _item:Object = null;
 		
+		[Bindable(event="indicesChange", style="weak")]
 		public function get indices():IList
 		{
+			if (!_indices) {
+				_indices = new ArrayList();
+				_indices.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
+			}
 			return _indices;
 		}
+		private var _indices:ArrayList;
 		
+		[Bindable(event="itemsChange", style="weak")]
 		public function get items():IList
 		{
+			if (!_indices) {
+				_items = new ArrayList();
+				_items.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
+			}
 			return _items;
 		}
+		private var _items:ArrayList = new ArrayList();
 		
 		public function select(items:*):void
 		{

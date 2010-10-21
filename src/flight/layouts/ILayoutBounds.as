@@ -44,27 +44,27 @@ package flight.layouts
 		function get y():Number;
 		function set y(value:Number):void;
 		
-//		/**
-//		 * The width of the bounds as a percentage of the parent's total size,
-//		 * relative to the local coordinates of the parent. The percentWidth
-//		 * is a value from 0 to 100, where 100 equals 100% of the parent's
-//		 * total size.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get percentWidth():Number;
-//		function set percentWidth(value:Number):void;
+		/**
+		 * The width of the bounds as a percentage of the parent's total size,
+		 * relative to the local coordinates of the parent. The percentWidth
+		 * is a value from 0 to 100, where 100 equals 100% of the parent's
+		 * total size.
+		 * 
+		 * @default		NaN
+		 */
+		function get percentWidth():Number;
+		function set percentWidth(value:Number):void;
 		
-//		/**
-//		 * The height of the bounds as a percentage of the parent's total size,
-//		 * relative to the local coordinates of the parent. The percentHeight
-//		 * is a value from 0 to 100, where 100 equals 100% of the parent's
-//		 * total size.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get percentHeight():Number;
-//		function set percentHeight(value:Number):void;
+		/**
+		 * The height of the bounds as a percentage of the parent's total size,
+		 * relative to the local coordinates of the parent. The percentHeight
+		 * is a value from 0 to 100, where 100 equals 100% of the parent's
+		 * total size.
+		 * 
+		 * @default		NaN
+		 */
+		function get percentHeight():Number;
+		function set percentHeight(value:Number):void;
 		
 		/**
 		 * The preferred width of the bounds relative to the local coordinates
@@ -80,6 +80,12 @@ package flight.layouts
 		 */
 		function get preferredHeight():Number;
 		
+		/**
+		 * The space surrounding the layout, relative to the local coordinates
+		 * of the parent. The space is defined as a box with left, top, right
+		 * and bottom coordinates.
+		 */
+		function get margin():Box;
 		
 		/**
 		 * The explicitly set bounds of this bounds instance. Actual values
@@ -127,7 +133,7 @@ package flight.layouts
 		 */
 		function getLayoutRect(width:Number = NaN, height:Number = NaN):Rectangle
 		
-		// TODO: implement baseline and anchor features
+		// TODO: implement baseline and anchor features - (anchor may be implemented as a Box instance)
 		
 //		/**
 //		 * The y coordinate of the baseline of this bounds instance, primarily
@@ -186,7 +192,7 @@ package flight.layouts
 //		 * 
 //		 * @default		NaN
 //		 */
-//		function get veritical():Number;
+//		function get vertical():Number;
 		
 		/**
 		 * The Flash display object associated with these layout properties.

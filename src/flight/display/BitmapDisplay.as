@@ -14,6 +14,7 @@ package flight.display
 	
 	import flight.data.DataChange;
 	import flight.layouts.Bounds;
+	import flight.layouts.Box;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyleable;
@@ -280,7 +281,7 @@ package flight.display
 				DataChange.change(this, "rotation", super.rotation, super.rotation = value);
 			}
 		}
-
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -314,10 +315,47 @@ package flight.display
 		public function get freeform():Boolean { return _freeform; }
 		public function set freeform(value:Boolean):void
 		{
-			DataChange.change(this, "freeform", _freeform, _freeform = value);
+			if (_freeform != value) {
+				if (!isNaN(_layoutWidth)) {
+					_layoutWidth = NaN;
+					updateWidth();
+				}
+				if (!isNaN(_layoutWidth)) {
+					_layoutHeight = NaN;
+					updateHeight();
+				}
+				DataChange.change(this, "freeform", _freeform, _freeform = value);
+			}
 		}
 		private var _freeform:Boolean = false;
 		
+		/**
+		 * @inheritDoc
+		 */
+		[Bindable(event="percentWidthChange", style="weak")]
+		public function get percentWidth():Number { return _percentWidth }
+		public function set percentWidth(value:Number):void
+		{
+			if (_percentWidth != value) {
+				invalidateLayout();
+				DataChange.change(this, "percentWidth", _percentWidth, _percentWidth = value);
+			}
+		}
+		private var _percentWidth:Number = NaN;
+		
+		/**
+		 * @inheritDoc
+		 */
+		[Bindable(event="percentHeightChange", style="weak")]
+		public function get percentHeight():Number { return _percentHeight }
+		public function set percentHeight(value:Number):void
+		{
+			if (_percentHeight != value) {
+				invalidateLayout();
+				DataChange.change(this, "percentHeight", _percentHeight, _percentHeight = value);
+			}
+		}
+		private var _percentHeight:Number = NaN;
 		
 		/**
 		 * @inheritDoc
@@ -334,6 +372,19 @@ package flight.display
 		{
 			return !isNaN(_explicit.height) ? _explicit.height : _measured.height;
 		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		[Bindable(event="marginChange", style="weak")]
+		public function get margin():Box { return _margin || (_margin = new Box()); }
+		public function set margin(value:*):void
+		{
+			value = (value is String ? Box.fromString(value) : value) as Box;
+			invalidateLayout();
+			DataChange.change(this, "margin", _margin, _margin = value);
+		}
+		private var _margin:Box;
 		
 		/**
 		 * @inheritDoc
@@ -432,7 +483,7 @@ package flight.display
 		 */
 		public function setLayoutPosition(x:Number, y:Number):void
 		{
-			if (rotation) {
+			if (complexMatrix()) {
 				var m:Matrix = matrix, d:Number;
 				d = m.a * _width + m.c * _height;
 				if (d < 0) x -= d;
@@ -450,7 +501,7 @@ package flight.display
 		 */
 		public function setLayoutSize(width:Number, height:Number):void
 		{
-			if (rotation) {
+			if (complexMatrix()) {
 				var m:Matrix = matrix;
 				if (isNaN(width)) {
 					width = Math.abs(m.a * preferredWidth + m.c * preferredHeight);
@@ -482,7 +533,7 @@ package flight.display
 			if (isNaN(width)) width = _width;
 			if (isNaN(height)) height = _height;
 			
-			if (rotation) {
+			if (complexMatrix()) {
 				var m:Matrix = matrix;
 				var x:Number, y:Number, tx:Number, ty:Number;
 				var minX:Number, minY:Number, maxX:Number, maxY:Number;
@@ -529,7 +580,7 @@ package flight.display
 		public function constrainWidth(width:Number):Number
 		{
 			return (width <= _minWidth) ? _minWidth :
-				   (width >= _maxWidth) ? _maxWidth : width;
+				(width >= _maxWidth) ? _maxWidth : width;
 		}
 		
 		/**
@@ -538,7 +589,7 @@ package flight.display
 		public function constrainHeight(height:Number):Number
 		{
 			return (height <= _minHeight) ? _minHeight :
-				   (height >= _maxHeight) ? _maxHeight : height;
+				(height >= _maxHeight) ? _maxHeight : height;
 		}
 		
 		/**
@@ -556,7 +607,7 @@ package flight.display
 		{
 			RenderPhase.validateNow(this, phase);
 		}
-				
+		
 		/**
 		 * Specialized method for MXML, called after the display has been
 		 * created and all of its properties specified in MXML have been
@@ -574,9 +625,8 @@ package flight.display
 		
 		protected function measure():void
 		{
-			var rect:Rectangle = getRect(this);
-			_measured.width = rect.width;
-			_measured.height = rect.height;
+			_measured.width = bitmapData ? bitmapData.width : 0;
+			_measured.height = bitmapData ? bitmapData.height : 0;
 		}
 		
 		protected function invalidateLayout(measureOnly:Boolean = false):void
@@ -600,22 +650,28 @@ package flight.display
 				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
 				DataChange.change(this, "width", _width, _width = w);
-				dispatchEvent(new Event(Event.RESIZE));
 			}
 		}
 		
 		private function updateHeight(layout:Boolean = false):void
 		{
-			var h:Number = !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth;
-			h = constrainWidth(h);
-			if (_width != h) {
+			var h:Number = !isNaN(_layoutHeight) ? _layoutHeight : preferredHeight;
+			h = constrainHeight(h);
+			if (_height != h) {
 				if (!layout) {
 					invalidateLayout();
 				}
 				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
-				DataChange.change(this, "width", _width, _width = h);
+				DataChange.change(this, "height", _height, _height = h);
 			}
+		}
+		
+		private function complexMatrix():Boolean
+		{
+			var m:Matrix = matrix;
+			return (m.a < 0 || m.d < 0 ||
+					m.b != 0 || m.c != 0);
 		}
 		
 		private function onMeasure(event:Event):void
@@ -623,6 +679,10 @@ package flight.display
 			measure();
 			updateWidth();
 			updateHeight();
+			minWidth = minWidth;
+			minHeight = minHeight;
+			maxWidth = maxWidth;
+			maxHeight = maxHeight;
 		}
 		
 		private function onAddedToStage(event:Event):void

@@ -6,10 +6,14 @@
 
 package flight.layouts
 {
+	import flash.events.EventDispatcher;
+	
+	import flight.data.DataChange;
+	
 	/**
 	 * The Bounds class holds values related to a object's dimensions.
 	 */
-	public class Bounds implements IBounds
+	public class Bounds extends EventDispatcher implements IBounds
 	{
 		/**
 		 * Constructor.
@@ -26,72 +30,86 @@ package flight.layouts
 		/**
 		 * @inheritDoc
 		 */
+		[Inspectable(category="General")]
+		[Bindable(event="widthChange", style="weak")]
 		public function get width():Number { return _width; }
 		public function set width(value:Number):void
 		{
-			_width = constrainWidth(value);
+			value = constrainWidth(value);
+			DataChange.change(this, "width", _width, _width = value);
 		}
 		private var _width:Number;
 		
 		/**
 		 * @inheritDoc
 		 */
+		[Inspectable(category="General")]
+		[Bindable(event="heightChange", style="weak")]
 		public function get height():Number { return _height; }
 		public function set height(value:Number):void
 		{
-			_height = constrainHeight(value);
+			value = constrainHeight(value);
+			DataChange.change(this, "height", _height, _height = value);
 		}
 		private var _height:Number;
 		
 		/**
 		 * @inheritDoc
 		 */
+		[Inspectable(category="General")]
+		[Bindable(event="minWidthChange", style="weak")]
 		public function get minWidth():Number { return _minWidth; }
 		public function set minWidth(value:Number):void
 		{
-			_minWidth = value;
 			if (_maxWidth < value) {
-				_maxWidth = value;
+				DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
 			}
+			DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
 		}
 		private var _minWidth:Number = 0;
 		
 		/**
 		 * @inheritDoc
 		 */
+		[Inspectable(category="General")]
+		[Bindable(event="minHeightChange", style="weak")]
 		public function get minHeight():Number { return _minHeight; }
 		public function set minHeight(value:Number):void
 		{
-			_minHeight = value;
 			if (_maxHeight < value) {
-				_maxHeight = value;
+				DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
 			}
+			DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
 		}
 		private var _minHeight:Number = 0;
 			
 		/**
 		 * @inheritDoc
-		 */	
+		 */
+		[Inspectable(category="General")]
+		[Bindable(event="maxWidthChange", style="weak")]
 		public function get maxWidth():Number { return _maxWidth; }
 		public function set maxWidth(value:Number):void
 		{
 			if (_minWidth > value) {
-				_minWidth = value;
+				DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
 			}
-			_maxWidth = value;
+			DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
 		}
 		private var _maxWidth:Number = 0xFFFFFF;
 		
 		/**
 		 * @inheritDoc
 		 */
+		[Inspectable(category="General")]
+		[Bindable(event="maxHeightChange", style="weak")]
 		public function get maxHeight():Number { return _maxHeight; }
 		public function set maxHeight(value:Number):void
 		{
 			if (_minHeight > value) {
-				_minHeight = value;
+				DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
 			}
-			_maxHeight = value;
+			DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
 		

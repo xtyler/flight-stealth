@@ -18,12 +18,12 @@ package flight.behaviors
 		public var fwdBehavior:ButtonBehavior;
 		public var bwdBehavior:ButtonBehavior;
 		
-		[Bindable]
+//		[Bindable]
 		public var fwdBtn:InteractiveObject;
-		[Bindable]
+//		[Bindable]
 		public var bwdBtn:InteractiveObject;
 		
-		[Bindable]
+//		[Bindable]
 		[Binding(target="target.position")]
 		public var position:IRange = new Range();		// TODO: implement lazy instantiation of position
 		
