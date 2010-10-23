@@ -6,13 +6,13 @@
 
 package flight.behaviors
 {
-
 	import flash.display.InteractiveObject;
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
-
+	
 	import flight.data.DataBind;
-
+	import flight.data.DataChange;
+	import flight.utils.getClassName;
+	
 	/**
 	 * Behavior is a convenient base class for various behavior implementations.
 	 * These classes represent added features and functionality to a target
@@ -26,21 +26,24 @@ package flight.behaviors
 	 * the component (eg ReorderTabBehavior)
 	 * 3) common addon behaviors - general solutions for all components, or all
 	 * components of a type (eg TooltipBehavior)
-	 * @alpha
 	 */
 	public class Behavior extends EventDispatcher implements IBehavior
 	{
 		protected var dataBind:DataBind = new DataBind();
 		
-		/**
-		 * The object this behavior acts upon.
-		 */
-		[Bindable(event="targetChange")]
-		public function get target():InteractiveObject { return _target; }
+		[Bindable(event="typeChange", style="noEvent")]
+		public function get type():String { return _type || getClassName(this); }
+		public function set type(value:String):void
+		{
+			DataChange.change(this, "type", _type, _type = value);
+		}
+		private var _type:String;
+		
+		[Bindable(event="targetChange", style="noEvent")]
+		public function get target():InteractiveObject { return _target }
 		public function set target(value:InteractiveObject):void
 		{
-			_target = value;
-			dispatchEvent(new Event("targetChange"));
+			DataChange.change(this, "target", _target, _target = value);
 		}
 		private var _target:InteractiveObject;
 		

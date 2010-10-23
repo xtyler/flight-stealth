@@ -10,10 +10,12 @@ package flight.layouts
 	import flash.events.EventDispatcher;
 
 	import flight.data.DataChange;
+	
+	[Event(name="change", type="flash.events.Event")]
 
 	public class Box extends EventDispatcher
 	{
-		[Bindable(event="leftChange", style="weak")]
+		[Bindable(event="leftChange", style="noEvent")]
 		public function get left():Number { return _left }
 		public function set left(value:Number):void
 		{
@@ -22,7 +24,7 @@ package flight.layouts
 		}
 		private var _left:Number;
 		
-		[Bindable(event="topChange", style="weak")]
+		[Bindable(event="topChange", style="noEvent")]
 		public function get top():Number { return _top }
 		public function set top(value:Number):void
 		{
@@ -31,7 +33,7 @@ package flight.layouts
 		}
 		private var _top:Number;
 		
-		[Bindable(event="rightChange", style="weak")]
+		[Bindable(event="rightChange", style="noEvent")]
 		public function get right():Number { return _right }
 		public function set right(value:Number):void
 		{
@@ -40,7 +42,7 @@ package flight.layouts
 		}
 		private var _right:Number;
 		
-		[Bindable(event="bottomChange", style="weak")]
+		[Bindable(event="bottomChange", style="noEvent")]
 		public function get bottom():Number { return _bottom }
 		public function set bottom(value:Number):void
 		{
@@ -49,7 +51,7 @@ package flight.layouts
 		}
 		private var _bottom:Number;
 		
-		[Bindable(event="horizontalChange", style="weak")]
+		[Bindable(event="horizontalChange", style="noEvent")]
 		public function get horizontal():Number { return _horizontal }
 		public function set horizontal(value:Number):void
 		{
@@ -58,7 +60,7 @@ package flight.layouts
 		}
 		private var _horizontal:Number = 0;
 		
-		[Bindable(event="verticalChange", style="weak")]
+		[Bindable(event="verticalChange", style="noEvent")]
 		public function get vertical():Number { return _vertical }
 		public function set vertical(value:Number):void
 		{

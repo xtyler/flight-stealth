@@ -46,10 +46,10 @@ package flight.layouts
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{
 			if (!isNaN(percentWidth)) {
-				childRect.width = constrainChildWidth(contentRect.width * percentWidth * 1/percentHorizontal);
+				childRect.width = constrainChildWidth(contentRect.width * percentWidth * (percentHorizontal < 1 ? 1 : 1/percentHorizontal));
 			}
 			if (!isNaN(percentHeight)) {
-				childRect.height = constrainChildHeight(contentRect.height * percentHeight * 1/percentVertical);
+				childRect.height = constrainChildHeight(contentRect.height * percentHeight * (percentVertical < 1 ? 1 : 1/percentVertical));
 			}
 			
 			// vertical layout
@@ -60,7 +60,7 @@ package flight.layouts
 				case Align.CENTER:
 					childRect.y = contentRect.y + (childMargin.top + contentRect.height - childRect.height - childMargin.bottom) / 2;
 					break;
-				case Align.RIGHT:
+				case Align.BOTTOM:
 					childRect.y = contentRect.y + (contentRect.height - childRect.height - childMargin.bottom);
 					break;
 				case Align.JUSTIFY:

@@ -25,7 +25,7 @@ package flight.data
 		}
 		
 		
-		[Bindable(event="mutliselectChange", style="weak")]
+		[Bindable(event="mutliselectChange", style="noEvent")]
 		public function get multiselect():Boolean { return _multiselect }
 		public function set multiselect(value:Boolean):void
 		{
@@ -34,7 +34,7 @@ package flight.data
 		private var _multiselect:Boolean = false;
 		
 		
-		[Bindable(event="indexChange", style="weak")]
+		[Bindable(event="indexChange", style="noEvent")]
 		public function get index():int { return _index; }
 		public function set index(value:int):void
 		{
@@ -53,7 +53,7 @@ package flight.data
 		}
 		private var _index:int = -1;
 		
-		[Bindable(event="itemChange", style="weak")]
+		[Bindable(event="itemChange", style="noEvent")]
 		public function get item():Object { return _item; }
 		public function set item(value:Object):void
 		{
@@ -72,7 +72,7 @@ package flight.data
 		}
 		private var _item:Object = null;
 		
-		[Bindable(event="indicesChange", style="weak")]
+		[Bindable(event="indicesChange", style="noEvent")]
 		public function get indices():IList
 		{
 			if (!_indices) {
@@ -83,7 +83,7 @@ package flight.data
 		}
 		private var _indices:ArrayList;
 		
-		[Bindable(event="itemsChange", style="weak")]
+		[Bindable(event="itemsChange", style="noEvent")]
 		public function get items():IList
 		{
 			if (!_indices) {

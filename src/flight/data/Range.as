@@ -6,7 +6,10 @@
 
 package flight.data
 {
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	
+	[Event(name="change", type="flash.events.Event")]
 	
 	public class Range extends EventDispatcher implements IRange
 	{
@@ -16,7 +19,7 @@ package flight.data
 			_max = max;
 		}
 		
-		[Bindable(event="minChange", style="weak")]
+		[Bindable(event="minChange", style="noEvent")]
 		public function get min():Number { return _min; }
 		public function set min(value:Number):void
 		{
@@ -30,7 +33,7 @@ package flight.data
 		}
 		private var _min:Number = 0;
 		
-		[Bindable(event="maxChange", style="weak")]
+		[Bindable(event="maxChange", style="noEvent")]
 		public function get max():Number { return _max;}
 		public function set max(value:Number):void
 		{
@@ -44,7 +47,7 @@ package flight.data
 		}
 		private var _max:Number = 0;
 		
-		[Bindable(event="valueChange", style="weak")]
+		[Bindable(event="valueChange", style="noEvent")]
 		public function get value():Number { return _value; }
 		public function set value(value:Number):void
 		{
@@ -55,12 +58,13 @@ package flight.data
 				DataChange.queue(this, "value", _value, _value = value);
 				value = _min == _max ? 0 : (_value - _min) / (_max - _min);
 				DataChange.queue(this, "percent", _percent, _percent = value);
+				dispatchEvent(new Event(Event.CHANGE));
 			}
 			DataChange.change();
 		}
 		private var _value:Number = 0;
 		
-		[Bindable(event="percentChange", style="weak")]
+		[Bindable(event="percentChange", style="noEvent")]
 		public function get percent():Number { return _percent; }
 		public function set percent(value:Number):void
 		{
@@ -70,7 +74,7 @@ package flight.data
 		}
 		private var _percent:Number = 0;
 		
-		[Bindable(event="precisionChange", style="weak")]
+		[Bindable(event="precisionChange", style="noEvent")]
 		public function get precision():Number { return _precision; }
 		public function set precision(value:Number):void
 		{
@@ -81,7 +85,7 @@ package flight.data
 		}
 		private var _precision:Number = 1;
 		
-		[Bindable(event="stepSizeChange", style="weak")]
+		[Bindable(event="stepSizeChange", style="noEvent")]
 		public function get stepSize():Number { return _stepSize; }
 		public function set stepSize(value:Number):void
 		{

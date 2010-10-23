@@ -30,7 +30,6 @@ package flight.display
 	[Style(name="vertical")]
 	[Style(name="offsetX")]
 	[Style(name="offsetY")]
-	[Style(name="margin")]
 	[Style(name="dock")]
 	[Style(name="tile")]
 	
@@ -60,7 +59,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="idChange", style="weak")]
+		[Bindable(event="idChange", style="noEvent")]
 		public function get id():String { return _id; }
 		public function set id(value:String):void
 		{
@@ -80,7 +79,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="styleNameChange", style="weak")]
+		[Bindable(event="styleNameChange", style="noEvent")]
 		public function get styleName():String { return _styleName;}
 		public function set styleName(value:String):void
 		{
@@ -116,7 +115,7 @@ package flight.display
 //		/**
 //		 * @inheritDoc
 //		 */
-//		[Bindable(event="parentTransformChange", style="weak")]	// TODO: implement support from layout for non-children
+//		[Bindable(event="parentTransformChange", style="noEvent")]	// TODO: implement support from layout for non-children
 //		public function get parentTransform():ITransform { return _parentTransform; }
 //		public function set parentTransform(value:ITransform):void
 //		{
@@ -128,7 +127,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="xChange", style="weak")]
+		[Bindable(event="xChange", style="noEvent")]
 		override public function set x(value:Number):void
 		{
 			if (super.x != value) {
@@ -143,7 +142,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="yChange", style="weak")]
+		[Bindable(event="yChange", style="noEvent")]
 		override public function set y(value:Number):void
 		{
 			if (super.y != value) {
@@ -158,7 +157,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="widthChange", style="weak")]
+		[Bindable(event="widthChange", style="noEvent")]
 		override public function get width():Number { return _width; }
 		override public function set width(value:Number):void
 		{
@@ -171,7 +170,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="heightChange", style="weak")]
+		[Bindable(event="heightChange", style="noEvent")]
 		override public function get height():Number { return _height; }
 		override public function set height(value:Number):void
 		{
@@ -187,7 +186,7 @@ package flight.display
 		 * the nativeWidth property the scaleX property is adjusted
 		 * accordingly.
 		 */
-		[Bindable(event="nativeWidthChange", style="weak")]
+		[Bindable(event="nativeWidthChange", style="noEvent")]
 		public function get nativeWidth():Number { return super.width; }
 		public function set nativeWidth(value:Number):void
 		{
@@ -204,7 +203,7 @@ package flight.display
 		 * the nativeHeight property the scaleY property is adjusted
 		 * accordingly.
 		 */
-		[Bindable(event="nativeHeightChange", style="weak")]
+		[Bindable(event="nativeHeightChange", style="noEvent")]
 		public function get nativeHeight():Number { return super.height; }
 		public function set nativeHeight(value:Number):void
 		{
@@ -219,7 +218,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="Change", style="weak")]
+		[Bindable(event="Change", style="noEvent")]
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
@@ -232,7 +231,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="transformYChange", style="weak")]
+		[Bindable(event="transformYChange", style="noEvent")]
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
@@ -246,7 +245,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="scaleXChange", style="weak")]
+		[Bindable(event="scaleXChange", style="noEvent")]
 		override public function set scaleX(value:Number):void
 		{
 			if (super.scaleX != value) {
@@ -260,7 +259,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="scaleYChange", style="weak")]
+		[Bindable(event="scaleYChange", style="noEvent")]
 		override public function set scaleY(value:Number):void
 		{
 			if (super.scaleY != value) {
@@ -274,7 +273,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="rotationChange", style="weak")]
+		[Bindable(event="rotationChange", style="noEvent")]
 		override public function set rotation(value:Number):void
 		{
 			if (super.rotation != value) {
@@ -287,7 +286,7 @@ package flight.display
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="matrixChange", style="weak")]
+		[Bindable(event="matrixChange", style="noEvent")]
 		public function get matrix():Matrix
 		{
 			return _matrix || transform.matrix;
@@ -313,7 +312,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="Change", style="weak")]
+		[Bindable(event="Change", style="noEvent")]
 		public function get freeform():Boolean { return _freeform; }
 		public function set freeform(value:Boolean):void
 		{
@@ -334,7 +333,7 @@ package flight.display
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentWidthChange", style="weak")]
+		[Bindable(event="percentWidthChange", style="noEvent")]
 		public function get percentWidth():Number { return _percentWidth }
 		public function set percentWidth(value:Number):void
 		{
@@ -351,7 +350,7 @@ package flight.display
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentHeightChange", style="weak")]
+		[Bindable(event="percentHeightChange", style="noEvent")]
 		public function get percentHeight():Number { return _percentHeight }
 		public function set percentHeight(value:Number):void
 		{
@@ -384,13 +383,28 @@ package flight.display
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="marginChange", style="weak")]
-		public function get margin():Box { return _margin || (_margin = new Box()); }
+		[Bindable(event="marginChange", style="noEvent")]
+		public function get margin():Box { return _margin || (margin = new Box()); }
 		public function set margin(value:*):void
 		{
-			value = (value is String ? Box.fromString(value) : value) as Box;
+			if (value is String) {
+				value = Box.fromString(value);
+			} else if (value is Number) {
+				value = new Box(value, value, value, value);
+			} else {
+				value = value as Box;
+			}
+			
+			if (_margin) {
+				_margin.removeEventListener(Event.CHANGE, onMarginChange);
+			}
+			DataChange.queue(this, "margin", _margin, _margin = value);
+			if (_margin) {
+				_margin.addEventListener(Event.CHANGE, onMarginChange);
+			}
+			
 			invalidateLayout();
-			DataChange.change(this, "margin", _margin, _margin = value);
+			DataChange.change();
 		}
 		private var _margin:Box;
 		
@@ -398,7 +412,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="minWidthChange", style="weak")]
+		[Bindable(event="minWidthChange", style="noEvent")]
 		public function get minWidth():Number { return _minWidth;}
 		public function set minWidth(value:Number):void
 		{
@@ -406,7 +420,9 @@ package flight.display
 			if (_explicit.maxWidth < value) {
 				_explicit.maxWidth = value;
 			}
-			value = _measured.constrainWidth(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainWidth(value);
+			}
 			if (_minWidth != value) {
 				invalidateLayout(true);
 				DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
@@ -418,7 +434,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="minHeightChange", style="weak")]
+		[Bindable(event="minHeightChange", style="noEvent")]
 		public function get minHeight():Number { return _minHeight;}
 		public function set minHeight(value:Number):void
 		{
@@ -426,7 +442,9 @@ package flight.display
 			if (_explicit.maxHeight < value) {
 				_explicit.maxHeight = value;
 			}
-			value = _measured.constrainHeight(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainHeight(value);
+			}
 			if (_minHeight != value) {
 				invalidateLayout(true);
 				DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
@@ -438,7 +456,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="maxWidthChange", style="weak")]
+		[Bindable(event="maxWidthChange", style="noEvent")]
 		public function get maxWidth():Number { return _maxWidth;}
 		public function set maxWidth(value:Number):void
 		{
@@ -446,7 +464,9 @@ package flight.display
 				_explicit.minWidth = value;
 			}
 			_explicit.maxWidth = value;
-			value = _measured.constrainWidth(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainWidth(value);
+			}
 			if (_maxWidth != value) {
 				invalidateLayout(true);
 				DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
@@ -458,7 +478,7 @@ package flight.display
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="maxHeightChange", style="weak")]
+		[Bindable(event="maxHeightChange", style="noEvent")]
 		public function get maxHeight():Number { return _maxHeight;}
 		public function set maxHeight(value:Number):void
 		{
@@ -466,7 +486,9 @@ package flight.display
 				_explicit.minHeight = value;
 			}
 			_explicit.maxHeight = value;
-			value = _measured.constrainHeight(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainHeight(value);
+			}
 			if (_maxHeight != value) {
 				invalidateLayout(true);
 				DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
@@ -474,17 +496,32 @@ package flight.display
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
 		
+		[Bindable(event="constrainChange", style="noEvent")]
+		public function get constrainMeasured():Boolean { return _constrainMeasured }
+		public function set constrainMeasured(value:Boolean):void
+		{
+			if (_constrainMeasured != value) {
+				DataChange.queue(this, "constrainMeasured", _constrainMeasured, _constrainMeasured = value);
+				minWidth = _explicit.minWidth;
+				minHeight = _explicit.minHeight;
+				maxWidth = _explicit.maxWidth;
+				maxHeight = _explicit.maxHeight;
+				DataChange.change();
+			}
+		}
+		private var _constrainMeasured:Boolean = true;
+		
 		/**
 		 * @inheritDoc
 		 */
 		public function get explicit():IBounds { return _explicit; }
-		private var _explicit:Bounds;
+		private var _explicit:IBounds;
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured; }
-		private var _measured:Bounds;
+		private var _measured:IBounds;
 		
 		/**
 		 * @inheritDoc
@@ -509,6 +546,8 @@ package flight.display
 		 */
 		public function setLayoutSize(width:Number, height:Number):void
 		{
+			var preferredWidth:Number = this.preferredWidth;
+			var preferredHeight:Number = this.preferredWidth;
 			if (complexMatrix()) {
 				var m:Matrix = matrix;
 				if (isNaN(width)) {
@@ -519,15 +558,21 @@ package flight.display
 				}
 				
 				m.invert();
-				_layoutWidth = Math.abs(m.a * width + m.c * height);
-				_layoutHeight = Math.abs(m.d * height + m.b * width);
+				width = Math.abs(m.a * width + m.c * height);
+				height = Math.abs(m.d * height + m.b * width);
 			} else {
-				_layoutWidth = isNaN(width) ? NaN : width * scaleX;
-				_layoutHeight = isNaN(height) ? NaN : height * scaleY;
+				width = isNaN(width) ? NaN : width * scaleX;
+				height = isNaN(height) ? NaN : height * scaleY;
 			}
 			
-			updateWidth(true);
-			updateHeight(true);
+			if (width != preferredWidth) {
+				_layoutWidth = width;
+				updateWidth(true);
+			}
+			if (height != preferredHeight) {
+				_layoutHeight = height;
+				updateHeight(true);
+			}
 			
 		}
 		private var _layoutWidth:Number;
@@ -708,10 +753,12 @@ package flight.display
 			measure();
 			updateWidth();
 			updateHeight();
-			minWidth = minWidth;
-			minHeight = minHeight;
-			maxWidth = maxWidth;
-			maxHeight = maxHeight;
+			if (_constrainMeasured) {
+				minWidth = _explicit.minWidth;
+				minHeight = _explicit.minHeight;
+				maxWidth = _explicit.maxWidth;
+				maxHeight = _explicit.maxHeight;
+			}
 		}
 		
 		private function onAddedToStage(event:Event):void
@@ -720,6 +767,11 @@ package flight.display
 			RenderPhase.invalidate(this, InitializePhase.INITIALIZE);
 			RenderPhase.invalidate(this, InitializePhase.READY);
 			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+		}
+		
+		private function onMarginChange(event:Event):void
+		{
+			invalidateLayout();
 		}
 	}
 }

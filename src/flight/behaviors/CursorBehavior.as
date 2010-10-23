@@ -8,8 +8,6 @@ package flight.behaviors
 {
 	import flash.display.InteractiveObject;
 	
-	import flight.cursors.Cursor;
-	
 	public class CursorBehavior extends Behavior
 	{
 //		[Bindable]
@@ -25,14 +23,14 @@ package flight.behaviors
 		protected function cursorChange(cursor:Object):void
 		{
 			if (target) {
-				Cursor.useCursor(target, cursor);
+//				Cursor.useCursor(target, cursor);
 			}
 		}
 		
 		protected function targetChange(oldTarget:InteractiveObject, newTarget:InteractiveObject):void
 		{
-			if (oldTarget && cursor) Cursor.useCursor(oldTarget, null);
-			if (newTarget && cursor) Cursor.useCursor(newTarget, cursor);
+//			if (oldTarget && cursor) Cursor.useCursor(oldTarget, null);
+//			if (newTarget && cursor) Cursor.useCursor(newTarget, cursor);
 		}
 	}
 }

@@ -46,10 +46,10 @@ package flight.layouts
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{
 			if (!isNaN(percentWidth)) {
-				childRect.width = constrainChildWidth(contentRect.width * percentWidth * 1/percentHorizontal);
+				childRect.width = constrainChildWidth(contentRect.width * percentWidth * (percentHorizontal < 1 ? 1 : 1/percentHorizontal));
 			}
 			if (!isNaN(percentHeight)) {
-				childRect.height = constrainChildHeight(contentRect.height * percentHeight * 1/percentVertical);
+				childRect.height = constrainChildHeight(contentRect.height * percentHeight * (percentVertical < 1 ? 1 : 1/percentVertical));
 			}
 			
 			// horizontal layout

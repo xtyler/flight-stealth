@@ -13,7 +13,7 @@ package flight.layouts
 	 * A simple box-model layout element containing size and bounds logic,
 	 * including measured and explicit sizing.
 	 */
-	public interface ILayoutBounds extends IBounds
+	public interface ILayoutBounds extends IMeasureable, IBounds
 	{
 		
 		/**
@@ -94,12 +94,6 @@ package flight.layouts
 		function get explicit():IBounds;
 		
 		/**
-		 * The default bounds of this bounds instance, primarily based on
-		 * the measured size of this bounds contents.
-		 */
-		function get measured():IBounds;
-		
-		/**
 		 * Allows layout positioning to be set, overriding explicit position.
 		 * 
 		 * @param		x			The bounds layout x coordinate.
@@ -133,72 +127,5 @@ package flight.layouts
 		 */
 		function getLayoutRect(width:Number = NaN, height:Number = NaN):Rectangle
 		
-		// TODO: implement baseline and anchor features - (anchor may be implemented as a Box instance)
-		
-//		/**
-//		 * The y coordinate of the baseline of this bounds instance, primarily
-//		 * based on the first line of text of this bounds contents.
-//		 */
-//		function get baseline():Number;
-//		function set baseline(value:Number):void;
-		
-//		/**
-//		 * A horizontal anchor in pixels from the left edge of this bounds
-//		 * instance to the parent's left edge.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get left():Number;
-//		
-//		/**
-//		 * A vertical anchor in pixels from the top edge of this bounds
-//		 * instance to the parent's top edge.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get top():Number;
-//		
-//		/**
-//		 * A horizontal anchor in pixels from the right edge of this bounds
-//		 * instance to the parent's right edge.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get right():Number;
-//		
-//		/**
-//		 * A vertical anchor in pixels from the bottom edge of this bounds
-//		 * instance to the parent's bottom edge.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get bottom():Number;
-//		
-//		/**
-//		 * A horizontal anchor as a percentage from the percent-width of this
-//		 * bounds instance to the percent-width of the parent. The horizontal
-//		 * anchor is a percentage from 0 to 1, where 1 equals 100% width, or
-//		 * fully anchored to the right.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get horizontal():Number;
-//		
-//		/**
-//		 * A vertical anchor as a percentage from the percent-height of this
-//		 * bounds instance to the percent-height of the parent. The vertical
-//		 * anchor is a percentage from 0 to 1, where 1 equals 100% height, or
-//		 * fully anchored to the bottom.
-//		 * 
-//		 * @default		NaN
-//		 */
-//		function get vertical():Number;
-		
-		/**
-		 * The Flash display object associated with these layout properties.
-		 * This reference is often self assigned to the implementing display
-		 * class instance.
-		 */
-		function get display():DisplayObject;
 	}
 }

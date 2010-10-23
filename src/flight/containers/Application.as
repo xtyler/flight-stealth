@@ -6,27 +6,24 @@
 
 package flight.containers
 {
-	
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	
-	//[Frame(factoryClass="flight.tools.flashbuilder.StealthApplicationLoader")]
+	//[Frame(factoryClass="flight.containers.FrameLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
-	
-	/**
-	 * @alpha
-	 */
 	public class Application extends Group
 	{
-		
 		public function Application()
 		{
-			super();
-			if (stage == null) {
-				return;
+			if (stage != null) {
+				// if this is the root application class
+				initApplication();
 			}
-			
+		}
+		
+		protected function initApplication():void
+		{
 			//contextMenu = new ContextMenu();
 			//contextMenu.hideBuiltInItems();
 			stage.scaleMode = StageScaleMode.NO_SCALE;

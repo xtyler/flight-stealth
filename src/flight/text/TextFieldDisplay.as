@@ -11,9 +11,8 @@ package flight.text
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
-
 	import flash.text.TextLineMetrics;
-
+	
 	import flight.data.DataChange;
 	import flight.display.IInvalidating;
 	import flight.display.ITransform;
@@ -35,7 +34,8 @@ package flight.text
 	[Style(name="bottom")]
 	[Style(name="horizontal")]
 	[Style(name="vertical")]
-	[Style(name="margin")]
+	[Style(name="offsetX")]
+	[Style(name="offsetY")]
 	[Style(name="dock")]
 	[Style(name="tile")]
 	
@@ -57,6 +57,7 @@ package flight.text
 			_measured = new Bounds(0, 0);
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			addEventListener(Event.CHANGE, onTextChange);
 		}
 		
 		// ====== IStyleable implementation ====== //
@@ -65,7 +66,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="idChange", style="weak")]
+		[Bindable(event="idChange", style="noEvent")]
 		public function get id():String { return _id; }
 		public function set id(value:String):void
 		{
@@ -85,7 +86,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="styleNameChange", style="weak")]
+		[Bindable(event="styleNameChange", style="noEvent")]
 		public function get styleName():String { return _styleName;}
 		public function set styleName(value:String):void
 		{
@@ -121,7 +122,7 @@ package flight.text
 //		/**
 //		 * @inheritDoc
 //		 */
-//		[Bindable(event="parentTransformChange", style="weak")]	// TODO: implement support from layout for non-children
+//		[Bindable(event="parentTransformChange", style="noEvent")]	// TODO: implement support from layout for non-children
 //		public function get parentTransform():ITransform { return _parentTransform; }
 //		public function set parentTransform(value:ITransform):void
 //		{
@@ -133,7 +134,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="xChange", style="weak")]
+		[Bindable(event="xChange", style="noEvent")]
 		override public function set x(value:Number):void
 		{
 			if (super.x != value) {
@@ -148,7 +149,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="yChange", style="weak")]
+		[Bindable(event="yChange", style="noEvent")]
 		override public function set y(value:Number):void
 		{
 			if (super.y != value) {
@@ -163,7 +164,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="widthChange", style="weak")]
+		[Bindable(event="widthChange", style="noEvent")]
 		override public function get width():Number { return _width; }
 		override public function set width(value:Number):void
 		{
@@ -176,7 +177,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="heightChange", style="weak")]
+		[Bindable(event="heightChange", style="noEvent")]
 		override public function get height():Number { return _height; }
 		override public function set height(value:Number):void
 		{
@@ -192,7 +193,7 @@ package flight.text
 		 * the nativeWidth property the scaleX property is adjusted
 		 * accordingly.
 		 */
-		[Bindable(event="nativeWidthChange", style="weak")]
+		[Bindable(event="nativeWidthChange", style="noEvent")]
 		public function get nativeWidth():Number { return super.width; }
 		public function set nativeWidth(value:Number):void
 		{
@@ -209,7 +210,7 @@ package flight.text
 		 * the nativeHeight property the scaleY property is adjusted
 		 * accordingly.
 		 */
-		[Bindable(event="nativeHeightChange", style="weak")]
+		[Bindable(event="nativeHeightChange", style="noEvent")]
 		public function get nativeHeight():Number { return super.height; }
 		public function set nativeHeight(value:Number):void
 		{
@@ -224,7 +225,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="Change", style="weak")]
+		[Bindable(event="Change", style="noEvent")]
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
@@ -237,7 +238,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="transformYChange", style="weak")]
+		[Bindable(event="transformYChange", style="noEvent")]
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
@@ -251,7 +252,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="scaleXChange", style="weak")]
+		[Bindable(event="scaleXChange", style="noEvent")]
 		override public function set scaleX(value:Number):void
 		{
 			if (super.scaleX != value) {
@@ -265,7 +266,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="scaleYChange", style="weak")]
+		[Bindable(event="scaleYChange", style="noEvent")]
 		override public function set scaleY(value:Number):void
 		{
 			if (super.scaleY != value) {
@@ -279,7 +280,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="rotationChange", style="weak")]
+		[Bindable(event="rotationChange", style="noEvent")]
 		override public function set rotation(value:Number):void
 		{
 			if (super.rotation != value) {
@@ -292,7 +293,7 @@ package flight.text
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="matrixChange", style="weak")]
+		[Bindable(event="matrixChange", style="noEvent")]
 		public function get matrix():Matrix
 		{
 			return _matrix || transform.matrix;
@@ -318,7 +319,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="Change", style="weak")]
+		[Bindable(event="Change", style="noEvent")]
 		public function get freeform():Boolean { return _freeform; }
 		public function set freeform(value:Boolean):void
 		{
@@ -339,10 +340,13 @@ package flight.text
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentWidthChange", style="weak")]
+		[Bindable(event="percentWidthChange", style="noEvent")]
 		public function get percentWidth():Number { return _percentWidth }
 		public function set percentWidth(value:Number):void
 		{
+			if (value > 1) {
+				value *= 0.01;
+			}
 			if (_percentWidth != value) {
 				invalidateLayout();
 				DataChange.change(this, "percentWidth", _percentWidth, _percentWidth = value);
@@ -353,10 +357,13 @@ package flight.text
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentHeightChange", style="weak")]
+		[Bindable(event="percentHeightChange", style="noEvent")]
 		public function get percentHeight():Number { return _percentHeight }
 		public function set percentHeight(value:Number):void
 		{
+			if (value > 1) {
+				value *= 0.01;
+			}
 			if (_percentHeight != value) {
 				invalidateLayout();
 				DataChange.change(this, "percentHeight", _percentHeight, _percentHeight = value);
@@ -383,13 +390,28 @@ package flight.text
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="marginChange", style="weak")]
-		public function get margin():Box { return _margin || (_margin = new Box()); }
+		[Bindable(event="marginChange", style="noEvent")]
+		public function get margin():Box { return _margin || (margin = new Box()); }
 		public function set margin(value:*):void
 		{
-			value = (value is String ? Box.fromString(value) : value) as Box;
+			if (value is String) {
+				value = Box.fromString(value);
+			} else if (value is Number) {
+				value = new Box(value, value, value, value);
+			} else {
+				value = value as Box;
+			}
+			
+			if (_margin) {
+				_margin.removeEventListener(Event.CHANGE, onMarginChange);
+			}
+			DataChange.queue(this, "margin", _margin, _margin = value);
+			if (_margin) {
+				_margin.addEventListener(Event.CHANGE, onMarginChange);
+			}
+			
 			invalidateLayout();
-			DataChange.change(this, "margin", _margin, _margin = value);
+			DataChange.change();
 		}
 		private var _margin:Box;
 		
@@ -397,7 +419,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="minWidthChange", style="weak")]
+		[Bindable(event="minWidthChange", style="noEvent")]
 		public function get minWidth():Number { return _minWidth;}
 		public function set minWidth(value:Number):void
 		{
@@ -417,7 +439,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="minHeightChange", style="weak")]
+		[Bindable(event="minHeightChange", style="noEvent")]
 		public function get minHeight():Number { return _minHeight;}
 		public function set minHeight(value:Number):void
 		{
@@ -437,7 +459,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="maxWidthChange", style="weak")]
+		[Bindable(event="maxWidthChange", style="noEvent")]
 		public function get maxWidth():Number { return _maxWidth;}
 		public function set maxWidth(value:Number):void
 		{
@@ -457,7 +479,7 @@ package flight.text
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="maxHeightChange", style="weak")]
+		[Bindable(event="maxHeightChange", style="noEvent")]
 		public function get maxHeight():Number { return _maxHeight;}
 		public function set maxHeight(value:Number):void
 		{
@@ -477,13 +499,13 @@ package flight.text
 		 * @inheritDoc
 		 */
 		public function get explicit():IBounds { return _explicit; }
-		private var _explicit:Bounds;
+		private var _explicit:IBounds;
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured; }
-		private var _measured:Bounds;
+		private var _measured:IBounds;
 		
 		/**
 		 * @inheritDoc
@@ -498,9 +520,9 @@ package flight.text
 				if (d < 0) y -= d;
 			}
 			
+			RenderPhase.invalidate(this, LayoutPhase.MOVE);
 			DataChange.queue(this, "x", super.x, super.x = x);
 			DataChange.change(this, "y", super.y, super.y = y);
-			RenderPhase.invalidate(this, LayoutPhase.RESIZE);
 		}
 		
 		/**
@@ -542,30 +564,50 @@ package flight.text
 			
 			if (complexMatrix()) {
 				var m:Matrix = matrix;
-				var x:Number, y:Number, tx:Number, ty:Number;
+				var x:Number, y:Number;
 				var minX:Number, minY:Number, maxX:Number, maxY:Number;
 				
-				x = this.x;
-				y = this.y;
-				tx = m.a * x + m.c * y + m.tx;
-				ty = m.d * y + m.b * x + m.ty;
-				minX = maxX = tx;
-				minY = maxY = ty;
-				x += width;
-				tx = m.a * x + m.c * y + m.tx;
-				ty = m.d * y + m.b * x + m.ty;
-				if (tx < minX) minX = tx else if (tx > maxX) maxX = tx;
-				if (ty < minY) minY = ty else if (ty > maxY) maxY = ty;
-				y += height;
-				tx = m.a * x + m.c * y + m.tx;
-				ty = m.d * y + m.b * x + m.ty;
-				if (tx < minX) minX = tx else if (tx > maxX) maxX = tx;
-				if (ty < minY) minY = ty else if (ty > maxY) maxY = ty;
-				x = this.x;
-				tx = m.a * x + m.c * y + m.tx;
-				ty = m.d * y + m.b * x + m.ty;
-				if (tx < minX) minX = tx else if (tx > maxX) maxX = tx;
-				if (ty < minY) minY = ty else if (ty > maxY) maxY = ty;
+				minX = maxX = m.tx;
+				minY = maxY = m.ty;
+				
+				x = m.a * width + m.tx;
+				y = m.b * width + m.ty;
+				if (x < minX) {
+					minX = x;
+				} else if (x > maxX) {
+					maxX = x;
+				}
+				if (y < minY) {
+					minY = y;
+				} else if (y > maxY) {
+					maxY = y;
+				}
+				
+				x = m.a * width + m.c * height + m.tx;
+				y = m.d * height + m.b * width + m.ty;
+				if (x < minX) {
+					minX = x;
+				} else if (x > maxX) {
+					maxX = x;
+				}
+				if (y < minY) {
+					minY = y;
+				} else if (y > maxY) {
+					maxY = y;
+				}
+				
+				x = m.c * width + m.tx;
+				y = m.d * width + m.ty;
+				if (x < minX) {
+					minX = x;
+				} else if (x > maxX) {
+					maxX = x;
+				}
+				if (y < minY) {
+					minY = y;
+				} else if (y > maxY) {
+					maxY = y;
+				}
 				
 				rect.x = minX;
 				rect.y = minY;
@@ -587,7 +629,7 @@ package flight.text
 		public function constrainWidth(width:Number):Number
 		{
 			return (width <= _minWidth) ? _minWidth :
-				(width >= _maxWidth) ? _maxWidth : width;
+				   (width >= _maxWidth) ? _maxWidth : width;
 		}
 		
 		/**
@@ -596,7 +638,7 @@ package flight.text
 		public function constrainHeight(height:Number):Number
 		{
 			return (height <= _minHeight) ? _minHeight :
-				(height >= _maxHeight) ? _maxHeight : height;
+				   (height >= _maxHeight) ? _maxHeight : height;
 		}
 		
 		/**
@@ -657,7 +699,7 @@ package flight.text
 				}
 				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
-				DataChange.change(this, "width", _width, _width = w);
+				DataChange.change(this, "width", _width, super.width = _width = w);
 			}
 		}
 		
@@ -671,7 +713,7 @@ package flight.text
 				}
 				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
-				DataChange.change(this, "height", _height, _height = h);
+				DataChange.change(this, "height", _height, super.height = _height = h);
 			}
 		}
 		
@@ -687,10 +729,10 @@ package flight.text
 			measure();
 			updateWidth();
 			updateHeight();
-			minWidth = minWidth;
-			minHeight = minHeight;
-			maxWidth = maxWidth;
-			maxHeight = maxHeight;
+			minWidth = _explicit.minWidth;
+			minHeight = _explicit.minHeight;
+			maxWidth = _explicit.maxWidth;
+			maxHeight = _explicit.maxHeight;
 		}
 		
 		private function onAddedToStage(event:Event):void
@@ -699,6 +741,16 @@ package flight.text
 			RenderPhase.invalidate(this, InitializePhase.INITIALIZE);
 			RenderPhase.invalidate(this, InitializePhase.READY);
 			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+		}
+		
+		private function onTextChange(event:Event):void
+		{
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+		}
+		
+		private function onMarginChange(event:Event):void
+		{
+			invalidateLayout();
 		}
 	}
 }

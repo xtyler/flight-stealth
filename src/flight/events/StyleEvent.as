@@ -7,33 +7,36 @@
 package flight.events
 {
 	import flash.events.Event;
-
+	
 	public class StyleEvent extends Event
 	{
 		public static const STYLE_CHANGE:String = "styleChange";
-		public static const STYLES_CHANGED:String = "stylesChanged";
 		
 		public function StyleEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false,
-								   styleName:String = "", styleValue:Object = null, changedStyles:Object = null)
+								   source:Object = null, property:String = "", oldValue:Object = null, newValue:Object = null)
 		{
 			super(type, bubbles, cancelable);
-			_styleName = styleName;
-			_styleValue = styleValue;
-			_changedStyles = changedStyles;
+			_source = source;
+			_property = property;
+			_oldValue = oldValue;
+			_newValue = newValue;
 		}
 		
-		public function get styleName():String { return _styleName; }
-		private var _styleName:String;
+		public function get source():Object { return _source; }
+		private var _source:Object;
 		
-		public function get styleValue():Object { return _styleValue; }
-		private var _styleValue:Object;
+		public function get property():String { return _property; }
+		private var _property:String;
 		
-		public function get changedStyles():Object { return _changedStyles; }
-		private var _changedStyles:Object;
+		public function get oldValue():Object { return _oldValue; }
+		private var _oldValue:Object;
+		
+		public function get newValue():Object { return _newValue; }
+		private var _newValue:Object;
 		
 		override public function clone():Event
 		{
-			return new StyleEvent(type, bubbles, cancelable, styleName, styleValue, changedStyles);
+			return new StyleEvent(type, bubbles, cancelable, source, property, oldValue, newValue);
 		}
 	}
 }

@@ -31,7 +31,7 @@ package flight.layouts
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="widthChange", style="weak")]
+		[Bindable(event="widthChange", style="noEvent")]
 		public function get width():Number { return _width; }
 		public function set width(value:Number):void
 		{
@@ -44,7 +44,7 @@ package flight.layouts
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="heightChange", style="weak")]
+		[Bindable(event="heightChange", style="noEvent")]
 		public function get height():Number { return _height; }
 		public function set height(value:Number):void
 		{
@@ -57,7 +57,7 @@ package flight.layouts
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="minWidthChange", style="weak")]
+		[Bindable(event="minWidthChange", style="noEvent")]
 		public function get minWidth():Number { return _minWidth; }
 		public function set minWidth(value:Number):void
 		{
@@ -72,7 +72,7 @@ package flight.layouts
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="minHeightChange", style="weak")]
+		[Bindable(event="minHeightChange", style="noEvent")]
 		public function get minHeight():Number { return _minHeight; }
 		public function set minHeight(value:Number):void
 		{
@@ -87,7 +87,7 @@ package flight.layouts
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="maxWidthChange", style="weak")]
+		[Bindable(event="maxWidthChange", style="noEvent")]
 		public function get maxWidth():Number { return _maxWidth; }
 		public function set maxWidth(value:Number):void
 		{
@@ -102,7 +102,7 @@ package flight.layouts
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="maxHeightChange", style="weak")]
+		[Bindable(event="maxHeightChange", style="noEvent")]
 		public function get maxHeight():Number { return _maxHeight; }
 		public function set maxHeight(value:Number):void
 		{

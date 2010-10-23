@@ -10,6 +10,9 @@ package flight.behaviors
 
 	public interface IBehavior
 	{
+		function get type():String;
+		function set type(value:String):void;
+		
 		function get target():InteractiveObject;
 		function set target(value:InteractiveObject):void;
 	}

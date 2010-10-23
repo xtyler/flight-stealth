@@ -7,14 +7,34 @@
 package flight.containers
 {
 	import flight.layouts.ILayout;
-	import flight.layouts.ILayoutBounds;
+	import flight.layouts.IMeasureable;
 	import flight.list.IList;
 	
-	public interface IContainer extends ILayoutBounds
+	public interface IContainer extends IMeasureable
 	{
 		function get content():IList;
 		
 		function get layout():ILayout;
 		function set layout(value:ILayout):void;
+		
+		/**
+		 * The width of the layout's content in pixels relative to the local
+		 * coordinates of this layout instance. The width represents a
+		 * virtual size, allowing content of the layout to fill it
+		 * accordingly, and is non-scaling.
+		 * 
+		 * @default		0
+		 */
+		function get contentWidth():Number;
+		
+		/**
+		 * The height of the layout's content in pixels relative to the local
+		 * coordinates of this layout instance. The height represents a
+		 * virtual size, allowing content of the layout to fill it
+		 * accordingly, and is non-scaling.
+		 * 
+		 * @default		0
+		 */
+		function get contentHeight():Number;
 	}
 }

@@ -9,315 +9,133 @@ package flight.skins
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-
+	
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
-	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
-	import flight.layouts.ILayoutBounds;
-	import flight.list.ArrayList;
+	import flight.layouts.IMeasureable;
 	import flight.list.IList;
-	import flight.templating.addItemsAt;
 	
 	/**
 	 * Skin is a convenient base class for many skins, a swappable graphical
 	 * definition. Skins decorate a target Sprite by drawing on its surface,
 	 * adding children to the Sprite, or both.
-	 * @alpha
 	 */
 	[DefaultProperty("content")]
-	public class Skin extends EventDispatcher// implements ISkin, IContainer, IStateful, ILayoutBounds
+	public class Skin extends EventDispatcher implements ISkin, IContainer//, IStateful, IStyleable, IInvalidating
 	{
 		protected var dataBind:DataBind = new DataBind();
 		
-		private var renderers:Array = [];
-		private var _layout:ILayout;
-		private var _states:Array;
-		private var _currentState:String;
-		//private var _transitions:Array;
-		private var _template:Object; // = new StealthDataTemplate();
-		
-		private var unscaledWidth:Number = 160;
-		private var unscaledHeight:Number = 22;
-		
-		private var _explicit:Bounds;
-		private var _measured:Bounds;
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="widthChange")]
-		public function get width():Number { return unscaledWidth; }
-		public function set width(value:Number):void
-		{
-			if (unscaledWidth == value) {
-				return;
-			}
-			_explicit.width = value;
-			RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
-			DataChange.change(this, "width", unscaledWidth, unscaledWidth = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="heightChange")]
-		public function get height():Number { return unscaledHeight; }
-		public function set height(value:Number):void
-		{
-			if (unscaledHeight == value) {
-				return;
-			}
-			_explicit.height = value;
-			RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
-			DataChange.change(this, "height", unscaledHeight, unscaledHeight = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="explicitChange")]
-		public function get explicit():IBounds { return _explicit; }
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="measuredChange")]
-		public function get measured():IBounds { return _measured; }
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function setSize(width:Number, height:Number):void
-		{
-			RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
-			DataChange.queue(this, "width", unscaledWidth, unscaledWidth = width);
-			DataChange.change(this, "height", unscaledHeight, unscaledHeight = height);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="layoutChange")]
-		public function get layout():ILayout { return _layout; }
-		public function set layout(value:ILayout):void
-		{
-			if (_layout == value) {
-				return;
-			}
-			if (_layout) { _layout.target = null; }
-			DataChange.queue(this, "layout", _layout, _layout = value);
-			_layout.target = IContainer(target);
-			if (target) {
-				RenderPhase.invalidate(target, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
-			}
-			DataChange.change();
-		}
-		
-		[Bindable(event="templateChange")]
-		public function get template():Object { return _template; }
-		public function set template(value:Object):void
-		{
-			DataChange.change(this, "template", _template, _template = value);
-		}
-		
-		[Bindable(event="currentStateChange")]
-		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
-		{
-			DataChange.change(this, "currentState", _currentState, _currentState = value);
-		}
-		
-		[Bindable(event="statesChange")]
-		public function get states():Array { return _states; }
-		public function set states(value:Array):void
-		{
-			DataChange.change(this, "states", _states, _states = value);
-		}
-		
-		private var _target:Sprite;
-		private var _content:IList;
-		
 		public function Skin()
 		{
-			super();
-			_content = new ArrayList();
-			_explicit = new Bounds();
-			_measured = new Bounds(160, 22);
-			_content.addEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
-			addEventListener(LayoutPhase.LAYOUT, onLayout, false, 0, true);
+			_measured = new Bounds();
 		}
 		
+		// ====== ISkin implementation ====== //
 		
-		[Bindable(event="targetChange")]
-		public function get target():Sprite { return _target; }
+		[Bindable(event="targetChange", style="noEvent")]
+		public function get target():Sprite { return _target }
 		public function set target(value:Sprite):void
 		{
-			if (_target == value) {
-				return;
-			}
-			
-			DataChange.queue(this, "target", _target, _target = value);
-			if (layout) {
-				layout.target = IContainer(_target);
-			}
-			
-			if (this.hasOwnProperty('hostComponent')) {
-				this['hostComponent'] = _target;
-			}
-			
-			if (_target != null) {
-				target.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 0, true);
-				target.addEventListener(LayoutPhase.LAYOUT, onLayout, false, 0, true);
-				RenderPhase.invalidate(target, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(target, LayoutPhase.LAYOUT);
-			}
-			
-			var items:Array = [];
-			for (var i:int = 0; i < _content.length; i++) {
-				items.push(_content.getItemAt(i));
-			}
-			reset(items);
-			DataChange.change();
+			DataChange.queue(this, "display", _target, value);
+			DataChange.change(this, "target", _target, _target = value);
 		}
+		private var _target:Sprite;
 		
-		protected function init():void
-		{
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[ArrayElementType("Object")]
-		[Bindable(event="contentChange")]
-		public function get content():IList
-		{
-			return _content;
-		}
-		
-		public function set content(value:*):void
-		{
-			if (_content == value) {
-				return;
-			}
-			
-			var oldContent:IList = _content;
-			
-			if (_content) {
-				_content.removeEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
-			}
-			
-			if (value == null) {
-				_content = null;
-			} else if (value is IList) {
-				_content = value as IList;
-			} else if (value is Array || value is Vector) {
-				_content = new ArrayList(value);
-			} else {
-				_content = new ArrayList([value]);
-			}
-			
-			if (_content) {
-				_content.addEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
-				var items:Array = [];
-				for (var i:int = 0; i < _content.length; i++) {
-					items.push(_content.getItemAt(i));
-				}
-				reset(items);
-			}
-			
-			
-			DataChange.change(this, "content", oldContent, _content);
-		}
 		
 		public function getSkinPart(part:String):InteractiveObject
 		{
-			return (part in this) ? this[part] : null;
+			return (part in this) ? this[part] : (part in _target ? _target[part] : null);
 		}
 		
-		private function onChildrenChange(event:ListEvent):void
+		// ====== IContainer implementation ====== //
+		
+		/**
+		 * @inheritDoc
+		 */
+		[ArrayElementType("flash.display.DisplayObject")]
+		[Bindable(event="contentChange", style="noEvent")]
+		public function get content():IList { return _content; }
+		public function set content(value:*):void
 		{
-			if (_target == null) {
-				return;
+			_content.removeItems();
+			if (value is DisplayObject) {
+				_content.addItem(value);
+			} else if (value is Array) {
+				_content.addItems(value);
+			} else if (value is IList) {
+				_content.addItems( IList(value).getItems() );
 			}
-			var child:DisplayObject;
-			var loc:int = event.location1;
-			switch (event.kind) {
-				case ListEventKind.ADD :
-					add(event.items, loc++);
-					break;
-				case ListEventKind.REMOVE :
-					for each (child in event.items) {
-						_target.removeChild(child);
-					}
-					break;
-				case ListEventKind.REPLACE :
-					_target.removeChild(event.items[1]);
-					_target.addChildAt(event.items[0], loc);
-					break;
-				case ListEventKind.RESET :
-				default:
-					reset(event.items);
-					break;
-			}
+			DataChange.change(this, "content", _content, _content, true);
 		}
+		private var _content:IList;
 		
-		
-		private function add(items:Array, index:int):void
+		/**
+		 * @inheritDoc
+		 */
+		[Bindable(event="layoutChange", style="noEvent")]
+		public function get layout():ILayout { return _layout; }
+		public function set layout(value:ILayout):void
 		{
-			var children:Array = addItemsAt(_target, items, index, template);
-			renderers.concat(children); // todo: correct ordering
-		}
-		
-		private function reset(items:Array):void
-		{
-			if (_target) {
-				while (_target.numChildren) {
-					_target.removeChildAt(_target.numChildren - 1);
+			if (_layout != value) {
+				if (_layout) {
+					_layout.target = null;
 				}
-				renderers = addItemsAt(_target, items, 0, template); // todo: correct ordering
-				RenderPhase.invalidate(_target, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
+				DataChange.queue(this, "layout", _layout, _layout = value);
+				if (_layout) {
+					_layout.target = this;
+				}
+				DataChange.change();
 			}
+		}
+		private var _layout:ILayout;
+		
+		/**
+		 * @private
+		 */
+		[Inspectable(category="General")]
+		[Bindable(event="Change", style="noEvent")]
+		public function get freeform():Boolean { return false; }
+		public function set freeform(value:Boolean):void { }
+		
+		/**
+		 * @inheritDoc
+		 */
+		[Inspectable(category="General")]
+		[Bindable(event="widthChange", style="noEvent")]
+		public function get contentWidth():Number
+		{
+			return _target != null ? _target.height : 0;
 		}
 		
-		private function onMeasure(event:Event):void
+		/**
+		 * @inheritDoc
+		 */
+		[Inspectable(category="General")]
+		[Bindable(event="heightChange", style="noEvent")]
+		public function get contentHeight():Number
 		{
-			var target:ILayoutBounds = this.target as ILayoutBounds;
-			if (layout && target && (isNaN(target.explicit.width) || isNaN(target.explicit.height))) {
-				var items:Array = [];
-				var length:int = _content.length;
-				for (var i:int = 0; i < length; i++) {
-					items.push(_content.getItemAt(i));
-				}
-//				var point:Point = layout.measure(items);
-			}
+			return _target != null ? _target.width : 0;
 		}
 		
-		private function onLayout(event:Event):void
+		/**
+		 * @inheritDoc
+		 */
+		public function get measured():IBounds
 		{
-			if (layout) {
-				var items:Array = [];
-				var length:int = _content.length;
-				for (var i:int = 0; i < length; i++) {
-					items.push(_content.getItemAt(i));
-				}
-				
-				var rectangle:Rectangle = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
-//				layout.update(items, rectangle);
-			}
+			return _target is IMeasureable ? IMeasureable(_target).measured : _measured;
 		}
+		private var _measured:IBounds;
+		
+		/**
+		 * @inheritDoc
+		 */
+		[Bindable(event="displayChange", style="noEvent")]
+		public function get display():DisplayObject { return _target; }
 		
 	}
 }

@@ -8,7 +8,7 @@ package flight.data
 {
 	public class Scroll extends Range implements IScroll
 	{
-		[Bindable(event="pageSizeChange", style="weak")]
+		[Bindable(event="pageSizeChange", style="noEvent")]
 		public function get pageSize():Number { return _pageSize; }
 		public function set pageSize(value:Number):void
 		{

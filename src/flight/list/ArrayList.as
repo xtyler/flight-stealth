@@ -52,7 +52,7 @@ package flight.list
 			this.source = source || [];
 		}
 		
-		[Bindable(event="idFieldChange", style="weak")]
+		[Bindable(event="idFieldChange", style="noEvent")]
 		public function get idField():String { return _idField }
 		public function set idField(value:String):void
 		{
@@ -60,10 +60,10 @@ package flight.list
 		}
 		private var _idField:String = "id";		// TODO: replace with dataMap
 		
-		[Bindable(event="listChange", style="weak")]
+		[Bindable(event="listChange", style="noEvent")]
 		public function get length():int { return adapter.length; }
 		
-		[Bindable(event="selectionChange", style="weak")]
+		[Bindable(event="selectionChange", style="noEvent")]
 		public function get selection():IListSelection { return _selection || (_selection = new ListSelection(this)); }
 		private var _selection:ListSelection;
 		
@@ -76,7 +76,7 @@ package flight.list
 		 * <code>myList.source.pop()</code> will not cause
 		 * <code>ListEvents</code> to be dispatched.</p>
 		 */
-		[Bindable(event="sourceChange", style="weak")]		
+		[Bindable(event="sourceChange", style="noEvent")]		
 		public function get source():* { return _source; }
 		public function set source(value:*):void
 		{
@@ -94,8 +94,9 @@ package flight.list
 				}
 				adapter = value;
 			}
+			var items:* = _source;
 			DataChange.change(this, "source", _source, _source = value);
-			dispatchEvent(new ListEvent(ListEvent.LIST_CHANGE, ListEventKind.RESET));
+			dispatchEvent(new ListEvent(ListEvent.LIST_CHANGE, ListEventKind.RESET, items, 0));
 		}
 		list_internal var _source:*;	// internally available to XMLListAdapter
 		
@@ -212,7 +213,8 @@ package flight.list
 		 */
 		public function removeItem(item:Object):Object
 		{
-			return removeItemAt(adapter.indexOf(item));
+			var index:int = adapter.indexOf(item);
+			return (index != -1) ? removeItemAt(index) : null;
 		}
 		
 		/**

@@ -12,6 +12,18 @@ package flight.layouts
 
 	public class BasicLayout extends Layout
 	{
+		public function BasicLayout()
+		{
+			registerStyle("left");
+			registerStyle("top");
+			registerStyle("right");
+			registerStyle("bottom");
+			registerStyle("horizontal");
+			registerStyle("vertical");
+			registerStyle("offsetX");
+			registerStyle("offsetY");
+		}
+		
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
 			if (!(child is IStyleable)) {
@@ -91,55 +103,55 @@ package flight.layouts
 			var offsetY:Number = !isNaN(style.offsetY) ? style.offsetY : 0;
 			if ( !isNaN(style.left) ) {
 				if ( !isNaN(style.right) ) {
-					childRect.width = target.width - style.left - style.right;
+					childRect.width = target.contentWidth - style.left - style.right;
 				} else if ( !isNaN(style.horizontal) ) {
-					childRect.width = (style.horizontal * target.width) - style.left + offsetX;
+					childRect.width = (style.horizontal * target.contentWidth) - style.left + offsetX;
 				} else if (!isNaN(percentWidth)) {
-					childRect.width = percentWidth * (target.width - style.left);
+					childRect.width = percentWidth * (target.contentWidth - style.left);
 				}
 				
 				childRect.x = style.left;
 			} else if ( !isNaN(style.right) ) {
 				if ( !isNaN(style.horizontal) ) {
-					childRect.width = (style.horizontal * target.width) - style.right - offsetX;
+					childRect.width = (style.horizontal * target.contentWidth) - style.right - offsetX;
 				} else if (!isNaN(percentWidth)) {
-					childRect.width = percentWidth * (target.width - style.right);
+					childRect.width = percentWidth * (target.contentWidth - style.right);
 				}
 				
-				childRect.x = target.width - childRect.width - style.right;
+				childRect.x = target.contentWidth - childRect.width - style.right;
 			} else if ( !isNaN(style.horizontal) ) {
 				if (!isNaN(percentWidth)) {
-					childRect.width = percentWidth * target.width;
+					childRect.width = percentWidth * target.contentWidth;
 				}
 				
-				childRect.x = style.horizontal * (target.width - childRect.width) + offsetX;
+				childRect.x = style.horizontal * (target.contentWidth - childRect.width) + offsetX;
 			}
 			
 			
 			if ( !isNaN(style.top) ) {
 				if ( !isNaN(style.bottom) ) {
-					childRect.height = target.height - style.top - style.bottom;
+					childRect.height = target.contentHeight - style.top - style.bottom;
 				} else if ( !isNaN(style.vertical) ) {
-					childRect.height = (style.vertical * target.height) - style.top + offsetY;
+					childRect.height = (style.vertical * target.contentHeight) - style.top + offsetY;
 				} else if (!isNaN(percentHeight)) {
-					childRect.height = percentHeight * (target.height - style.top);
+					childRect.height = percentHeight * (target.contentHeight - style.top);
 				}
 				
 				childRect.y = style.top;
 			} else if ( !isNaN(style.bottom) ) {
 				if ( !isNaN(style.vertical) ) {
-					childRect.height = (style.vertical * target.height) - style.bottom - offsetY;
+					childRect.height = (style.vertical * target.contentHeight) - style.bottom - offsetY;
 				} else if (!isNaN(percentHeight)) {
-					childRect.height = percentHeight * (target.height - style.bottom);
+					childRect.height = percentHeight * (target.contentHeight - style.bottom);
 				}
 				
-				childRect.y = target.height - childRect.height - style.bottom;
+				childRect.y = target.contentHeight - childRect.height - style.bottom;
 			} else if ( !isNaN(style.vertical) ) {
 				if (!isNaN(percentHeight)) {
-					childRect.height = percentHeight * target.height;
+					childRect.height = percentHeight * target.contentHeight;
 				}
 				
-				childRect.y = style.vertical * (target.height - childRect.height) + offsetY;
+				childRect.y = style.vertical * (target.contentHeight - childRect.height) + offsetY;
 			}
 		}
 		

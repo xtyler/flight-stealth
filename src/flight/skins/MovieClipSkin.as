@@ -17,6 +17,7 @@ package flight.skins
 	import flight.data.DataChange;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
+	import flight.layouts.IMeasureable;
 	
 	public class MovieClipSkin implements ISkin
 	{
@@ -51,7 +52,20 @@ package flight.skins
 		public function get target():Sprite { return _target; }
 		public function set target(value:Sprite):void
 		{
+			if (_movieclip && _target) {
+				_target.removeChild(_movieclip);
+				if (_target is IMeasureable) {
+					_target.removeEventListener(LayoutPhase.RESIZE, onSizeChange);
+				}
+			}
 			DataChange.change(this, "target", _target, _target = value);
+			if (_movieclip && _target) {
+				_target.addChild(_movieclip);
+				if (_target is IMeasureable) {
+					_target.addEventListener(LayoutPhase.RESIZE, onSizeChange);
+				}
+				onSizeChange(null);
+			}
 		}
 		private var _target:Sprite;
 		

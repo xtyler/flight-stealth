@@ -17,7 +17,7 @@ package flight.styles
 	import flight.events.StyleEvent;
 
 	[Event(name="styleChange", type="flight.events.StyleEvent")]
-	[Event(name="stylesChanged", type="flight.events.StyleEvent")]
+	[Event(name="styleDelete", type="flight.events.StyleEvent")]
 	
 	/**
 	 * A style object on which dynamic style data is stored.
@@ -29,27 +29,24 @@ package flight.styles
 		 */
 		protected var dispatcher:EventDispatcher;
 		
-		internal var explicitData:Object;
-		internal var styleData:Object;
-		
-		private var changes:Object;
+		private var explicitData:Object;
+		private var styleData:Object;
+		private var styleProps:Array;
 		
 		public function Style(target:DisplayObject)
 		{
 			dispatcher = new EventDispatcher();
 			explicitData = {};
 			styleData = {};
-			changes = {};
+			styleProps = [];
 			_target = target;
 		}
 		
-		[Bindable(event="targetChange", style="weak")]
+		[Bindable(event="targetChange", style="noEvent")]
 		public function get target():DisplayObject { return _target }
 		public function set target(value:DisplayObject):void
 		{
-			if (_target != null) _target.removeEventListener(StylePhase.STYLE, onStyle);
 			DataChange.change(this, "target", _target, _target = value);
-			if (_target != null) _target.addEventListener(StylePhase.STYLE, onStyle, false, -10, true);
 		}
 		private var _target:DisplayObject;
 		
@@ -62,12 +59,18 @@ package flight.styles
 		override flash_proxy function setProperty(name:*, value:*):void
 		{
 			var prop:String = name.localName;
-			DataChange.change(this, prop, prop in explicitData ? explicitData[prop] : styleData[prop], explicitData[name.localName] = value);
-			if (hasEventListener(StyleEvent.STYLE_CHANGE)) {
-				dispatchEvent(new StyleEvent(StyleEvent.STYLE_CHANGE, false, false, prop, value));
+			if (explicitData[prop] != value) {
+				if (!styleProps["$"+prop]) {
+					styleProps["$"+prop] = true;
+					styleProps.push(prop);
+				}
+				RenderPhase.invalidate(_target, StylePhase.STYLE);
+				var oldValue:Object = prop in explicitData ? explicitData[prop] : styleData[prop];
+				DataChange.change(this, prop, oldValue, explicitData[name.localName] = value);
+				if (hasEventListener(StyleEvent.STYLE_CHANGE)) {
+					dispatchEvent(new StyleEvent(StyleEvent.STYLE_CHANGE, false, false, _target, prop, oldValue, value));
+				}
 			}
-			changes[prop] = value;
-			RenderPhase.invalidate(_target, StylePhase.STYLE);
 		}
 		
 		override flash_proxy function hasProperty(name:*):Boolean
@@ -79,13 +82,34 @@ package flight.styles
 		override flash_proxy function deleteProperty(name:*):Boolean
 		{
 			var prop:String = name.localName;
+			if (!(prop in styleData)) {
+				delete styleProps["$"+prop];
+				styleProps.splice(styleProps.indexOf(prop), 1);
+			}
+			RenderPhase.invalidate(_target, StylePhase.STYLE);
+			var oldValue:Object = explicitData[prop];
+			DataChange.queue(this, prop, oldValue, styleData[prop]);
 			var deleted:Boolean = delete explicitData[prop];
 			if (hasEventListener(StyleEvent.STYLE_CHANGE)) {
-				dispatchEvent(new StyleEvent(StyleEvent.STYLE_CHANGE, false, false, prop, styleData[prop]));
+				dispatchEvent(new StyleEvent(StyleEvent.STYLE_CHANGE, false, false, _target, prop, oldValue, styleData[prop]));
 			}
-			changes[prop] = styleData[prop];
-			RenderPhase.invalidate(_target, StylePhase.STYLE);
 			return deleted;
+		}
+		
+		override flash_proxy function nextName(index:int):String
+		{
+			return String(styleProps[index - 1]);
+		}
+		
+		override flash_proxy function nextValue(index:int):*
+		{
+			var prop:String = styleProps[index - 1];
+			return prop in explicitData ? explicitData[prop] : styleData[prop];
+		}
+		
+		override flash_proxy function nextNameIndex(index:int):int
+		{
+			return (index + 1) % (styleProps.length + 1);
 		}
 		
 		// ========== Dispatcher Methods ========== //
@@ -186,15 +210,6 @@ package flight.styles
 		public function willTrigger(type:String):Boolean
 		{
 			return dispatcher.willTrigger(type);
-		}
-		
-		private function onStyle(event:Event):void
-		{
-			var stylesChanged:Object = changes;
-			changes = {};
-			if (hasEventListener(StyleEvent.STYLES_CHANGED)) {
-				dispatchEvent(new StyleEvent(StyleEvent.STYLES_CHANGED, false, false, null, null, stylesChanged));
-			}
 		}
 	}
 }

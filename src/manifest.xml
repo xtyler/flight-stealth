@@ -39,7 +39,6 @@
 	<component id="Display" class="flight.display.SpriteDisplay"/>
 	
 	<!-- text -->
-	<component id="Text" class="flight.text.Text"/>
 	<component id="TextFieldDisplay" class="flight.text.TextFieldDisplay"/>
 	
 </componentPackage>

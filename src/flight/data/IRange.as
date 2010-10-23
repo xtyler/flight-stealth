@@ -8,6 +8,8 @@ package flight.data
 {
 	import flash.events.IEventDispatcher;
 	
+	[Event(name="change", type="flash.events.Event")]
+	
 	public interface IRange extends IEventDispatcher
 	{
 		function get min():Number;

@@ -64,7 +64,7 @@ package flight.display
 		/**
 		 * The actual width of the transform in pixels relative to the local
 		 * coordinates of this transform instance. The width represents a
-		 * virtual size, allowing content of the transform to layout
+		 * virtual size, allowing content of the transform to fill it
 		 * accordingly, and is non-scaling.
 		 * 
 		 * @default		0
@@ -75,7 +75,7 @@ package flight.display
 		/**
 		 * The actual height of the transform in pixels relative to the local
 		 * coordinates of this transform instance. The height represents a
-		 * virtual size, allowing content of the transform to layout
+		 * virtual size, allowing content of the transform to fill it
 		 * accordingly, and is non-scaling.
 		 * 
 		 * @default		0
