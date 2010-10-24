@@ -32,8 +32,10 @@ package flight.layouts
 		protected var contentRect:Rectangle = new Rectangle();
 		protected var percentWidth:Number;
 		protected var percentHeight:Number;
-		protected var percentHorizontal:Number;
-		protected var percentVertical:Number;
+		protected var horizontalPercent:Number;
+		protected var verticalPercent:Number;
+		protected var horizontalSpace:Number;
+		protected var verticalSpace:Number;
 		
 		public function Layout(target:IContainer = null)
 		{
@@ -118,7 +120,7 @@ package flight.layouts
 			measured.maxWidth = measured.maxHeight = 0xFFFFFF;
 			measured.width = measured.height = 0;
 			contentMargin.left = contentMargin.top = contentMargin.right = contentMargin.bottom = 0;
-			percentHorizontal = percentVertical = 0;
+			horizontalPercent = verticalPercent = 0;
 			
 			var len:int = _target.content.length;
 			for (var i:int = 0; i < len; i++) {
@@ -178,7 +180,10 @@ package flight.layouts
 			contentRect.y = _padding.top;
 			contentRect.width = _target.contentWidth;
 			contentRect.height = _target.contentHeight
-			alignContent();
+			var measuredWidth:Number = measured.width + horizontalPercent * contentRect.width;
+			var measuredHeight:Number = measured.height + verticalPercent * contentRect.height;
+			horizontalSpace = measuredWidth < contentRect.width ? contentRect.width - measuredWidth : 0;
+			verticalSpace = measuredHeight < contentRect.height ? contentRect.height - measuredHeight : 0;
 			contentRect.width -= _padding.left + _padding.right;
 			contentRect.height -= _padding.top + _padding.bottom;
 			
@@ -223,41 +228,19 @@ package flight.layouts
 				
 				if (child is ILayoutBounds) {
 					// only update widths/heights that have changed
-					width = width != childRect.width ? childRect.width : NaN;
-					height = height != childRect.height ? childRect.height : NaN;
-					ILayoutBounds(child).setLayoutSize(width, height);
+					if (childRect.width == width && isNaN(percentWidth)) {
+						childRect.width = NaN;
+					}
+					if (childRect.height == height && isNaN(percentHeight)) {
+						childRect.height = NaN;
+					}
+					ILayoutBounds(child).setLayoutSize(childRect.width, childRect.height);
 					ILayoutBounds(child).setLayoutPosition(childRect.x, childRect.y);
 				} else {
 					child.x = childRect.x;
 					child.y = childRect.y;
 					child.width = childRect.width;
 					child.height = childRect.height;
-				}
-			}
-		}
-		
-		protected function alignContent():void
-		{
-			var measured:IBounds = _target.measured;
-			if (contentRect.width != measured.width && _horizontalAlign != Align.JUSTIFY) {
-				var measuredWidth:Number = measured.width + percentHorizontal * contentRect.width;
-				if (measuredWidth < contentRect.width) {
-					switch (_horizontalAlign) {
-						case Align.CENTER: contentRect.x += (contentRect.width - measuredWidth) / 2; break;
-						case Align.RIGHT: contentRect.x += (contentRect.width - measuredWidth); break;
-					}
-					contentRect.width = measuredWidth;
-				}
-			}
-			
-			if (contentRect.height != measured.height && _verticalAlign != Align.JUSTIFY) {
-				var measuredHeight:Number = measured.height + percentVertical * contentRect.height;
-				if (measuredHeight < contentRect.height) {
-					switch (_verticalAlign) {
-						case Align.CENTER: contentRect.y += (contentRect.height - measuredHeight) / 2; break;
-						case Align.BOTTOM: contentRect.y += (contentRect.height - measuredHeight); break;
-					}
-					contentRect.height = measuredHeight;
 				}
 			}
 		}

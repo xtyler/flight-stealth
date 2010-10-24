@@ -35,7 +35,7 @@ package flight.layouts
 				contentMargin.top = childMargin.bottom;
 			}
 			if (!isNaN(percentHeight)) {
-				percentVertical += percentHeight;
+				verticalPercent += percentHeight;
 				measured.height += space;
 			} else {
 				measured.height += childRect.height + space;
@@ -45,11 +45,14 @@ package flight.layouts
 		
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{
+			var size:Number;
 			if (!isNaN(percentWidth)) {
-				childRect.width = constrainChildWidth(contentRect.width * percentWidth * (percentHorizontal < 1 ? 1 : 1/percentHorizontal));
+				size = contentRect.width - childMargin.left - childMargin.right;
+				childRect.width = constrainChildWidth(size * percentWidth * (horizontalPercent < 1 ? 1 : 1/horizontalPercent));
 			}
 			if (!isNaN(percentHeight)) {
-				childRect.height = constrainChildHeight(contentRect.height * percentHeight * (percentVertical < 1 ? 1 : 1/percentVertical));
+				size = target.contentHeight - target.measured.minHeight;
+				childRect.height = constrainChildHeight(size * percentHeight * (verticalPercent < 1 ? 1 : 1/verticalPercent));
 			}
 			
 			// horizontal layout
@@ -75,6 +78,15 @@ package flight.layouts
 			} else {
 				contentRect.top = childRect.y + childRect.height + padding.vertical;
 				contentMargin.top = childMargin.bottom;
+			}
+			
+			switch (verticalAlign) {
+				case Align.CENTER:
+					childRect.y += verticalSpace / 2;
+					break;
+				case Align.RIGHT:
+					childRect.y += verticalSpace;
+					break;
 			}
 		}
 		

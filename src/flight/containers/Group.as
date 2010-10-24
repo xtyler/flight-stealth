@@ -102,33 +102,33 @@ package flight.containers
 		}
 		private var _contentHeight:Number = 0;
 		
-		[Bindable(event="hScrollChange", style="noEvent")]
-		public function get hScroll():IScroll { return _hScroll || (hScroll = new Scroll()); }
-		public function set hScroll(value:IScroll):void
+		[Bindable(event="hPositionChange", style="noEvent")]
+		public function get hPosition():IScroll { return _hPosition || (hPosition = new Scroll()); }
+		public function set hPosition(value:IScroll):void
 		{
-			if (_hScroll) {
-				_hScroll.removeEventListener(Event.CHANGE, onScrollChange);
+			if (_hPosition) {
+				_hPosition.removeEventListener(Event.CHANGE, onPositionChange);
 			}
-			DataChange.change(this, "hScroll", _hScroll, _hScroll = value);
-			if (_hScroll) {
-				_hScroll.addEventListener(Event.CHANGE, onScrollChange);
+			DataChange.change(this, "hPosition", _hPosition, _hPosition = value);
+			if (_hPosition) {
+				_hPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
 		}
-		private var _hScroll:IScroll;
+		private var _hPosition:IScroll;
 		
-		[Bindable(event="vScrollChange", style="noEvent")]
-		public function get vScroll():IScroll { return _vScroll || (vScroll = new Scroll()); }
-		public function set vScroll(value:IScroll):void
+		[Bindable(event="vPositionChange", style="noEvent")]
+		public function get vPosition():IScroll { return _vPosition || (vPosition = new Scroll()); }
+		public function set vPosition(value:IScroll):void
 		{
-			if (_vScroll) {
-				_vScroll.removeEventListener(Event.CHANGE, onScrollChange);
+			if (_vPosition) {
+				_vPosition.removeEventListener(Event.CHANGE, onPositionChange);
 			}
-			DataChange.change(this, "vScroll", _vScroll, _vScroll = value);
-			if (_vScroll) {
-				_vScroll.addEventListener(Event.CHANGE, onScrollChange);
+			DataChange.change(this, "vPosition", _vPosition, _vPosition = value);
+			if (_vPosition) {
+				_vPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
 		}
-		private var _vScroll:IScroll;
+		private var _vPosition:IScroll;
 		
 		[Bindable(event="clipChange", style="noEvent")]
 		public function get clip():Boolean { return _clip }
@@ -164,17 +164,17 @@ package flight.containers
 			rect = scrollRect || new Rectangle();
 			rect.width = width;
 			rect.height = height;
-			if (_hScroll) {
-				_hScroll.min = 0;
-				_hScroll.max = contentWidth - width;
-				_hScroll.pageSize = rect.width;
-				rect.x = hScroll.value;
+			if (_hPosition) {
+				_hPosition.min = 0;
+				_hPosition.max = contentWidth - width;
+				_hPosition.pageSize = rect.width;
+				rect.x = hPosition.value;
 			}
-			if (_vScroll) {
-				_vScroll.min = 0;
-				_vScroll.max = contentHeight - height;
-				_vScroll.pageSize = rect.height;
-				rect.y = vScroll.value;
+			if (_vPosition) {
+				_vPosition.min = 0;
+				_vPosition.max = contentHeight - height;
+				_vPosition.pageSize = rect.height;
+				rect.y = vPosition.value;
 			}
 			
 			if (width < contentWidth || height < contentHeight) {
@@ -184,15 +184,15 @@ package flight.containers
 			}
 		}
 		
-		private function onScrollChange(event:Event):void
+		private function onPositionChange(event:Event):void
 		{
 			if (width < contentWidth || height < contentHeight) {
 				var rect:Rectangle = scrollRect || new Rectangle();
-				if (_hScroll) {
-					rect.x = hScroll.value;
+				if (_hPosition) {
+					rect.x = hPosition.value;
 				}
-				if (_vScroll) {
-					rect.y = vScroll.value;
+				if (_vPosition) {
+					rect.y = vPosition.value;
 				}
 				scrollRect = rect;
 			}

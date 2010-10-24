@@ -323,10 +323,5 @@ package flight.layouts
 					break;
 			}
 		}
-		
-		override protected function alignContent():void
-		{
-			// just override to avoid having content aligned
-		}
 	}
 }

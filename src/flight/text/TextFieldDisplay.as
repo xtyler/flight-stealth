@@ -530,6 +530,8 @@ package flight.text
 		 */
 		public function setLayoutSize(width:Number, height:Number):void
 		{
+			var preferredWidth:Number = this.preferredWidth;
+			var preferredHeight:Number = this.preferredWidth;
 			if (complexMatrix()) {
 				var m:Matrix = matrix;
 				if (isNaN(width)) {
@@ -540,16 +542,17 @@ package flight.text
 				}
 				
 				m.invert();
-				_layoutWidth = Math.abs(m.a * width + m.c * height);
-				_layoutHeight = Math.abs(m.d * height + m.b * width);
+				width = Math.abs(m.a * width + m.c * height);
+				height = Math.abs(m.d * height + m.b * width);
 			} else {
-				_layoutWidth = isNaN(width) ? NaN : width * scaleX;
-				_layoutHeight = isNaN(height) ? NaN : height * scaleY;
+				width = isNaN(width) ? preferredWidth : width * scaleX;
+				height = isNaN(height) ? preferredHeight : height * scaleY;
 			}
 			
+			_layoutWidth = (width != preferredWidth) ? width : NaN;
 			updateWidth(true);
+			_layoutHeight = (height != preferredHeight) ? height : NaN;
 			updateHeight(true);
-			
 		}
 		private var _layoutWidth:Number;
 		private var _layoutHeight:Number;

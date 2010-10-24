@@ -13,20 +13,6 @@ package flight.behaviors
 	import flight.data.DataChange;
 	import flight.utils.getClassName;
 	
-	/**
-	 * Behavior is a convenient base class for various behavior implementations.
-	 * These classes represent added features and functionality to a target
-	 * InteractiveObject. Behavior takes advantage of the skin of an ISkinnable
-	 * target by syncing skin parts and setting state.
-	 * 
-	 * Stealth component behaviors can be broken into 3 types -
-	 * 1) a components single base behavior - core implementation with which the
-	 * particular component would be useless without (eg ScrollBarBehavior)
-	 * 2) a components addon behaviors - additional functionality specefic to
-	 * the component (eg ReorderTabBehavior)
-	 * 3) common addon behaviors - general solutions for all components, or all
-	 * components of a type (eg TooltipBehavior)
-	 */
 	public class Behavior extends EventDispatcher implements IBehavior
 	{
 		protected var dataBind:DataBind = new DataBind();

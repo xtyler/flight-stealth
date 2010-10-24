@@ -561,19 +561,14 @@ package flight.display
 				width = Math.abs(m.a * width + m.c * height);
 				height = Math.abs(m.d * height + m.b * width);
 			} else {
-				width = isNaN(width) ? NaN : width * scaleX;
-				height = isNaN(height) ? NaN : height * scaleY;
+				width = isNaN(width) ? preferredWidth : width * scaleX;
+				height = isNaN(height) ? preferredHeight : height * scaleY;
 			}
 			
-			if (width != preferredWidth) {
-				_layoutWidth = width;
-				updateWidth(true);
-			}
-			if (height != preferredHeight) {
-				_layoutHeight = height;
-				updateHeight(true);
-			}
-			
+			_layoutWidth = (width != preferredWidth) ? width : NaN;
+			updateWidth(true);
+			_layoutHeight = (height != preferredHeight) ? height : NaN;
+			updateHeight(true);
 		}
 		private var _layoutWidth:Number;
 		private var _layoutHeight:Number;
