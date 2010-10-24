@@ -142,11 +142,11 @@ package flight.layouts
 					measured.maxWidth = measured.constrainWidth(space + childMax.width);
 				}
 			} else {	// if (dock == JUSTIFY) {
-				space = measured.width + childMargin.left + childMargin.right;
+				space = measured.width + childMargin.left + childMargin.right + padding.horizontal;
 				measured.minWidth = measured.constrainWidth(space + childMin.width);
 				measured.maxWidth = measured.constrainWidth(space + childMax.width);
 				
-				space = measured.height + childMargin.top + childMargin.bottom;
+				space = measured.height + childMargin.top + childMargin.bottom + padding.vertical;
 				measured.minHeight = measured.constrainHeight(space + childMin.height);
 				measured.maxHeight = measured.constrainHeight(space + childMax.height);
 			}

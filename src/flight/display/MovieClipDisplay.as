@@ -6,8 +6,8 @@
 
 package flight.display
 {
-	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
@@ -40,12 +40,12 @@ package flight.display
 	[Event(name="ready", type="flash.events.Event")]
 	
 	/**
-	 * Advanced Bitmap implementation providing styling, transformation and
+	 * Advanced MovieClip implementation providing styling, transformation and
 	 * simple layout properties, also making the display bindable.
 	 */
-	public class BitmapDisplay extends Bitmap implements IStyleable, ITransform, ILayoutBounds, IInvalidating, IMXMLObject
+	public class MovieClipDisplay extends MovieClip implements IStyleable, ITransform, ILayoutBounds, IInvalidating, IMXMLObject
 	{
-		public function BitmapDisplay()
+		public function MovieClipDisplay()
 		{
 			_explicit = new Bounds(NaN, NaN);
 			_measured = new Bounds(0, 0);
@@ -420,7 +420,9 @@ package flight.display
 			if (_explicit.maxWidth < value) {
 				_explicit.maxWidth = value;
 			}
-			value = _measured.constrainWidth(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainWidth(value);
+			}
 			if (_minWidth != value) {
 				invalidateLayout(true);
 				DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
@@ -442,7 +444,9 @@ package flight.display
 			if (_explicit.maxHeight < value) {
 				_explicit.maxHeight = value;
 			}
-			value = _measured.constrainHeight(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainHeight(value);
+			}
 			if (_minHeight != value) {
 				invalidateLayout(true);
 				DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
@@ -464,7 +468,9 @@ package flight.display
 				_explicit.minWidth = value;
 			}
 			_explicit.maxWidth = value;
-			value = _measured.constrainWidth(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainWidth(value);
+			}
 			if (_maxWidth != value) {
 				invalidateLayout(true);
 				DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
@@ -486,7 +492,9 @@ package flight.display
 				_explicit.minHeight = value;
 			}
 			_explicit.maxHeight = value;
-			value = _measured.constrainHeight(value);
+			if (_constrainMeasured) {
+				value = _measured.constrainHeight(value);
+			}
 			if (_maxHeight != value) {
 				invalidateLayout(true);
 				DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
@@ -495,6 +503,21 @@ package flight.display
 			}
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
+		
+		[Bindable(event="constrainChange", style="noEvent")]
+		public function get constrainMeasured():Boolean { return _constrainMeasured }
+		public function set constrainMeasured(value:Boolean):void
+		{
+			if (_constrainMeasured != value) {
+				DataChange.queue(this, "constrainMeasured", _constrainMeasured, _constrainMeasured = value);
+				minWidth = _explicit.minWidth;
+				minHeight = _explicit.minHeight;
+				maxWidth = _explicit.maxWidth;
+				maxHeight = _explicit.maxHeight;
+				DataChange.change();
+			}
+		}
+		private var _constrainMeasured:Boolean = true;
 		
 		/**
 		 * @inheritDoc
@@ -680,8 +703,9 @@ package flight.display
 		
 		protected function measure():void
 		{
-			_measured.width = bitmapData ? bitmapData.width : 0;
-			_measured.height = bitmapData ? bitmapData.height : 0;
+			var rect:Rectangle = getRect(this);
+			_measured.width = rect.width;
+			_measured.height = rect.height;
 		}
 		
 		protected function invalidateLayout(measureOnly:Boolean = false):void
@@ -734,10 +758,12 @@ package flight.display
 			measure();
 			updateWidth();
 			updateHeight();
-			minWidth = _explicit.minWidth;
-			minHeight = _explicit.minHeight;
-			maxWidth = _explicit.maxWidth;
-			maxHeight = _explicit.maxHeight;
+			if (_constrainMeasured) {
+				minWidth = _explicit.minWidth;
+				minHeight = _explicit.minHeight;
+				maxWidth = _explicit.maxWidth;
+				maxHeight = _explicit.maxHeight;
+			}
 		}
 		
 		private function onAddedToStage(event:Event):void

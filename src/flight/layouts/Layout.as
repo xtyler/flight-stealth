@@ -222,18 +222,9 @@ package flight.layouts
 					percentWidth = percentHeight = NaN;
 				}
 				
-				var width:Number = childRect.width;
-				var height:Number = childRect.height;
 				updateChild(child, i == len - 1);
 				
 				if (child is ILayoutBounds) {
-					// only update widths/heights that have changed
-					if (childRect.width == width && isNaN(percentWidth)) {
-						childRect.width = NaN;
-					}
-					if (childRect.height == height && isNaN(percentHeight)) {
-						childRect.height = NaN;
-					}
 					ILayoutBounds(child).setLayoutSize(childRect.width, childRect.height);
 					ILayoutBounds(child).setLayoutPosition(childRect.x, childRect.y);
 				} else {

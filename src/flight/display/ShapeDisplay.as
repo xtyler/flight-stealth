@@ -213,7 +213,6 @@ package flight.display
 			}
 		}
 		
-		
 		/**
 		 * @inheritDoc
 		 */
@@ -423,7 +422,9 @@ package flight.display
 			value = _measured.constrainWidth(value);
 			if (_minWidth != value) {
 				invalidateLayout(true);
-				DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
+				DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
+				updateWidth();
+				DataChange.change();
 			}
 		}
 		private var _minWidth:Number = 0;
@@ -443,7 +444,9 @@ package flight.display
 			value = _measured.constrainHeight(value);
 			if (_minHeight != value) {
 				invalidateLayout(true);
-				DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
+				DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
+				updateHeight();
+				DataChange.change();
 			}
 		}
 		private var _minHeight:Number = 0;
@@ -463,7 +466,9 @@ package flight.display
 			value = _measured.constrainWidth(value);
 			if (_maxWidth != value) {
 				invalidateLayout(true);
-				DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
+				DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
+				updateWidth();
+				DataChange.change();
 			}
 		}
 		private var _maxWidth:Number = 0xFFFFFF;
@@ -483,7 +488,9 @@ package flight.display
 			value = _measured.constrainHeight(value);
 			if (_maxHeight != value) {
 				invalidateLayout(true);
-				DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
+				DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
+				updateHeight();
+				DataChange.change();
 			}
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
@@ -523,28 +530,30 @@ package flight.display
 		 */
 		public function setLayoutSize(width:Number, height:Number):void
 		{
-			var preferredWidth:Number = this.preferredWidth;
-			var preferredHeight:Number = this.preferredWidth;
 			if (complexMatrix()) {
 				var m:Matrix = matrix;
-				if (isNaN(width)) {
-					width = Math.abs(m.a * preferredWidth + m.c * preferredHeight);
-				}
-				if (isNaN(height)) {
-					height = Math.abs(m.d * preferredHeight + m.b * preferredWidth);
-				}
-				
 				m.invert();
-				width = Math.abs(m.a * width + m.c * height);
-				height = Math.abs(m.d * height + m.b * width);
+				
+				if (width < 0) {
+					width = 0;
+				}
+				if (height < 0) {
+					height = 0;
+				}
+				_layoutWidth = Math.abs(m.a * width + m.c * height);
+				_layoutHeight = Math.abs(m.d * height + m.b * width);
 			} else {
-				width = isNaN(width) ? preferredWidth : width * scaleX;
-				height = isNaN(height) ? preferredHeight : height * scaleY;
+				_layoutWidth = width / scaleX;
+				_layoutHeight = height / scaleY;
 			}
 			
-			_layoutWidth = (width != preferredWidth) ? width : NaN;
+			if (_layoutWidth == preferredWidth) {
+				_layoutWidth = NaN;
+			}
+			if (_layoutHeight == preferredHeight) {
+				_layoutHeight = NaN;
+			}
 			updateWidth(true);
-			_layoutHeight = (height != preferredHeight) ? height : NaN;
 			updateHeight(true);
 		}
 		private var _layoutWidth:Number;
