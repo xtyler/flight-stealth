@@ -31,6 +31,9 @@ package flight.containers
 		public function Group()
 		{
 			_content = new ArrayList();
+			for (var i:int = 0; i < numChildren; i ++) {
+				_content.addItem(getChildAt(i));
+			}
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			addEventListener(Event.ADDED, onChildAdded, true);
 			addEventListener(Event.REMOVED, onChildRemoved, true);
@@ -77,7 +80,7 @@ package flight.containers
 		private var _layout:ILayout;
 		
 		[Bindable(event="contentWidthChange", style="noEvent")]
-		public function get contentWidth():Number { return !constrainMeasured ? _contentWidth : width}
+		public function get contentWidth():Number { return !constrainMeasured ? _contentWidth : width }
 		public function set contentWidth(value:Number):void
 		{
 			if (!constrainMeasured) {
@@ -90,7 +93,7 @@ package flight.containers
 		private var _contentWidth:Number = 0;
 		
 		[Bindable(event="contentHeightChange", style="noEvent")]
-		public function get contentHeight():Number { return !constrainMeasured ? _contentHeight : height}
+		public function get contentHeight():Number { return !constrainMeasured ? _contentHeight : height }
 		public function set contentHeight(value:Number):void
 		{
 			if (!constrainMeasured) {
@@ -232,20 +235,23 @@ package flight.containers
 			var child:DisplayObject;
 			var location:int = event.location1;
 			switch (event.kind) {
-				case ListEventKind.ADD :
+				case ListEventKind.ADD:
 					for each (child in event.items) {
 						addChildAt(child, location++);
 					}
 					break;
-				case ListEventKind.REMOVE :
+				case ListEventKind.REMOVE:
 					for each (child in event.items) {
 						removeChild(child);
 					}
 					break;
-				case ListEventKind.MOVE :
+				case ListEventKind.MOVE:
 					addChildAt(event.items[0], location);
+					if (event.items.length == 2) {
+						addChildAt(event.items[1], event.location2);
+					}
 					break;
-				case ListEventKind.REPLACE :
+				case ListEventKind.REPLACE:
 					removeChild(event.items[1]);
 					addChildAt(event.items[0], location);
 					break;

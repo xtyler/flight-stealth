@@ -11,124 +11,69 @@ package flight.skins
 	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	
-	import flight.data.DataBind;
-	import flight.data.DataChange;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
-	import flight.layouts.IMeasureable;
-	
-	public class MovieClipSkin implements ISkin
+	public class MovieClipSkin extends Skin
 	{
-		protected var dataBind:DataBind = new DataBind();
-		private var _movieclip:Sprite;
+		protected var skinParts:Object;
+		protected var statefulParts:Object;
 		
-		public function MovieClipSkin(movieclip:Sprite)
+		public function MovieClipSkin()
 		{
-			this.movieclip = movieclip;
 		}
 		
-		[Bindable(event="currentStateChange")]
-		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
+		override public function set target(value:Sprite):void
 		{
-			DataChange.change(this, "currentState", _currentState, _currentState = value);
-			if (_movieclip is MovieClip) {
-				gotoState(_movieclip as MovieClip, _currentState);
-			} else if (_movieclip is Sprite) {
-				var length:int = _movieclip.numChildren;
-				for (var i:int = 0; i < length; i++) {
-					var child:DisplayObject = _movieclip.getChildAt(i);
-					if (child is MovieClip) {
-						gotoState(child as MovieClip, _currentState);
+			skinParts = statefulParts = null;
+			super.target = value;
+			if (value) {
+				skinParts = {};
+				statefulParts = [];
+				inspectSkin(value);
+			}
+		}
+		
+		override public function getSkinPart(part:String):InteractiveObject
+		{
+			if (target && part in skinParts) {
+				return  skinParts[part];
+			}
+			return null;
+		}
+		
+		override public function set currentState(value:String):void
+		{
+			super.currentState = value;
+			for each (var states:Object in statefulParts) {
+				var skinPart:MovieClip = states.skinPart;
+				if (states[value]) {
+					skinPart.gotoAndStop(states[value]);
+				}
+			}
+		}
+		
+		private function inspectSkin(skinPart:Sprite):void
+		{
+			if (skinPart is MovieClip) {
+				
+				// get frame labels
+				var movieclip:MovieClip = skinPart as MovieClip;
+				if (movieclip.currentLabels.length) {
+					var states:Object = {skinPart:movieclip};
+					for each (var label:FrameLabel in movieclip.currentLabels) {
+						states[label.name] = label.frame;
 					}
-				}
-			}
-		}
-		private var _currentState:String = "default";
-		
-		[Bindable(event="targetChange")]
-		public function get target():Sprite { return _target; }
-		public function set target(value:Sprite):void
-		{
-			if (_movieclip && _target) {
-				_target.removeChild(_movieclip);
-				if (_target is IMeasureable) {
-					_target.removeEventListener(LayoutPhase.RESIZE, onSizeChange);
-				}
-			}
-			DataChange.change(this, "target", _target, _target = value);
-			if (_movieclip && _target) {
-				_target.addChild(_movieclip);
-				if (_target is IMeasureable) {
-					_target.addEventListener(LayoutPhase.RESIZE, onSizeChange);
-				}
-				onSizeChange(null);
-			}
-		}
-		private var _target:Sprite;
-		
-		[Bindable(event="movieclipChange")]
-		public function get movieclip():Sprite { return _movieclip; }
-		public function set movieclip(value:Sprite):void
-		{
-			if (_movieclip && _target) {
-				_target.removeChild(_movieclip);
-			}
-			DataChange.change(this, "movieclip", _movieclip, _movieclip = value);
-			if (_movieclip && _target) {
-				_target.addChild(_movieclip);
-				onSizeChange(null);
-			}
-		}
-		private var _width:Number = 0;
-		
-		[Bindable(event="widthChange")]
-		public function get width():Number { return _width; }
-		public function set width(value:Number):void
-		{
-			DataChange.change(this, "width", _width, _width = value);
-			RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
-		}
-		
-		[Bindable(event="heightChange")]
-		public function get height():Number { return _height; }
-		public function set height(value:Number):void
-		{
-			DataChange.change(this, "height", _height, _height = value);
-			RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
-		}
-		private var _height:Number = 0;
-		
-		public function getSkinPart(part:String):InteractiveObject
-		{
-			return (part in _movieclip) ? _movieclip[part] : (part in this ? this[part] : null);
-		}
-		
-		private function onSizeChange(event:Event):void
-		{
-			if (_movieclip && _target) {
-				_movieclip.width = _target.width;
-				_movieclip.height = _target.height;
-			}
-		}
-		
-		// we'll update this for animated/play animations later
-		private function gotoState(clip:MovieClip, state:String):void
-		{
-			var frames:Array = clip.currentLabels;
-			for each(var label:FrameLabel in frames) {
-				if (label.name == state) {
-					clip.gotoAndStop(label.frame);
+					statefulParts.push(states);
 				}
 			}
 			
-			var length:int = clip.numChildren; // recurse (for now)
-			for (var i:int = 0; i < length; i++) {
-				var child:DisplayObject = clip.getChildAt(i);
-				if (child is MovieClip) {
-					gotoState(child as MovieClip, state);
+			for (var i:int = 0; i < skinPart.numChildren; i++) {
+				var child:DisplayObject = skinPart.getChildAt(i);
+				if (child is InteractiveObject) {
+					skinParts[child.name.replace("$", "")] = child;
+					// inspect child if not its own component/skin
+					if (child is Sprite && !(child is ISkinnable)) {
+						inspectSkin(child as Sprite);
+					}
 				}
 			}
 		}

@@ -195,13 +195,6 @@ package flight.text
 		 */
 		[Bindable(event="nativeWidthChange", style="noEvent")]
 		public function get nativeWidth():Number { return super.width; }
-		public function set nativeWidth(value:Number):void
-		{
-			if (super.width != value) {
-				invalidateLayout();
-				DataChange.change(this, "nativeWidth", super.width, super.width = value);
-			}
-		}
 		
 		/**
 		 * The height of the display in pixels relative to the local
@@ -212,14 +205,6 @@ package flight.text
 		 */
 		[Bindable(event="nativeHeightChange", style="noEvent")]
 		public function get nativeHeight():Number { return super.height; }
-		public function set nativeHeight(value:Number):void
-		{
-			if (super.height != value) {
-				invalidateLayout();
-				DataChange.change(this, "nativeHeight", super.height, super.height = value);
-			}
-		}
-		
 		
 		/**
 		 * @inheritDoc

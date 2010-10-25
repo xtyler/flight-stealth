@@ -6,17 +6,16 @@
 
 package flight.skins
 {
-	import flash.display.InteractiveObject;
-	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
+	
+	import flight.data.IDataRenderer;
+	import flight.styles.IStateful;
 	
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
-	public interface ISkin extends IEventDispatcher
+	public interface ISkinnable extends IEventDispatcher, IDataRenderer, IStateful
 	{
-		function get target():Sprite;
-		function set target(value:Sprite):void;
-		
-		function getSkinPart(part:String):InteractiveObject;
+		function get skin():ISkin;
+		function set skin(value:ISkin):void;
 	}
 }

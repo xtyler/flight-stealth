@@ -29,13 +29,12 @@ package flight.behaviors
 		public function get target():InteractiveObject { return _target }
 		public function set target(value:InteractiveObject):void
 		{
-			DataChange.change(this, "target", _target, _target = value);
+			DataChange.queue(this, "target", _target, _target = value);
+			if ("hostComponent" in this) {
+				this["hostComponent"] = _target;
+			}
+			DataChange.change();
 		}
 		private var _target:InteractiveObject;
-		
-		public function Behavior(target:InteractiveObject = null)
-		{
-			this.target = target;
-		}
 	}
 }

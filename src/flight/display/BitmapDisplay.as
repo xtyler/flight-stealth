@@ -188,13 +188,6 @@ package flight.display
 		 */
 		[Bindable(event="nativeWidthChange", style="noEvent")]
 		public function get nativeWidth():Number { return super.width; }
-		public function set nativeWidth(value:Number):void
-		{
-			if (super.width != value) {
-				invalidateLayout();
-				DataChange.change(this, "nativeWidth", super.width, super.width = value);
-			}
-		}
 		
 		/**
 		 * The height of the display in pixels relative to the local
@@ -205,14 +198,18 @@ package flight.display
 		 */
 		[Bindable(event="nativeHeightChange", style="noEvent")]
 		public function get nativeHeight():Number { return super.height; }
-		public function set nativeHeight(value:Number):void
-		{
-			if (super.height != value) {
-				invalidateLayout();
-				DataChange.change(this, "nativeHeight", super.height, super.height = value);
-			}
-		}
 		
+		[Bindable(event="nativeSizingChange", style="noEvent")]
+		public function get nativeSizing():Boolean { return _nativeSizing }
+		public function set nativeSizing(value:Boolean):void
+		{
+			unscaledRect = getRect(this);
+			DataChange.change(this, "nativeSizing", _nativeSizing, _nativeSizing = value);
+			updateWidth();
+			updateHeight();
+		}
+		private var _nativeSizing:Boolean;
+		private var unscaledRect:Rectangle;
 		
 		/**
 		 * @inheritDoc
@@ -515,6 +512,9 @@ package flight.display
 		{
 			if (complexMatrix()) {
 				var m:Matrix = matrix, d:Number;
+				if (_nativeSizing) {
+					m = resetMatrixScale(m);
+				}
 				d = m.a * _width + m.c * _height;
 				if (d < 0) x -= d;
 				d = m.d * _height + m.b * _width;
@@ -533,6 +533,9 @@ package flight.display
 		{
 			if (complexMatrix()) {
 				var m:Matrix = matrix;
+				if (_nativeSizing) {
+					m = resetMatrixScale(m);
+				}
 				m.invert();
 				
 				if (width < 0) {
@@ -543,6 +546,9 @@ package flight.display
 				}
 				_layoutWidth = Math.abs(m.a * width + m.c * height);
 				_layoutHeight = Math.abs(m.d * height + m.b * width);
+			} else if (_nativeSizing) {
+				_layoutWidth = width;
+				_layoutHeight = height;
 			} else {
 				_layoutWidth = width / scaleX;
 				_layoutHeight = height / scaleY;
@@ -570,6 +576,9 @@ package flight.display
 			
 			if (complexMatrix()) {
 				var m:Matrix = matrix;
+				if (_nativeSizing) {
+					m = resetMatrixScale(m);
+				}
 				var x:Number, y:Number;
 				var minX:Number, minY:Number, maxX:Number, maxY:Number;
 				
@@ -622,8 +631,13 @@ package flight.display
 			} else {
 				rect.x = this.x;
 				rect.y = this.y;
-				rect.width = width * scaleX;
-				rect.height = height * scaleY;
+				if (_nativeSizing) {
+					rect.width = width;
+					rect.height = height;
+				} else {
+					rect.width = width * scaleX;
+					rect.height = height * scaleY;
+				}
 			}
 			return rect;
 		}
@@ -704,6 +718,9 @@ package flight.display
 				}
 				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				if (_nativeSizing) {
+					DataChange.queue(this, "scaleX", super.scaleX, super.scaleX = w / unscaledRect.width);
+				}
 				DataChange.change(this, "width", _width, _width = w);
 			}
 		}
@@ -718,6 +735,9 @@ package flight.display
 				}
 				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				if (_nativeSizing) {
+					DataChange.change(this, "scaleY", super.scaleY, super.scaleY = h / unscaledRect.height);
+				}
 				DataChange.change(this, "height", _height, _height = h);
 			}
 		}
@@ -727,6 +747,18 @@ package flight.display
 			var m:Matrix = matrix;
 			return (m.a < 0 || m.d < 0 ||
 					m.b != 0 || m.c != 0);
+		}
+		
+		private function resetMatrixScale(m:Matrix):Matrix
+		{
+			// set scale back to 1 but keep rotation
+			var skewY:Number = Math.atan2(m.b, m.a);
+			m.a = Math.cos(skewY);
+			m.b = Math.sin(skewY);
+			var skewX:Number = Math.atan2(-m.c, m.d);
+			m.c = -Math.sin(skewX);
+			m.d = Math.cos(skewX);
+			return m;
 		}
 		
 		private function onMeasure(event:Event):void

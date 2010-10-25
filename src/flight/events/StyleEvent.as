@@ -36,7 +36,7 @@ package flight.events
 		
 		override public function clone():Event
 		{
-			return new StyleEvent(type, bubbles, cancelable, source, property, oldValue, newValue);
+			return new StyleEvent(type, bubbles, cancelable, _source, _property, _oldValue, _newValue);
 		}
 	}
 }

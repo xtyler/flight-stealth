@@ -134,17 +134,17 @@ package flight.data
 			
 			updatingLists = true;
 			switch (event.kind) {
-				case ListEventKind.ADD :
+				case ListEventKind.ADD:
 					tmpArray = [];
 					for each (tmpObject in event.items) {
 						tmpArray.push( getData(tmpObject) );
 					}
 					list2.addItems(tmpArray, event.location1);
 					break;
-				case ListEventKind.REMOVE :
+				case ListEventKind.REMOVE:
 					list2.removeItems(event.location1, event.items.length);
 					break;
-				case ListEventKind.MOVE :
+				case ListEventKind.MOVE:
 					if (event.items.length == 1) {
 						tmpObject = getData(event.items[0]);
 						list2.setItemIndex(tmpObject, event.location1);
@@ -152,11 +152,11 @@ package flight.data
 						list2.swapItemsAt(event.location1, event.location2);
 					}
 					break;
-				case ListEventKind.REPLACE :
+				case ListEventKind.REPLACE:
 					tmpObject = getData(event.items[0]);
 					list2.setItemAt(tmpObject, event.location1);
 					break;
-				case ListEventKind.RESET :
+				default:	// ListEventKind.RESET
 					tmpArray = [];
 					for (var i:int = 0; i < list1.length; i++) {
 						tmpObject = list1.getItemAt(i);

@@ -263,6 +263,7 @@ package flight.layouts
 			}
 			layoutStyles.push(property);
 		}
+		
 		private function onStyleChange(event:StyleEvent):void
 		{
 			if (layoutStyles && layoutStyles.indexOf(event.property) != -1) {
@@ -293,23 +294,23 @@ package flight.layouts
 		{
 			var child:DisplayObject;
 			switch (event.kind) {
-				case ListEventKind.ADD :
+				case ListEventKind.ADD:
 					for each (child in event.items) {
 					if (child is IStyleable) {
 						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
 					}
 				}
 					break;
-				case ListEventKind.REMOVE :
+				case ListEventKind.REMOVE:
 					for each (child in event.items) {
 					if (child is IStyleable) {
 						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
 					}
 				}
 					break;
-				case ListEventKind.MOVE :
+				case ListEventKind.MOVE:
 					break;
-				case ListEventKind.REPLACE :
+				case ListEventKind.REPLACE:
 					child = event.items[1];
 					if (child is IStyleable) {
 						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);

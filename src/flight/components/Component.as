@@ -6,22 +6,28 @@
 
 package flight.components
 {
+	import flash.display.InteractiveObject;
+	import flash.events.Event;
+	
 	import flight.behaviors.IBehavior;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.data.IDataRenderer;
+	import flight.display.InitializePhase;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
 	import flight.events.ListEvent;
 	import flight.events.ListEventKind;
+	import flight.events.SkinEvent;
 	import flight.events.StyleEvent;
 	import flight.list.ArrayList;
 	import flight.list.IList;
 	import flight.skins.ISkin;
-	import flight.styles.IStateful;
+	import flight.skins.ISkinnable;
 	
-	public class Component extends SpriteDisplay implements IDataRenderer, IStateful
+	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
+	
+	public class Component extends SpriteDisplay implements ISkinnable
 	{
 		protected var dataBind:DataBind = new DataBind();
 		
@@ -30,17 +36,18 @@ package flight.components
 			_behaviors = new ArrayList();
 			_behaviors.addEventListener(ListEvent.LIST_CHANGE, onBehaviorsChange);
 			style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+			addEventListener(InitializePhase.CREATE, onSkinCreate);
 		}
 		
-		[Bindable(event="dataChange", style="noEvent")]
-		public function get data():Object { return _data || (_data = {}); }
-		public function set data(value:Object):void
+		[Bindable(event="disabledChange", style="noEvent")]
+		public function get disabled():Boolean { return _disabled; }
+		public function set disabled(value:Boolean):void
 		{
-			DataChange.change(this, "data", _data, _data = value);
+			mouseEnabled = mouseChildren = !value;
+			DataChange.change(this, "disabled", _disabled, _disabled = value);
 		}
-		private var _data:Object;
-		
-		
+		private var _disabled:Boolean = true;
+
 		[ArrayElementType("flight.behaviors.IBehavior")]
 		[Bindable(event="behaviorsChange", style="noEvent")]
 		public function get behaviors():IList { return _behaviors; }
@@ -50,39 +57,21 @@ package flight.components
 				style[IBehavior(value).type] = value;
 			} else if (value is Array || value is IList) {
 				for each (var behavior:IBehavior in value) {
-					style[behavior.type] = value;
+					style[behavior.type] = behavior;
 				}
 			}
 		}
 		private var _behaviors:IList;
 		
-		[Bindable(event="skinChange", style="noEvent")]
-		public function get skin():ISkin { return _skin; }
-		public function set skin(value:ISkin):void
-		{
-			if (_skin != value) {
-				if (_skin) {
-					_skin.target = null;
-				}
-				DataChange.queue(this, "skin", _skin, _skin = value);
-				if (_skin) {
-					_skin.target = this;
-				}
-				RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-				DataChange.change();
-			}
-		}
-		private var _skin:ISkin;
+		// ====== IDataRenderer implementation ====== //
 		
-		
-		[Bindable(event="enabledChange", style="noEvent")]
-		public function get enabled():Boolean { return _enabled; }
-		public function set enabled(value:Boolean):void
+		[Bindable(event="dataChange", style="noEvent")]
+		public function get data():Object { return _data || (_data = {}); }
+		public function set data(value:Object):void
 		{
-			enabled = mouseEnabled = mouseChildren = value;
-			DataChange.change(this, "enabled", _enabled, _enabled = value);
+			DataChange.change(this, "data", _data, _data = value);
 		}
-		private var _enabled:Boolean = true;
+		private var _data:Object;
 		
 		// ====== IStateful implementation ====== //
 		
@@ -102,13 +91,69 @@ package flight.components
 		}
 		private var _states:Array;
 		
+		[Bindable(event="skinChange", style="noEvent")]
+		public function get skin():ISkin { return _skin; }
+		public function set skin(value:ISkin):void
+		{
+			if (_skin != value) {
+				if (_skin) {
+					removeSkin();
+				}
+				DataChange.queue(this, "skin", _skin, _skin = value);
+				RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(this, InitializePhase.CREATE);
+				DataChange.change();
+			}
+		}
+		private var _skin:ISkin;
+		
+		protected function get skinParts():Object { return _skinParts; }
+		protected function set skinParts(value:Object):void
+		{
+			for (var i:String in value) {
+				_skinParts[i] = value[i];
+			}
+		}
+		private var _skinParts:Object = {};
+		
+		
+		protected function addSkin():void
+		{
+			_skin.target = this;
+			var skinParts:Object = this.skinParts;
+			for (var i:String in skinParts) {
+				var part:InteractiveObject = _skin.getSkinPart(i);
+				if (part) {
+					this[i] = part;
+					dispatchEvent(new SkinEvent(SkinEvent.SKIN_PART_CHANGE, false, false, i, null, this[i]));
+				}
+			}
+			_skin.addEventListener(SkinEvent.SKIN_PART_CHANGE, onSkinPartChange);
+		}
+		
+		protected function removeSkin():void
+		{
+			var skinParts:Object = this.skinParts;
+			for (var i:String in skinParts) {
+				this[i] = null;
+			}
+			_skin.removeEventListener(SkinEvent.SKIN_PART_CHANGE, onSkinPartChange);
+			_skin.target = null;
+		}
+		
+		private function onSkinPartChange(event:SkinEvent):void
+		{
+			this[event.skinPart] = _skin.getSkinPart(event.skinPart);
+			dispatchEvent(event);
+		}
+		
+		private function onSkinCreate(event:Event):void
+		{
+			addSkin();
+		}
 		
 		private function onStyleChange(event:StyleEvent):void
 		{
-			if (behaviorsChanging) {
-				return;
-			}
-			
 			var behavior:IBehavior;			
 			if (event.oldValue is IBehavior) {
 				behavior = IBehavior(event.oldValue);
@@ -138,17 +183,17 @@ package flight.components
 			var behavior:IBehavior;
 			var location:int = event.location1;
 			switch (event.kind) {
-				case ListEventKind.ADD :
+				case ListEventKind.ADD:
 					for each (behavior in event.items) {
 						style[behavior.type] = behavior;
 					}
 					break;
-				case ListEventKind.REMOVE :
+				case ListEventKind.REMOVE:
 					for each (behavior in event.items) {
 						delete style[behavior.type];
 					}
 					break;
-				case ListEventKind.REPLACE :
+				case ListEventKind.REPLACE:
 					behavior = event.items[1];
 					delete style[behavior.type];
 					behavior = event.items[0];

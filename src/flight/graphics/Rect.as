@@ -19,7 +19,6 @@ package flight.graphics
 		public function Rect()
 		{
 			addEventListener(LayoutPhase.RESIZE, onResize);
-			onResize(null);
 		}
 		
 		[Bindable(event="radiusXChange", style="noEvent")]

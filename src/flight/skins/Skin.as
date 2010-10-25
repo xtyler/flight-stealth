@@ -19,38 +19,67 @@ package flight.skins
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
 	import flight.list.IList;
+	import flight.styles.IStateful;
+	
+	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
 	/**
-	 * Skin is a convenient base class for many skins, a swappable graphical
-	 * definition. Skins decorate a target Sprite by drawing on its surface,
+	 * Skin is a convenient base class for many skins, swappable graphic
+	 * definitions. Skins decorate a target Sprite by drawing on its surface,
 	 * adding children to the Sprite, or both.
 	 */
 	[DefaultProperty("content")]
-	public class Skin extends EventDispatcher implements ISkin, IContainer//, IStateful, IStyleable, IInvalidating
+	public class Skin extends EventDispatcher implements ISkin, IContainer, IStateful
 	{
+		protected var skinnableComponent:ISkinnable;
 		protected var dataBind:DataBind = new DataBind();
 		
 		public function Skin()
 		{
 			_measured = new Bounds();
+			dataBind.bind(this, "currentState", this, "target.currentState");
 		}
 		
 		// ====== ISkin implementation ====== //
 		
 		[Bindable(event="targetChange", style="noEvent")]
-		public function get target():Sprite { return _target }
+		public function get target():Sprite { return _target; }
 		public function set target(value:Sprite):void
 		{
 			DataChange.queue(this, "display", _target, value);
-			DataChange.change(this, "target", _target, _target = value);
+			DataChange.queue(this, "target", _target, _target = value);
+			if (_target is ISkinnable) {
+				skinnableComponent = ISkinnable(_target);
+			}
+			if ("hostComponent" in this) {
+				this["hostComponent"] = _target;
+			}
+			DataChange.change();
 		}
 		private var _target:Sprite;
 		
-		
 		public function getSkinPart(part:String):InteractiveObject
 		{
-			return (part in this) ? this[part] : (part in _target ? _target[part] : null);
+			return part in this ? this[part] : null;
 		}
+		
+		// ====== IStateful implementation ====== //
+		
+		[Bindable(event="currentStateChange", style="noEvent")]
+		public function get currentState():String { return _currentState; }
+		public function set currentState(value:String):void
+		{
+			DataChange.change(this, "currentState", _currentState, _currentState = value);
+		}
+		private var _currentState:String;
+		
+		[Bindable(event="statesChange", style="noEvent")]
+		public function get states():Array { return _states; }
+		public function set states(value:Array):void
+		{
+			DataChange.change(this, "states", _states, _states = value);
+		}
+		private var _states:Array;
 		
 		// ====== IContainer implementation ====== //
 		
@@ -93,14 +122,6 @@ package flight.skins
 			}
 		}
 		private var _layout:ILayout;
-		
-		/**
-		 * @private
-		 */
-		[Inspectable(category="General")]
-		[Bindable(event="Change", style="noEvent")]
-		public function get freeform():Boolean { return false; }
-		public function set freeform(value:Boolean):void { }
 		
 		/**
 		 * @inheritDoc
