@@ -154,10 +154,10 @@ package flight.layouts
 			if (last) {
 				// remove the last pad and add the last margin
 				switch (lastDock) {
-					case Align.LEFT : measured.minWidth += childMargin.right - padding.horizontal; break;
-					case Align.TOP : measured.minHeight += childMargin.bottom - padding.vertical; break;
-					case Align.RIGHT : measured.minWidth += childMargin.left - padding.horizontal; break;
-					case Align.BOTTOM : measured.minHeight += childMargin.top - padding.vertical; break;
+					case Align.LEFT: measured.minWidth += childMargin.right - padding.horizontal; break;
+					case Align.TOP: measured.minHeight += childMargin.bottom - padding.vertical; break;
+					case Align.RIGHT: measured.minWidth += childMargin.left - padding.horizontal; break;
+					case Align.BOTTOM: measured.minHeight += childMargin.top - padding.vertical; break;
 				}
 				lastDock = null;
 				tiling = false;
@@ -226,27 +226,27 @@ package flight.layouts
 		protected function dockChild(dock:String, area:Rectangle, margin:Box):void
 		{
 			switch (dock) {
-				case Align.LEFT :
+				case Align.LEFT:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + margin.top;
 					childRect.height = area.height - margin.top - margin.bottom;
 					break;
-				case Align.TOP :
+				case Align.TOP:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + margin.top;
 					childRect.width = area.width - margin.left - margin.right;
 					break;
-				case Align.RIGHT :
+				case Align.RIGHT:
 					childRect.x = area.x + area.width - childRect.width - margin.right;
 					childRect.y = area.y + margin.top;
 					childRect.height = area.height - margin.top - margin.bottom;
 					break;
-				case Align.BOTTOM :
+				case Align.BOTTOM:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + area.height - childRect.height - margin.bottom;
 					childRect.width = area.width - margin.left - margin.right;
 					break;
-				case Align.JUSTIFY :
+				case Align.JUSTIFY:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + margin.top;
 					childRect.height = area.height - margin.top - margin.bottom;
@@ -258,35 +258,35 @@ package flight.layouts
 		protected function tileChild(tile:String, dock:String, area:Rectangle, margin:Box):void
 		{
 			switch (tile) {
-				case Align.LEFT :
+				case Align.LEFT:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + margin.top;
 					if (dock == Align.BOTTOM) {
 						childRect.y = area.y + area.height - childRect.height - margin.bottom;
 					}
 					break;
-				case Align.TOP :
+				case Align.TOP:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + margin.top;
 					if (dock == Align.RIGHT) {
 						childRect.x = area.x + area.width - childRect.width - margin.right;
 					}
 					break;
-				case Align.RIGHT :
+				case Align.RIGHT:
 					childRect.x = area.x + area.width - childRect.width - margin.right;
 					childRect.y = area.y + margin.top;
 					if (dock == Align.BOTTOM) {
 						childRect.y = area.y + area.height - childRect.height - margin.bottom;
 					}
 					break;
-				case Align.BOTTOM :
+				case Align.BOTTOM:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + area.height - childRect.height - margin.bottom;
 					if (dock == Align.RIGHT) {
 						childRect.x = area.x + area.width - childRect.width - margin.right;
 					}
 					break;
-				case Align.JUSTIFY :
+				case Align.JUSTIFY:
 					childRect.x = area.x + margin.left;
 					childRect.y = area.y + margin.top;
 					break;
@@ -297,25 +297,25 @@ package flight.layouts
 		{
 			var pos:Number;
 			switch (align) {
-				case Align.LEFT :
+				case Align.LEFT:
 					if (area.left + margin.left < (pos = childRect.x + childRect.width + padding.horizontal) + childMargin.right) {
 						area.left = pos;
 						margin.left = childMargin.right;
 					}
 					break;
-				case Align.TOP :
+				case Align.TOP:
 					if (area.top + margin.top < (pos = childRect.y + childRect.height + padding.vertical) + childMargin.bottom) {
 						area.top = pos;
 						margin.top = childMargin.bottom;
 					}
 					break;
-				case Align.RIGHT :
+				case Align.RIGHT:
 					if (area.right - margin.right > (pos = childRect.x - padding.horizontal) - childMargin.left) {
 						area.right = pos;
 						margin.right = childMargin.left;
 					}
 					break;
-				case Align.BOTTOM :
+				case Align.BOTTOM:
 					if (area.bottom - margin.bottom > (pos = childRect.y - padding.vertical) - childMargin.top) {
 						area.bottom = pos;
 						margin.bottom = childMargin.top;

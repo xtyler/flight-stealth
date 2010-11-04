@@ -118,8 +118,8 @@ package flight.layouts
 		 */
 		public function constrainWidth(width:Number):Number
 		{
-			return (width <= _minWidth) ? _minWidth :
-				   (width >= _maxWidth) ? _maxWidth : width;
+			return (width >= _maxWidth) ? _maxWidth :
+				   (width <= _minWidth) ? _minWidth : width;
 		}
 		
 		/**
@@ -127,8 +127,8 @@ package flight.layouts
 		 */
 		public function constrainHeight(height:Number):Number
 		{
-			return (height <= _minHeight) ? _minHeight :
-				   (height >= _maxHeight) ? _maxHeight : height;
+			return (height >= _maxHeight) ? _maxHeight :
+				   (height <= _minHeight) ? _minHeight : height;
 		}
 	}
 }

@@ -9,8 +9,7 @@ package flight.events
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.events.MouseEvent;
+		import flash.events.MouseEvent;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
@@ -110,7 +109,7 @@ package flight.events
 		 * 								"onStateUp()"). Callbacks have no parameters.
 		 * @return	Returns the object that was converted for convenience.
 		 */
-		public static function initialize(button:IEventDispatcher, includeCallbacks:Boolean = false):IEventDispatcher
+		public static function initialize(button:InteractiveObject, includeCallbacks:Boolean = false):InteractiveObject
 		{
 			button.addEventListener(MouseEvent.MOUSE_DOWN,	onMouseDown,	false, 0xFF);
 			button.addEventListener(MouseEvent.ROLL_OVER,	onRollOver,		false, 0xFF);

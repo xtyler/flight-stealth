@@ -16,7 +16,7 @@ package flight.display
 		RenderPhase.registerPhase(MOVE, 80);
 		
 		public static const LAYOUT:String = "layout";
-		RenderPhase.registerPhase(LAYOUT, 90);
+		RenderPhase.registerPhase(LAYOUT, 90, false);
 		
 		public static const MEASURE:String = "measure";
 		RenderPhase.registerPhase(MEASURE, 100);

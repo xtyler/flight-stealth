@@ -9,20 +9,29 @@ package flight.containers
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	
+
+	import flight.display.InitializePhase;
+	import flight.layouts.DockLayout;
+
 	//[Frame(factoryClass="flight.containers.FrameLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
 	public class Application extends Group
 	{
 		public function Application()
 		{
+			addEventListener(InitializePhase.INITIALIZE, onInit);
 			if (stage != null) {
 				// if this is the root application class
-				initApplication();
+				initStage();
 			}
 		}
 		
-		protected function initApplication():void
+		protected function init():void
+		{
+			layout = new DockLayout();
+		}
+		
+		protected function initStage():void
 		{
 			//contextMenu = new ContextMenu();
 			//contextMenu.hideBuiltInItems();
@@ -36,6 +45,11 @@ package flight.containers
 		{
 			width = stage.stageWidth;
 			height = stage.stageHeight;
+		}
+		
+		private function onInit(event:Event):void
+		{
+			init();
 		}
 	}
 }

@@ -27,7 +27,7 @@ package flight.data
 			setterObjects.push(DataBind.bindSetter(setter, source, sourcePath, params, update));
 		}
 		
-		public function bindEventListener(type:String, listener:Function, source:Object, sourcePath:String, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
+		public function bindEventListener(type:String, listener:Function, source:Object, sourcePath:String, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true):void
 		{
 			setterObjects.push(DataBind.bindSetter(setEventListener, source, sourcePath, [type, listener, useCapture, priority, useWeakReference]));
 		}
@@ -202,7 +202,7 @@ package flight.data
 					source = value;
 					property = bindPath[i];
 					if (!(property in source)) {
-						trace("Warning: Attempted binding access of undefined property '" + property + "' in " + getClassName(value) + ".");
+						trace("Warning: Attempted binding access of undefined property '" + property + "' on " + getClassName(value) + ".");
 						value = null;
 						break;
 					}
@@ -262,7 +262,7 @@ package flight.data
 			// create "BindPath" object as an array with a 'sources' Dictionary
 			bindPath = sourcePath.split(".");
 			bindPath.$sourcePath = sourcePath;
-			// create the 'sources' index of source pointers (keys), also holding linked-lists of BindPaths (values)
+			// create the 'sources' index of source pointers (keys), also holding linked-stealth.lists of BindPaths (values)
 			bindPath.$sources = new Dictionary(true);
 			bindPath.$setters = new Dictionary(true);
 			// utility object for indexing sources when path is ready to update
@@ -276,7 +276,7 @@ package flight.data
 				
 				if (source != null) {
 					if (!(property in source)) {
-						trace("Warning: Attempted binding access of undefined property '" + property + "' in " + getClassName(source) + ".");
+						trace("Warning: Attempted binding access of undefined property '" + property + "' on " + getClassName(source) + ".");
 						source = null;
 						break;
 					}

@@ -8,9 +8,8 @@ package flight.containers
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-
 	import flash.geom.Rectangle;
-
+	
 	import flight.data.DataChange;
 	import flight.data.IScroll;
 	import flight.data.Scroll;
@@ -30,13 +29,12 @@ package flight.containers
 	{
 		public function Group()
 		{
-			_content = new ArrayList();
 			for (var i:int = 0; i < numChildren; i ++) {
 				_content.addItem(getChildAt(i));
 			}
-			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			addEventListener(Event.ADDED, onChildAdded, true);
 			addEventListener(Event.REMOVED, onChildRemoved, true);
+			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 		}
 		
 		/**
@@ -48,16 +46,16 @@ package flight.containers
 		public function set content(value:*):void
 		{
 			_content.removeItems();
-			if (value is DisplayObject) {
-				_content.addItem(value);
+			if (value is IList) {
+				_content.addItems( IList(value).getItems() );
 			} else if (value is Array) {
 				_content.addItems(value);
-			} else if (value is IList) {
-				_content.addItems( IList(value).getItems() );
+			} else {
+				_content.addItem(value);
 			}
 			DataChange.change(this, "content", _content, _content, true);
 		}
-		private var _content:IList;
+		private var _content:IList = new ArrayList();
 		
 		/**
 		 * @inheritDoc
@@ -80,10 +78,16 @@ package flight.containers
 		private var _layout:ILayout;
 		
 		[Bindable(event="contentWidthChange", style="noEvent")]
-		public function get contentWidth():Number { return !constrainMeasured ? _contentWidth : width }
+		public function get contentWidth():Number
+		{
+			if (!contained && _contentWidth > width) {
+				return _contentWidth;
+			}
+			return width;
+		}
 		public function set contentWidth(value:Number):void
 		{
-			if (!constrainMeasured) {
+			if (!contained) {
 				value = measured.constrainWidth(value);
 				DataChange.change(this, "contentWidth", _contentWidth, _contentWidth = value);
 			} else {
@@ -93,10 +97,16 @@ package flight.containers
 		private var _contentWidth:Number = 0;
 		
 		[Bindable(event="contentHeightChange", style="noEvent")]
-		public function get contentHeight():Number { return !constrainMeasured ? _contentHeight : height }
+		public function get contentHeight():Number
+		{
+			if (!contained && _contentHeight > height) {
+				return _contentHeight;
+			}
+			return height;
+		}
 		public function set contentHeight(value:Number):void
 		{
-			if (!constrainMeasured) {
+			if (!contained) {
 				value = measured.constrainHeight(value);
 				DataChange.change(this, "contentHeight", _contentHeight, _contentHeight = value);
 			} else {
@@ -106,7 +116,7 @@ package flight.containers
 		private var _contentHeight:Number = 0;
 		
 		[Bindable(event="hPositionChange", style="noEvent")]
-		public function get hPosition():IScroll { return _hPosition || (hPosition = new Scroll()); }
+		public function get hPosition():IScroll { return _hPosition ||= new Scroll(); }
 		public function set hPosition(value:IScroll):void
 		{
 			if (_hPosition) {
@@ -120,7 +130,7 @@ package flight.containers
 		private var _hPosition:IScroll;
 		
 		[Bindable(event="vPositionChange", style="noEvent")]
-		public function get vPosition():IScroll { return _vPosition || (vPosition = new Scroll()); }
+		public function get vPosition():IScroll { return _vPosition ||= new Scroll(); }
 		public function set vPosition(value:IScroll):void
 		{
 			if (_vPosition) {
@@ -133,29 +143,29 @@ package flight.containers
 		}
 		private var _vPosition:IScroll;
 		
-		[Bindable(event="clipChange", style="noEvent")]
-		public function get clip():Boolean { return _clip }
-		public function set clip(value:Boolean):void
+		[Bindable(event="clippedChange", style="noEvent")]
+		public function get clipped():Boolean { return _clipped }
+		public function set clipped(value:Boolean):void
 		{
-			if (_clip != value) {
+			if (_clipped != value) {
 				if (value) {
 					addEventListener(LayoutPhase.RESIZE, onResize);
-					constrainMeasured = false;
+					contained = false;
 				} else {
 					removeEventListener(LayoutPhase.RESIZE, onResize);
-					constrainMeasured = true;
+					contained = true;
 				}
-				DataChange.change(this, "clip", _clip, _clip = value);
+				DataChange.change(this, "clipped", _clipped, _clipped = value);
 			}
 		}
-		private var _clip:Boolean = false;
+		private var _clipped:Boolean = false;
 		
 		override protected function measure():void
 		{
 			if (!layout) {
 				super.measure();
 			}
-			if (!constrainMeasured) {
+			if (!contained) {
 				contentWidth = _contentWidth;
 				contentHeight = _contentHeight;
 			}
@@ -211,6 +221,9 @@ package flight.containers
 			contentChanging = true;
 			content.addItemAt(child, getChildIndex(child));
 			contentChanging = false;
+			
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 		}
 		
 		private function onChildRemoved(event:Event):void
@@ -223,6 +236,9 @@ package flight.containers
 			contentChanging = true;
 			content.removeItem(child);
 			contentChanging = false;
+			
+			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
 		}
 		
 		private function onContentChange(event:ListEvent):void

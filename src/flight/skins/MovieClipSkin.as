@@ -12,24 +12,18 @@ package flight.skins
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	
+	import flight.display.SpriteDisplay;
+	import flight.layouts.DockLayout;
+	
 	public class MovieClipSkin extends Skin
 	{
 		protected var skinParts:Object;
 		protected var statefulParts:Object;
 		
-		public function MovieClipSkin()
-		{
-		}
-		
 		override public function set target(value:Sprite):void
 		{
 			skinParts = statefulParts = null;
 			super.target = value;
-			if (value) {
-				skinParts = {};
-				statefulParts = [];
-				inspectSkin(value);
-			}
 		}
 		
 		override public function getSkinPart(part:String):InteractiveObject
@@ -51,6 +45,17 @@ package flight.skins
 			}
 		}
 		
+		override protected function attachSkin():void
+		{
+			super.attachSkin();
+			skinParts = {};
+			statefulParts = [];
+			inspectSkin(target);
+			if (!layout) {
+				layout = new DockLayout();
+			}
+		}
+		
 		private function inspectSkin(skinPart:Sprite):void
 		{
 			if (skinPart is MovieClip) {
@@ -69,13 +74,18 @@ package flight.skins
 			for (var i:int = 0; i < skinPart.numChildren; i++) {
 				var child:DisplayObject = skinPart.getChildAt(i);
 				if (child is InteractiveObject) {
-					skinParts[child.name.replace("$", "")] = child;
+					var id:String = child.name.replace("$", "");
+					skinParts[id] = child;
+					if (id in this) {
+						this[id] = child;
+					}
 					// inspect child if not its own component/skin
 					if (child is Sprite && !(child is ISkinnable)) {
 						inspectSkin(child as Sprite);
 					}
 				}
 			}
+			
 		}
 	}
 }

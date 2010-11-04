@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -55,7 +55,6 @@ package flight.layouts
 				_target.content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			}
 			DataChange.change(this, "target", _target, _target = value);
-			
 			if (_target) {
 				_target.display.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 50, true);
 				_target.display.addEventListener(LayoutPhase.LAYOUT, onLayout, false, 50, true);
@@ -67,7 +66,7 @@ package flight.layouts
 		private var _target:IContainer;
 		
 		[Bindable(event="paddingChange", style="noEvent")]
-		public function get padding():Box { return _padding || (padding = new Box()); }
+		public function get padding():Box { return _padding ||= new Box(); }
 		public function set padding(value:*):void
 		{
 			if (value is String) {
@@ -186,7 +185,6 @@ package flight.layouts
 			verticalSpace = measuredHeight < contentRect.height ? contentRect.height - measuredHeight : 0;
 			contentRect.width -= _padding.left + _padding.right;
 			contentRect.height -= _padding.top + _padding.bottom;
-			
 			
 			var len:int = _target.content.length;
 			for (var i:int = 0; i < len; i++) {

@@ -64,7 +64,7 @@ package flight.list
 		public function get length():int { return adapter.length; }
 		
 		[Bindable(event="selectionChange", style="noEvent")]
-		public function get selection():IListSelection { return _selection || (_selection = new ListSelection(this)); }
+		public function get selection():IListSelection { return _selection ||= new ListSelection(this); }
 		private var _selection:ListSelection;
 		
 		/**
@@ -309,7 +309,7 @@ package flight.list
 			if (items is XMLList) {
 				items += adapter.splice(index1, 1, item2);
 			} else {
-				items.push( adapter.splice(index1, 1, item2) );
+				items.push( adapter.splice(index1, 1, item2)[0] );
 			}
 			adapter.splice(index2, 0, item1);
 			dispatchEvent( new ListEvent(ListEvent.LIST_CHANGE, ListEventKind.MOVE, items, index1, index2) );
@@ -356,27 +356,27 @@ package flight.list
 		
 		override flash_proxy function getProperty(name:*):*
 		{
-			return _source[name];
+			return getItemAt(name);
 		}
 		
 		override flash_proxy function setProperty(name:*, value:*):void
 		{
-			_source[name] = value;
+			setItemAt(value,  name);
 		}
 		
 		override flash_proxy function deleteProperty(name:*):Boolean
 		{
-			return delete _source[name];
+			return removeItemAt(name) != null;
 		}
 		
 		override flash_proxy function hasProperty(name:*):Boolean
 		{
-			return (name in _source);
+			return name is uint && uint(name) < length;
 		}
 		
 		override flash_proxy function callProperty(name:*, ... rest):*
 		{
-			return _source[name].apply(_source, rest);
+			return getItemAt(name).apply(null, rest);
 		}
 		
 		override flash_proxy function nextName(index:int):String

@@ -7,12 +7,10 @@
 package flight.components
 {
 	import flash.display.InteractiveObject;
-	import flash.events.Event;
 	
 	import flight.behaviors.IBehavior;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.InitializePhase;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
@@ -36,7 +34,6 @@ package flight.components
 			_behaviors = new ArrayList();
 			_behaviors.addEventListener(ListEvent.LIST_CHANGE, onBehaviorsChange);
 			style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-			addEventListener(InitializePhase.CREATE, onSkinCreate);
 		}
 		
 		[Bindable(event="disabledChange", style="noEvent")]
@@ -47,7 +44,7 @@ package flight.components
 			DataChange.change(this, "disabled", _disabled, _disabled = value);
 		}
 		private var _disabled:Boolean = true;
-
+		
 		[ArrayElementType("flight.behaviors.IBehavior")]
 		[Bindable(event="behaviorsChange", style="noEvent")]
 		public function get behaviors():IList { return _behaviors; }
@@ -66,7 +63,7 @@ package flight.components
 		// ====== IDataRenderer implementation ====== //
 		
 		[Bindable(event="dataChange", style="noEvent")]
-		public function get data():Object { return _data || (_data = {}); }
+		public function get data():Object { return _data ||= {}; }
 		public function set data(value:Object):void
 		{
 			DataChange.change(this, "data", _data, _data = value);
@@ -97,11 +94,13 @@ package flight.components
 		{
 			if (_skin != value) {
 				if (_skin) {
-					removeSkin();
+					detachSkin();
 				}
-				DataChange.queue(this, "skin", _skin, _skin = value);
 				RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(this, InitializePhase.CREATE);
+				DataChange.queue(this, "skin", _skin, _skin = value);
+				if (_skin) {
+					attachSkin();
+				}
 				DataChange.change();
 			}
 		}
@@ -116,40 +115,67 @@ package flight.components
 		}
 		private var _skinParts:Object = {};
 		
+		protected function getSkinPart(partName:String):InteractiveObject
+		{
+			if (_skin) {
+				return _skin.getSkinPart(partName);
+			} else if (partName in this) {
+				return this[partName];
+			}
+			return null;
+		}
 		
-		protected function addSkin():void
+		protected function attachSkin():void
 		{
 			_skin.target = this;
 			var skinParts:Object = this.skinParts;
-			for (var i:String in skinParts) {
-				var part:InteractiveObject = _skin.getSkinPart(i);
-				if (part) {
-					this[i] = part;
-					dispatchEvent(new SkinEvent(SkinEvent.SKIN_PART_CHANGE, false, false, i, null, this[i]));
+			for (var partName:String in skinParts) {
+				var skinPart:InteractiveObject = getSkinPart(partName);
+				if (skinPart && partName in this) {
+					this[partName] = skinPart;
+					partAdded(partName,  skinPart);
+					dispatchEvent(new SkinEvent(SkinEvent.SKIN_PART_CHANGE, false, false, partName, null, skinPart));
 				}
 			}
 			_skin.addEventListener(SkinEvent.SKIN_PART_CHANGE, onSkinPartChange);
 		}
 		
-		protected function removeSkin():void
+		protected function detachSkin():void
 		{
-			var skinParts:Object = this.skinParts;
-			for (var i:String in skinParts) {
-				this[i] = null;
-			}
 			_skin.removeEventListener(SkinEvent.SKIN_PART_CHANGE, onSkinPartChange);
+			var skinParts:Object = this.skinParts;
+			for (var partName:String in skinParts) {
+				var skinPart:InteractiveObject = this[partName];
+				if (skinPart) {
+					this[partName] = null;
+					partRemoved(partName, skinPart);
+					dispatchEvent(new SkinEvent(SkinEvent.SKIN_PART_CHANGE, false, false, partName, skinPart, null));
+				}
+			}
 			_skin.target = null;
+		}
+		
+		protected function partAdded(partName:String, skinPart:InteractiveObject):void
+		{
+		}
+		
+		protected function partRemoved(partName:String, skinPart:InteractiveObject):void
+		{
 		}
 		
 		private function onSkinPartChange(event:SkinEvent):void
 		{
-			this[event.skinPart] = _skin.getSkinPart(event.skinPart);
-			dispatchEvent(event);
-		}
-		
-		private function onSkinCreate(event:Event):void
-		{
-			addSkin();
+			var partName:String = event.partName;
+			if (partName in this) {
+				if (event.oldValue) {
+					partRemoved(partName, event.oldValue);
+				}
+				this[partName] = event.newValue;
+				if (event.newValue) {
+					partAdded(partName, event.newValue);
+				}
+				dispatchEvent(event);
+			}
 		}
 		
 		private function onStyleChange(event:StyleEvent):void

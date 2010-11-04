@@ -13,7 +13,7 @@ package flight.containers
 	public class Scroller extends Group
 	{
 //		[Bindable(event="hScrollChange", style="noEvent")]
-//		public function get hScroll():IScroll { return _hScroll || (_hScroll = new Scroll()); }
+//		public function get hScroll():IScroll { return _hScroll ||= new Scroll(); }
 //		public function set hScroll(value:IScroll):void
 //		{
 //			DataChange.change(this, "hScroll", _hScroll, _hScroll = value);
@@ -21,7 +21,7 @@ package flight.containers
 //		private var _hScroll:IScroll;
 //		
 //		[Bindable(event="vScrollChange", style="noEvent")]
-//		public function get vScroll():IScroll { return _vScroll || (_vScroll = new Scroll()); }
+//		public function get vScroll():IScroll { return _vScroll ||= new Scroll(); }
 //		public function set vScroll(value:IScroll):void
 //		{
 //			DataChange.change(this, "vScroll", _vScroll, _vScroll = value);

@@ -69,6 +69,10 @@ package flight.graphics
 			graphicsData.push(graphicsPath);
 		}
 		
+		override protected function measure():void
+		{
+		}
+		
 		private function onDraw(event:Event):void
 		{
 			update();

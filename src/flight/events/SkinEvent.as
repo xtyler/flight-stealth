@@ -22,7 +22,7 @@ package flight.events
 			_newValue = newValue;
 		}
 		
-		public function get skinPart():String { return _skinPart; }
+		public function get partName():String { return _skinPart; }
 		private var _skinPart:String;
 		
 		public function get oldValue():InteractiveObject { return _oldValue; }

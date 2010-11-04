@@ -17,6 +17,6 @@ package flight.skins
 		function get target():Sprite;
 		function set target(value:Sprite):void;
 		
-		function getSkinPart(part:String):InteractiveObject;
+		function getSkinPart(partName:String):InteractiveObject;
 	}
 }
