@@ -11,9 +11,9 @@ package flight.data
 	
 	[Event(name="change", type="flash.events.Event")]
 	
-	public class Range extends EventDispatcher implements IRange
+	public class Position extends EventDispatcher implements IPosition
 	{
-		public function Range(min:Number = 0, max:Number = 10)
+		public function Position(min:Number = 0, max:Number = 10)
 		{
 			_min = min;
 			_max = max;
@@ -84,24 +84,6 @@ package flight.data
 			}
 		}
 		private var _precision:Number = 1;
-		
-		[Bindable(event="stepSizeChange", style="noEvent")]
-		public function get stepSize():Number { return _stepSize; }
-		public function set stepSize(value:Number):void
-		{
-			DataChange.change(this, "stepSize", _stepSize, _stepSize = value);
-		}
-		private var _stepSize:Number = 1;
-		
-		public function stepForward():Number
-		{
-			return value += _stepSize;
-		}
-		
-		public function stepBackward():Number
-		{
-			return value -= _stepSize;
-		}
 		
 	}
 }

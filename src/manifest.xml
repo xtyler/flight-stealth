@@ -2,8 +2,8 @@
 <componentPackage>
 	
 	<!-- data -->
-	<component id="Range" class="flight.data.Range"/>
-	<component id="Scroll" class="flight.data.Scroll"/>
+	<component id="Range" class="flight.data.Position"/>
+	<component id="Scroll" class="flight.data.Track"/>
 	
 	<!-- skins -->
 	<component id="Skin" class="flight.skins.Skin"/>

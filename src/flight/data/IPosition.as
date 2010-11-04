@@ -10,7 +10,7 @@ package flight.data
 	
 	[Event(name="change", type="flash.events.Event")]
 	
-	public interface IRange extends IEventDispatcher
+	public interface IPosition extends IEventDispatcher
 	{
 		function get min():Number;
 		function set min(value:Number):void;
@@ -23,12 +23,5 @@ package flight.data
 		
 		function get percent():Number;
 		function set percent(value:Number):void;
-		
-		function get stepSize():Number;
-		function set stepSize(value:Number):void;
-		
-		function stepBackward():Number;
-		
-		function stepForward():Number;
 	}
 }

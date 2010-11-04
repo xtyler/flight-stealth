@@ -6,10 +6,18 @@
 
 package flight.data
 {
-	public interface IScroll extends IRange
+	public interface ITrack extends IPosition
 	{
+		
+		function get stepSize():Number;
+		function set stepSize(value:Number):void;
+		
 		function get pageSize():Number;
 		function set pageSize(value:Number):void;
+		
+		function stepBackward():Number;
+		
+		function stepForward():Number;
 		
 		function pageBackward():Number;
 		

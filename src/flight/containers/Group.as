@@ -11,8 +11,8 @@ package flight.containers
 	import flash.geom.Rectangle;
 	
 	import flight.data.DataChange;
-	import flight.data.IScroll;
-	import flight.data.Scroll;
+	import flight.data.ITrack;
+	import flight.data.Track;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
@@ -116,8 +116,8 @@ package flight.containers
 		private var _contentHeight:Number = 0;
 		
 		[Bindable(event="hPositionChange", style="noEvent")]
-		public function get hPosition():IScroll { return _hPosition ||= new Scroll(); }
-		public function set hPosition(value:IScroll):void
+		public function get hPosition():ITrack { return _hPosition ||= new Track(); }
+		public function set hPosition(value:ITrack):void
 		{
 			if (_hPosition) {
 				_hPosition.removeEventListener(Event.CHANGE, onPositionChange);
@@ -127,11 +127,11 @@ package flight.containers
 				_hPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
 		}
-		private var _hPosition:IScroll;
+		private var _hPosition:ITrack;
 		
 		[Bindable(event="vPositionChange", style="noEvent")]
-		public function get vPosition():IScroll { return _vPosition ||= new Scroll(); }
-		public function set vPosition(value:IScroll):void
+		public function get vPosition():ITrack { return _vPosition ||= new Track(); }
+		public function set vPosition(value:ITrack):void
 		{
 			if (_vPosition) {
 				_vPosition.removeEventListener(Event.CHANGE, onPositionChange);
@@ -141,7 +141,7 @@ package flight.containers
 				_vPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
 		}
-		private var _vPosition:IScroll;
+		private var _vPosition:ITrack;
 		
 		[Bindable(event="clippedChange", style="noEvent")]
 		public function get clipped():Boolean { return _clipped }

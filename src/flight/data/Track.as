@@ -6,8 +6,21 @@
 
 package flight.data
 {
-	public class Scroll extends Range implements IScroll
+	public class Track extends Position implements ITrack
 	{
+		public function Track(min:Number = 0, max:Number = 100)
+		{
+			super(min, max);
+		}
+		
+		[Bindable(event="stepSizeChange", style="noEvent")]
+		public function get stepSize():Number { return _stepSize; }
+		public function set stepSize(value:Number):void
+		{
+			DataChange.change(this, "stepSize", _stepSize, _stepSize = value);
+		}
+		private var _stepSize:Number = 1;
+		
 		[Bindable(event="pageSizeChange", style="noEvent")]
 		public function get pageSize():Number { return _pageSize; }
 		public function set pageSize(value:Number):void
@@ -16,9 +29,14 @@ package flight.data
 		}
 		private var _pageSize:Number = 10;
 		
-		public function Scroll(min:Number = 0, max:Number = 100)
+		public function stepForward():Number
 		{
-			super(min, max);
+			return value += _stepSize;
+		}
+		
+		public function stepBackward():Number
+		{
+			return value -= _stepSize;
 		}
 		
 		public function pageForward():Number
@@ -30,6 +48,5 @@ package flight.data
 		{
 			return value -= _pageSize;
 		}
-		
 	}
 }
