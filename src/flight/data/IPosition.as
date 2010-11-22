@@ -6,18 +6,8 @@
 
 package flight.data
 {
-	import flash.events.IEventDispatcher;
-	
-	[Event(name="change", type="flash.events.Event")]
-	
-	public interface IPosition extends IEventDispatcher
+	public interface IPosition extends IRange
 	{
-		function get min():Number;
-		function set min(value:Number):void;
-		
-		function get max():Number;
-		function set max(value:Number):void;
-		
 		function get value():Number;
 		function set value(value:Number):void;
 		

@@ -47,12 +47,14 @@ package flight.display
 	{
 		public function MovieClipDisplay()
 		{
-			unscaledRect = getRect(this);
-			_nativeSizing = true;
-			_explicit = new Bounds(NaN, NaN);
-			_measured = new Bounds(unscaledRect.width, unscaledRect.height);
+			defaultRect = Rectangle("sizeDisplay" in this ? this["sizeDisplay"].getRect(this) : getRect(this));
+			measure();
+			width = _measured.width;
+			height = _measured.height;
+			nativeSizing = true;
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			snapToPixel = true;
 		}
 		
 		// ====== IStyleable implementation ====== //
@@ -249,7 +251,7 @@ package flight.display
 				}
 			}
 		}
-		private var _snapToPixel:Boolean = true;
+		private var _snapToPixel:Boolean;
 		
 		/**
 		 * @inheritDoc
@@ -569,13 +571,13 @@ package flight.display
 		 * @inheritDoc
 		 */
 		public function get explicit():IBounds { return _explicit; }
-		private var _explicit:IBounds;
+		private var _explicit:IBounds = new Bounds();
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured; }
-		private var _measured:IBounds;
+		private var _measured:IBounds = new Bounds(0, 0);
 		
 		/**
 		 * @inheritDoc
@@ -687,8 +689,8 @@ package flight.display
 					maxY = y;
 				}
 				
-				x = m.c * width + m.tx;
-				y = m.d * width + m.ty;
+				x = m.c * height + m.tx;
+				y = m.d * height + m.ty;
 				if (x < minX) {
 					minX = x;
 				} else if (x > maxX) {
@@ -770,10 +772,10 @@ package flight.display
 		
 		protected function measure():void
 		{
-			var rect:Rectangle = getRect(this);
-			_measured.width = rect.width;
-			_measured.height = rect.height;
+			_measured.width = defaultRect.right;
+			_measured.height = defaultRect.bottom;
 		}
+		protected var defaultRect:Rectangle;
 		
 		protected function invalidateLayout(measureOnly:Boolean = false):void
 		{

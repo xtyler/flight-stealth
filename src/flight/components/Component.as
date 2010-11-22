@@ -80,14 +80,6 @@ package flight.components
 		}
 		private var _currentState:String;
 		
-		[Bindable(event="statesChange", style="noEvent")]
-		public function get states():Array { return _states }
-		public function set states(value:Array):void
-		{
-			DataChange.change(this, "states", _states, _states = value);
-		}
-		private var _states:Array;
-		
 		[Bindable(event="skinChange", style="noEvent")]
 		public function get skin():ISkin { return _skin; }
 		public function set skin(value:ISkin):void
@@ -161,6 +153,13 @@ package flight.components
 		
 		protected function partRemoved(partName:String, skinPart:InteractiveObject):void
 		{
+		}
+		
+		override protected function measure():void
+		{
+			if (!_skin) {
+				super.measure();
+			}
 		}
 		
 		private function onSkinPartChange(event:SkinEvent):void

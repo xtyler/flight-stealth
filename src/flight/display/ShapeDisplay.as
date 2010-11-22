@@ -47,10 +47,12 @@ package flight.display
 	{
 		public function ShapeDisplay()
 		{
-			_explicit = new Bounds(NaN, NaN);
-			_measured = new Bounds(0, 0);
+			measure();
+			_width = _measured.width;
+			_height = _measured.height;
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			snapToPixel = true;
 		}
 		
 		// ====== IStyleable implementation ====== //
@@ -247,7 +249,7 @@ package flight.display
 				}
 			}
 		}
-		private var _snapToPixel:Boolean = true;
+		private var _snapToPixel:Boolean;
 		
 		/**
 		 * @inheritDoc
@@ -548,13 +550,16 @@ package flight.display
 		 * @inheritDoc
 		 */
 		public function get explicit():IBounds { return _explicit; }
-		private var _explicit:IBounds;
+		private var _explicit:IBounds = new Bounds(
+			
+			
+			);
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured; }
-		private var _measured:IBounds;
+		private var _measured:IBounds = new Bounds(0, 0);
 		
 		/**
 		 * @inheritDoc
@@ -666,8 +671,8 @@ package flight.display
 					maxY = y;
 				}
 				
-				x = m.c * width + m.tx;
-				y = m.d * width + m.ty;
+				x = m.c * height + m.tx;
+				y = m.d * height + m.ty;
 				if (x < minX) {
 					minX = x;
 				} else if (x > maxX) {

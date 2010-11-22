@@ -8,9 +8,6 @@ package flight.styles
 {
 	public interface IStateful
 	{
-		function get states():Array;
-		function set states(value:Array):void;
-		
 		function get currentState():String;
 		function set currentState(value:String):void;
 	}

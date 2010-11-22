@@ -8,9 +8,9 @@ package flight.data
 {
 	public class Track extends Position implements ITrack
 	{
-		public function Track(min:Number = 0, max:Number = 100)
+		public function Track(minimum:Number = 0, maximum:Number = 100)
 		{
-			super(min, max);
+			super(minimum, maximum);
 		}
 		
 		[Bindable(event="stepSizeChange", style="noEvent")]

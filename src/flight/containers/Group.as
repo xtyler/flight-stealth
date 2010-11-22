@@ -80,16 +80,13 @@ package flight.containers
 		[Bindable(event="contentWidthChange", style="noEvent")]
 		public function get contentWidth():Number
 		{
-			if (!contained && _contentWidth > width) {
-				return _contentWidth;
-			}
-			return width;
+			var preferredWidth:Number = !isNaN(_contentWidth) ? measured.constrainWidth(_contentWidth) : measured.width;
+			return (!contained && preferredWidth > width) ? preferredWidth : width;
 		}
 		public function set contentWidth(value:Number):void
 		{
 			if (!contained) {
-				value = measured.constrainWidth(value);
-				DataChange.change(this, "contentWidth", _contentWidth, _contentWidth = value);
+				DataChange.queue(this, "contentWidth", _contentWidth, _contentWidth = value);
 			} else {
 				width = value;
 			}
@@ -99,15 +96,12 @@ package flight.containers
 		[Bindable(event="contentHeightChange", style="noEvent")]
 		public function get contentHeight():Number
 		{
-			if (!contained && _contentHeight > height) {
-				return _contentHeight;
-			}
-			return height;
+			var preferredHeight:Number = !isNaN(_contentHeight) ? measured.constrainHeight(_contentHeight) : measured.height;
+			return (!contained && preferredHeight > height) ? preferredHeight : height;
 		}
 		public function set contentHeight(value:Number):void
 		{
 			if (!contained) {
-				value = measured.constrainHeight(value);
 				DataChange.change(this, "contentHeight", _contentHeight, _contentHeight = value);
 			} else {
 				height = value;
@@ -116,7 +110,7 @@ package flight.containers
 		private var _contentHeight:Number = 0;
 		
 		[Bindable(event="hPositionChange", style="noEvent")]
-		public function get hPosition():ITrack { return _hPosition ||= new Track(); }
+		public function get hPosition():ITrack { return _hPosition || (hPosition = new Track()); }
 		public function set hPosition(value:ITrack):void
 		{
 			if (_hPosition) {
@@ -130,7 +124,7 @@ package flight.containers
 		private var _hPosition:ITrack;
 		
 		[Bindable(event="vPositionChange", style="noEvent")]
-		public function get vPosition():ITrack { return _vPosition ||= new Track(); }
+		public function get vPosition():ITrack { return _vPosition || (vPosition = new Track()); }
 		public function set vPosition(value:ITrack):void
 		{
 			if (_vPosition) {
@@ -151,6 +145,7 @@ package flight.containers
 				if (value) {
 					addEventListener(LayoutPhase.RESIZE, onResize);
 					contained = false;
+					RenderPhase.invalidate(this, LayoutPhase.RESIZE);
 				} else {
 					removeEventListener(LayoutPhase.RESIZE, onResize);
 					contained = true;
@@ -166,38 +161,11 @@ package flight.containers
 				super.measure();
 			}
 			if (!contained) {
-				contentWidth = _contentWidth;
-				contentHeight = _contentHeight;
+				scrollRectSize();
 			}
 		}
 		
-		private function onResize(event:Event):void
-		{
-			var rect:Rectangle;
-			rect = scrollRect || new Rectangle();
-			rect.width = width;
-			rect.height = height;
-			if (_hPosition) {
-				_hPosition.min = 0;
-				_hPosition.max = contentWidth - width;
-				_hPosition.pageSize = rect.width;
-				rect.x = hPosition.value;
-			}
-			if (_vPosition) {
-				_vPosition.min = 0;
-				_vPosition.max = contentHeight - height;
-				_vPosition.pageSize = rect.height;
-				rect.y = vPosition.value;
-			}
-			
-			if (width < contentWidth || height < contentHeight) {
-				scrollRect = rect;
-			} else if (scrollRect) {
-				scrollRect = null;
-			}
-		}
-		
-		private function onPositionChange(event:Event):void
+		protected function scrollRectPosition():void
 		{
 			if (width < contentWidth || height < contentHeight) {
 				var rect:Rectangle = scrollRect || new Rectangle();
@@ -209,6 +177,45 @@ package flight.containers
 				}
 				scrollRect = rect;
 			}
+		}
+		
+		protected function scrollRectSize():void
+		{
+			if (_hPosition) {
+				_hPosition.minimum = 0;
+				_hPosition.maximum = contentWidth - width;
+				_hPosition.pageSize = width;
+			}
+			if (_vPosition) {
+				_vPosition.minimum = 0;
+				_vPosition.maximum = contentHeight - height;
+				_vPosition.pageSize = height;
+			}
+			
+			if (width < contentWidth || height < contentHeight) {
+				var rect:Rectangle = scrollRect || new Rectangle();
+				rect.width = width;
+				rect.height = height;
+				if (_hPosition) {
+					rect.x = hPosition.value;
+				}
+				if (_vPosition) {
+					rect.y = vPosition.value;
+				}
+				scrollRect = rect;
+			} else if (scrollRect) {
+				scrollRect = null;
+			}
+		}
+		
+		private function onResize(event:Event):void
+		{
+			scrollRectSize();
+		}
+		
+		private function onPositionChange(event:Event):void
+		{
+			scrollRectPosition();
 		}
 		
 		private function onChildAdded(event:Event):void

@@ -71,7 +71,7 @@ package flight.behaviors
 			super.attachSkin();
 			ButtonEvent.initialize(target);
 			if (target is Sprite) {
-//				Sprite(target).mouseChildren = false;
+				//Sprite(target).mouseChildren = false;
 			}
 			target.addEventListener(MouseEvent.ROLL_OUT, onStateUp, false, 0, true);
 			target.addEventListener(ButtonEvent.RELEASE_OUTSIDE, onStateUp, false, 0, true);

@@ -30,7 +30,7 @@ package flight.behaviors
 		{
 			super.attachSkin();
 			ButtonEvent.initialize(target);
-			target.addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
+			target.addEventListener(MouseEvent.CLICK, onClick, false, 10, true);
 		}
 		
 		override protected function detachSkin():void

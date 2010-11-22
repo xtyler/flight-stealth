@@ -22,6 +22,10 @@ package flight.data
 		{
 			this.list = list;
 			list.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 10);
+			_indices = new ArrayList();
+			_indices.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
+			_items = new ArrayList();
+			_items.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
 		}
 		
 		
@@ -73,25 +77,11 @@ package flight.data
 		private var _item:Object = null;
 		
 		[Bindable(event="indicesChange", style="noEvent")]
-		public function get indices():IList
-		{
-			if (!_indices) {
-				_indices = new ArrayList();
-				_indices.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
-			}
-			return _indices;
-		}
+		public function get indices():IList { return _indices; }
 		private var _indices:ArrayList;
 		
 		[Bindable(event="itemsChange", style="noEvent")]
-		public function get items():IList
-		{
-			if (!_indices) {
-				_items = new ArrayList();
-				_items.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
-			}
-			return _items;
-		}
+		public function get items():IList { return _items; }
 		private var _items:ArrayList = new ArrayList();
 		
 		public function select(items:*):void

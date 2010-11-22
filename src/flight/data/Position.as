@@ -13,53 +13,63 @@ package flight.data
 	
 	public class Position extends EventDispatcher implements IPosition
 	{
-		public function Position(min:Number = 0, max:Number = 10)
+		public function Position(minimum:Number = 0, maximum:Number = 100)
 		{
-			_min = min;
-			_max = max;
+			this.minimum = minimum;
+			this.maximum = maximum;
 		}
 		
-		[Bindable(event="minChange", style="noEvent")]
-		public function get min():Number { return _min; }
-		public function set min(value:Number):void
+		[Bindable(event="minimumChange", style="noEvent")]
+		public function get minimum():Number { return _minimum; }
+		public function set minimum(value:Number):void
 		{
-			if (_min != value) {
-				DataChange.queue(this, "min", _min, _min = value);
-				if (_max < _min) {
-					DataChange.queue(this, "max", _max, _max = _min);
+			if (_minimum != value) {
+				DataChange.queue(this, "minimum", _minimum, _minimum = value);
+				if (_maximum < _minimum) {
+					DataChange.queue(this, "maximum", _maximum, _maximum = _minimum);
 				}
-				value = _value;
+				DataChange.queue(this, "size", _size, _size = _maximum - _minimum);
+				this.value = _value;
 			}
 		}
-		private var _min:Number = 0;
+		private var _minimum:Number = 0;
 		
-		[Bindable(event="maxChange", style="noEvent")]
-		public function get max():Number { return _max;}
-		public function set max(value:Number):void
+		[Bindable(event="maximumChange", style="noEvent")]
+		public function get maximum():Number { return _maximum;}
+		public function set maximum(value:Number):void
 		{
-			if (_max != value) {
-				DataChange.queue(this, "max", _max, _max = value);
-				if (_min > _max) {
-					DataChange.queue(this, "min", _min, _min = _max);
+			if (_maximum != value) {
+				DataChange.queue(this, "maximum", _maximum, _maximum = value);
+				if (_minimum > _maximum) {
+					DataChange.queue(this, "minimum", _minimum, _minimum = _maximum);
 				}
-				value = _value;
+				DataChange.queue(this, "size", _size, _size = _maximum - _minimum);
+				this.value = _value;
 			}
 		}
-		private var _max:Number = 0;
+		private var _maximum:Number = 100;
+		
+		[Bindable(event="sizeChange", style="noEvent")]
+		public function get size():Number { return _size; }
+		public function set size(value:Number):void
+		{
+			if (_size != value) {
+				maximum = _minimum + (value <= 0 ? 0 : value);
+			}
+		}
+		private var _size:Number = 100;
 		
 		[Bindable(event="valueChange", style="noEvent")]
 		public function get value():Number { return _value; }
 		public function set value(value:Number):void
 		{
-			value = value <= _min ? _min : (value > _max ? _max : value);
+			value = value <= _minimum ? _minimum : (value > _maximum ? _maximum : value);
 			var p:Number = 1 / _precision;
 			value = Math.round(value * p) / p;
-			if (_value != value) {
-				DataChange.queue(this, "value", _value, _value = value);
-				value = _min == _max ? 0 : (_value - _min) / (_max - _min);
-				DataChange.queue(this, "percent", _percent, _percent = value);
-				dispatchEvent(new Event(Event.CHANGE));
-			}
+			DataChange.queue(this, "value", _value, _value = value);
+			value = !_size ? 0 : (_value - _minimum) / _size;
+			DataChange.queue(this, "percent", _percent, _percent = value);
+			dispatchEvent(new Event(Event.CHANGE));
 			DataChange.change();
 		}
 		private var _value:Number = 0;
@@ -69,7 +79,7 @@ package flight.data
 		public function set percent(value:Number):void
 		{
 			if (_percent != value) {
-				value = _min + value * (_max - _min);
+				this.value = _minimum + value * _size;
 			}
 		}
 		private var _percent:Number = 0;
@@ -80,7 +90,7 @@ package flight.data
 		{
 			if (_precision != value) {
 				DataChange.queue(this, "precision", _precision, _precision = value);
-				value = _value;
+				this.value = _value;
 			}
 		}
 		private var _precision:Number = 1;

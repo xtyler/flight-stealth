@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -419,7 +419,7 @@ package flight.data
 						var changeEvent:String = (bindable.arg.(@key == "event").length() != 0) ?
 												  bindable.arg.(@key == "event").@value[0] :
 												  bindable.arg.@value[0];
-						if (bindable.arg.(@value == "noEvent").length() == 0) {
+						if (changeEvent && bindable.arg.(@value == "noEvent").length() == 0) {
 							changeEvents.push(changeEvent);
 						}
 					}

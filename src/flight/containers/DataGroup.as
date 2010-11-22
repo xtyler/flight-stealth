@@ -28,10 +28,22 @@ package flight.containers
 		[ArrayElementType("Object")]
 		[Bindable(event="dataProviderChange", style="noEvent")]
 		public function get dataProvider():IList { return _dataProvider ||= new ArrayList(); }
-		public function set dataProvider(value:IList):void
+		public function set dataProvider(value:*):void
 		{
 			RenderPhase.invalidate(this, InitializePhase.CREATE);
-			DataChange.change(this, "dataProvider", _dataProvider, _dataProvider = value);
+			if (!(value is IList)) {
+				if (!_dataProvider) {
+					_dataProvider = new ArrayList();
+				}
+				if (value is Array) {
+					_dataProvider.addItems(value);
+				} else {
+					_dataProvider.addItem(value);
+				}
+				DataChange.change(this, "dataProvider", _dataProvider, _dataProvider, true);
+			} else {
+				DataChange.change(this, "dataProvider", _dataProvider, _dataProvider = value, true);
+			}
 		}
 		private var _dataProvider:IList;
 		

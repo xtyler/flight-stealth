@@ -1,33 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <componentPackage>
 	
-	<!-- data -->
-	<component id="Range" class="flight.data.Position"/>
-	<component id="Scroll" class="flight.data.Track"/>
-	
-	<!-- skins -->
-	<component id="Skin" class="flight.skins.Skin"/>
-	
-	<!-- containers -->
-	<component id="Application" class="flight.containers.Application"/>
-	<component id="Group" class="flight.containers.Group"/>
-	<component id="Scroller" class="flight.containers.Scroller"/>
-	
-	<!-- layouts -->
-	<component id="BasicLayout" class="flight.layouts.BasicLayout"/>
-	<component id="DockLayout" class="flight.layouts.DockLayout"/>
-	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
-	<component id="Layout" class="flight.layouts.Layout"/>
-	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
-	
-	<!-- graphics -->
-	<component id="BitmapImage" class="flight.graphics.BitmapImage"/>
-	
 	<!-- display -->
 	<component id="BitmapDisplay" class="flight.display.BitmapDisplay"/>
-	<component id="Display" class="flight.display.SpriteDisplay"/>
+	<component id="ShapeDisplay" class="flight.display.ShapeDisplay"/>
+	<component id="SpriteDisplay" class="flight.display.SpriteDisplay"/>
+	<component id="MovieClipDisplay" class="flight.display.MovieClipDisplay"/>
 	
 	<!-- text -->
 	<component id="TextFieldDisplay" class="flight.text.TextFieldDisplay"/>
+	
+	<!-- containers -->
+	<component id="Group" class="flight.containers.Group"/>
+	<component id="Application" class="flight.containers.Application"/>
+	
+	<!-- layouts -->
+	<component id="Layout" class="flight.layouts.Layout"/>
+	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
+	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
+	<component id="BasicLayout" class="flight.layouts.BasicLayout"/>
+	<component id="DockLayout" class="flight.layouts.DockLayout"/>
+	
+	<!-- data -->
+	<component id="ArrayList" class="flight.list.ArrayList"/>
+	<component id="Position" class="flight.data.Position"/>
+	<component id="Track" class="flight.data.Track"/>
+	<component id="Style" class="flight.styles.Style"/>
+	
+	<!-- components -->
+	<component id="Component" class="flight.component.Component"/>
+	
+	<!-- skins -->
+	<component id="Skin" class="flight.skins.Skin"/>
+	<component id="MovieClipSkin" class="flight.skins.MovieClipSkin"/>
+	
+	<!-- behaviors -->
+	<component id="ClickBehavior" class="flight.behaviors.ClickBehavior"/>
+	<component id="SelectBehavior" class="flight.behaviors.SelectBehavior"/>
+	<component id="StepBehavior" class="flight.behaviors.StepBehavior"/>
+	<component id="SlideBehavior" class="flight.behaviors.SlideBehavior"/>
+	
+	<!-- graphics -->
+	<component id="BitmapImage" class="flight.graphics.BitmapImage"/>
+	<component id="Rect" class="flight.graphics.Rect"/>
+	<component id="SolidColor" class="flight.graphics.paint.SolidColor"/>
 	
 </componentPackage>

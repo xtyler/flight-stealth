@@ -13,6 +13,7 @@ package flight.layouts
 
 	public class DockLayout extends BasicLayout
 	{
+		protected var dockMeasured:Bounds = new Bounds();
 		protected var dockMargin:Box = new Box();
 		protected var tileRect:Rectangle = new Rectangle();
 		protected var lastDock:String = null;
@@ -20,6 +21,8 @@ package flight.layouts
 		
 		protected var tileWidth:Number;
 		protected var tileHeight:Number;
+		protected var measuredWidth:Number;
+		protected var measuredHeight:Number;
 		
 		private var validDockValues:Array = [Align.LEFT, Align.TOP, Align.RIGHT, Align.BOTTOM, Align.JUSTIFY];
 		
@@ -27,6 +30,30 @@ package flight.layouts
 		{
 			registerStyle("dock");
 			registerStyle("tile");
+		}
+		
+		override public function measure():void
+		{
+			dockMeasured.width = dockMeasured.minWidth = padding.left + padding.right;
+			dockMeasured.height = dockMeasured.minHeight = padding.top + padding.bottom;
+			dockMeasured.maxWidth = dockMeasured.maxHeight = 0xFFFFFF;
+			measuredWidth = measuredHeight = 0;
+			
+			super.measure();
+			
+			var measured:IBounds = target.measured;
+			measured.minWidth = dockMeasured.constrainWidth(measured.minWidth);
+			measured.minHeight = dockMeasured.constrainHeight(measured.minHeight);
+			measured.maxWidth = dockMeasured.constrainWidth(measured.maxWidth);
+			measured.maxHeight = dockMeasured.constrainHeight(measured.maxHeight);
+			dockMeasured.width = measuredWidth;
+			dockMeasured.height = measuredHeight;
+			if (measured.width < dockMeasured.width) {
+				measured.width = dockMeasured.width;
+			}
+			if (measured.height < dockMeasured.height) {
+				measured.height = dockMeasured.height;
+			}
 		}
 		
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
@@ -56,17 +83,16 @@ package flight.layouts
 				return;
 			}
 			
-			var measured:IBounds = target.measured;
 			var space:Number;
 			var m:String;
 			if (!tile) {
 				if (tiling) {
 					if (lastDock == Align.LEFT || lastDock == Align.RIGHT) {
-						measured.width += tileWidth;
-						measured.minHeight -= padding.vertical;
+						measuredWidth += tileWidth;
+						dockMeasured.minHeight -= padding.vertical;
 					} else {
-						measured.height += tileHeight;
-						measured.minWidth -= padding.horizontal;
+						measuredHeight += tileHeight;
+						dockMeasured.minWidth -= padding.horizontal;
 					}
 					childMargin.merge(dockMargin.clone(contentMargin));
 					tiling = false;
@@ -93,8 +119,8 @@ package flight.layouts
 						tileWidth = space;
 						dockMargin[dock] = childMargin[m];
 					}
-					measured.minWidth = measured.constrainWidth(measured.width + tileWidth);
-					measured.minHeight = measured.constrainHeight(measured.height + tileHeight);
+					dockMeasured.minWidth = dockMeasured.constrainWidth(measuredWidth + tileWidth);
+					dockMeasured.minHeight = dockMeasured.constrainHeight(measuredHeight + tileHeight);
 				} else {
 					if (dock == Align.LEFT) {
 						contentMargin.left = childMargin.right;
@@ -103,11 +129,11 @@ package flight.layouts
 						contentMargin.right = childMargin.left;
 						space = childMargin.right;
 					}
-					measured.width += childRect.width + space + padding.horizontal;
-					space = measured.height + childMargin.top + childMargin.bottom;
-					measured.minWidth = measured.constrainWidth(measured.width);
-					measured.minHeight = measured.constrainHeight(space + childMin.height);
-					measured.maxHeight = measured.constrainHeight(space + childMax.height);
+					measuredWidth += childRect.width + space + padding.horizontal;
+					space = measuredHeight + childMargin.top + childMargin.bottom;
+					dockMeasured.minWidth = dockMeasured.constrainWidth(measuredWidth);
+					dockMeasured.minHeight = dockMeasured.constrainHeight(space + childMin.height);
+					dockMeasured.maxHeight = dockMeasured.constrainHeight(space + childMax.height);
 				}
 			} else if (dock == Align.TOP || dock == Align.BOTTOM) {
 				m = dock == Align.TOP ? Align.BOTTOM : Align.TOP;
@@ -125,8 +151,8 @@ package flight.layouts
 						tileHeight = space;
 						dockMargin[dock] = childMargin[m];
 					}
-					measured.minWidth = measured.constrainWidth(measured.width + tileWidth);
-					measured.minHeight = measured.constrainHeight(measured.height + tileHeight);
+					dockMeasured.minWidth = dockMeasured.constrainWidth(measuredWidth + tileWidth);
+					dockMeasured.minHeight = dockMeasured.constrainHeight(measuredHeight + tileHeight);
 				} else {
 					if (dock == Align.TOP) {
 						contentMargin.top = childMargin.bottom;
@@ -135,29 +161,29 @@ package flight.layouts
 						contentMargin.bottom = childMargin.top;
 						space = childMargin.bottom;
 					}
-					measured.height += childRect.height + space + padding.vertical;
-					space = measured.width + childMargin.left + childMargin.right;
-					measured.minHeight = measured.constrainHeight(measured.height);
-					measured.minWidth = measured.constrainWidth(space + childMin.width);
-					measured.maxWidth = measured.constrainWidth(space + childMax.width);
+					measuredHeight += childRect.height + space + padding.vertical;
+					space = measuredWidth + childMargin.left + childMargin.right;
+					dockMeasured.minHeight = dockMeasured.constrainHeight(measuredHeight);
+					dockMeasured.minWidth = dockMeasured.constrainWidth(space + childMin.width);
+					dockMeasured.maxWidth = dockMeasured.constrainWidth(space + childMax.width);
 				}
 			} else {	// if (dock == JUSTIFY) {
-				space = measured.width + childMargin.left + childMargin.right + padding.horizontal;
-				measured.minWidth = measured.constrainWidth(space + childMin.width);
-				measured.maxWidth = measured.constrainWidth(space + childMax.width);
+				space = measuredWidth + childMargin.left + childMargin.right + padding.horizontal;
+				dockMeasured.minWidth = dockMeasured.constrainWidth(space + childMin.width);
+				dockMeasured.maxWidth = dockMeasured.constrainWidth(space + childMax.width);
 				
-				space = measured.height + childMargin.top + childMargin.bottom + padding.vertical;
-				measured.minHeight = measured.constrainHeight(space + childMin.height);
-				measured.maxHeight = measured.constrainHeight(space + childMax.height);
+				space = measuredHeight + childMargin.top + childMargin.bottom + padding.vertical;
+				dockMeasured.minHeight = dockMeasured.constrainHeight(space + childMin.height);
+				dockMeasured.maxHeight = dockMeasured.constrainHeight(space + childMax.height);
 			}
 			
 			if (last) {
 				// remove the last pad and add the last margin
 				switch (lastDock) {
-					case Align.LEFT: measured.minWidth += childMargin.right - padding.horizontal; break;
-					case Align.TOP: measured.minHeight += childMargin.bottom - padding.vertical; break;
-					case Align.RIGHT: measured.minWidth += childMargin.left - padding.horizontal; break;
-					case Align.BOTTOM: measured.minHeight += childMargin.top - padding.vertical; break;
+					case Align.LEFT: dockMeasured.minWidth += childMargin.right - padding.horizontal; break;
+					case Align.TOP: dockMeasured.minHeight += childMargin.bottom - padding.vertical; break;
+					case Align.RIGHT: dockMeasured.minWidth += childMargin.left - padding.horizontal; break;
+					case Align.BOTTOM: dockMeasured.minHeight += childMargin.top - padding.vertical; break;
 				}
 				lastDock = null;
 				tiling = false;
@@ -298,25 +324,29 @@ package flight.layouts
 			var pos:Number;
 			switch (align) {
 				case Align.LEFT:
-					if (area.left + margin.left < (pos = childRect.x + childRect.width + padding.horizontal) + childMargin.right) {
+					pos = childRect.x + childRect.width + padding.horizontal;
+					if (area.left + margin.left < pos + childMargin.right) {
 						area.left = pos;
 						margin.left = childMargin.right;
 					}
 					break;
 				case Align.TOP:
-					if (area.top + margin.top < (pos = childRect.y + childRect.height + padding.vertical) + childMargin.bottom) {
+					pos = childRect.y + childRect.height + padding.vertical;
+					if (area.top + margin.top < pos + childMargin.bottom) {
 						area.top = pos;
 						margin.top = childMargin.bottom;
 					}
 					break;
 				case Align.RIGHT:
-					if (area.right - margin.right > (pos = childRect.x - padding.horizontal) - childMargin.left) {
+					pos = childRect.x - padding.horizontal;
+					if (area.right - margin.right > pos - childMargin.left) {
 						area.right = pos;
 						margin.right = childMargin.left;
 					}
 					break;
 				case Align.BOTTOM:
-					if (area.bottom - margin.bottom > (pos = childRect.y - padding.vertical) - childMargin.top) {
+					pos = childRect.y - padding.vertical;
+					if (area.bottom - margin.bottom > pos - childMargin.top) {
 						area.bottom = pos;
 						margin.bottom = childMargin.top;
 					}

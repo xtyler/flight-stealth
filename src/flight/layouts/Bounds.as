@@ -64,7 +64,8 @@ package flight.layouts
 			if (_maxWidth < value) {
 				DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
 			}
-			DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
+			DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
+			width = _width;
 		}
 		private var _minWidth:Number = 0;
 		
@@ -79,7 +80,8 @@ package flight.layouts
 			if (_maxHeight < value) {
 				DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
 			}
-			DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
+			DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
+			height = _height;
 		}
 		private var _minHeight:Number = 0;
 			
@@ -94,7 +96,8 @@ package flight.layouts
 			if (_minWidth > value) {
 				DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
 			}
-			DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
+			DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
+			width = _width;
 		}
 		private var _maxWidth:Number = 0xFFFFFF;
 		
@@ -109,7 +112,8 @@ package flight.layouts
 			if (_minHeight > value) {
 				DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
 			}
-			DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
+			DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
+			height = _height;
 		}
 		private var _maxHeight:Number = 0xFFFFFF;
 		
@@ -129,6 +133,12 @@ package flight.layouts
 		{
 			return (height >= _maxHeight) ? _maxHeight :
 				   (height <= _minHeight) ? _minHeight : height;
+		}
+		
+		override public function toString():String
+		{
+			return '[object Bounds(width="' + _width + '", height="' + _height + '", minWidth="' + _minWidth +
+					'", minHeight="' + _minHeight +'", maxWidth="' + _maxWidth + '", maxHeight="' + _maxHeight + '")]';
 		}
 	}
 }

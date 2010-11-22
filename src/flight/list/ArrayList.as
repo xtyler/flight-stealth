@@ -48,7 +48,7 @@ package flight.list
 		
 		public function ArrayList(source:* = null)
 		{
-			dispatcher = new EventDispatcher();
+			dispatcher = new EventDispatcher(this);
 			this.source = source || [];
 		}
 		

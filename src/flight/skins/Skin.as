@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -11,6 +11,7 @@ package flight.skins
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.geom.Rectangle;
 	
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
@@ -20,7 +21,6 @@ package flight.skins
 	import flight.events.ListEvent;
 	import flight.events.ListEventKind;
 	import flight.layouts.Bounds;
-	import flight.layouts.DockLayout;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
@@ -42,8 +42,6 @@ package flight.skins
 		
 		public function Skin()
 		{
-			_measured = new Bounds();
-			_content = new ArrayList();
 			dataBind.bind(this, "currentState", this, "target.currentState");
 		}
 		
@@ -86,6 +84,7 @@ package flight.skins
 			for (i; i < _content.length; i++) {
 				_target.addChildAt(DisplayObject(_content.getItemAt(i)), i);
 			}
+			_target.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 10, true);
 			_target.addEventListener(Event.ADDED, onChildAdded, true);
 			_target.addEventListener(Event.REMOVED, onChildRemoved, true);
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
@@ -140,7 +139,7 @@ package flight.skins
 			}
 			DataChange.change(this, "content", _content, _content, true);
 		}
-		private var _content:IList;
+		private var _content:IList = new ArrayList();
 		
 		/**
 		 * @inheritDoc
@@ -185,17 +184,37 @@ package flight.skins
 		/**
 		 * @inheritDoc
 		 */
-		public function get measured():IBounds
-		{
-			return _target is IMeasureable ? IMeasureable(_target).measured : _measured;
-		}
-		private var _measured:IBounds;
+		public function get measured():IBounds { return _measured; }
+		private var _measured:IBounds = new Bounds();
 		
 		/**
 		 * @inheritDoc
 		 */
 		[Bindable(event="displayChange", style="noEvent")]
 		public function get display():DisplayObject { return _target; }
+		
+		protected function measure():void
+		{
+			if (_target) {
+				var rect:Rectangle = _target.getRect(_target);
+				_measured.width = rect.width;
+				_measured.height = rect.height;
+			}
+		}
+		
+		private function onMeasure(event:Event):void
+		{
+			measure();
+			if (_target is IMeasureable) {
+				var targetMeasured:IBounds = IMeasureable(_target).measured;
+				targetMeasured.minWidth = _measured.minWidth;
+				targetMeasured.minHeight = _measured.minHeight;
+				targetMeasured.maxWidth = _measured.maxWidth;
+				targetMeasured.maxHeight = _measured.maxHeight;
+				targetMeasured.width = _measured.width;
+				targetMeasured.height = _measured.height;
+			}
+		}
 		
 		private function onChildAdded(event:Event):void
 		{

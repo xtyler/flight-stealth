@@ -111,10 +111,10 @@ package flight.events
 		 */
 		public static function initialize(button:InteractiveObject, includeCallbacks:Boolean = false):InteractiveObject
 		{
-			button.addEventListener(MouseEvent.MOUSE_DOWN,	onMouseDown,	false, 0xFF);
-			button.addEventListener(MouseEvent.ROLL_OVER,	onRollOver,		false, 0xFF);
-			button.addEventListener(MouseEvent.ROLL_OUT,	onRollOut,		false, 0xFF);
-			button.addEventListener(MouseEvent.MOUSE_UP,	onMouseUp,		false, 0xFF);
+			button.addEventListener(MouseEvent.MOUSE_DOWN,	onMouseDown,	false, 10);
+			button.addEventListener(MouseEvent.ROLL_OVER,	onRollOver,		false, 10);
+			button.addEventListener(MouseEvent.ROLL_OUT,	onRollOut,		false, 10);
+			button.addEventListener(MouseEvent.MOUSE_UP,	onMouseUp,		false, 10);
 			
 			if (includeCallbacks) {
 				
