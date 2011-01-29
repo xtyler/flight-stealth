@@ -28,7 +28,7 @@
 	<component id="Style" class="flight.styles.Style"/>
 	
 	<!-- components -->
-	<component id="Component" class="flight.component.Component"/>
+	<component id="Component" class="flight.components.Component"/>
 	
 	<!-- skins -->
 	<component id="Skin" class="flight.skins.Skin"/>

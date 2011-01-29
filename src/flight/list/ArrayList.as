@@ -61,7 +61,7 @@ package flight.list
 		private var _idField:String = "id";		// TODO: replace with dataMap
 		
 		[Bindable(event="listChange", style="noEvent")]
-		public function get length():int { return adapter.length; }
+		public function get length():uint { return adapter.length; }
 		
 		[Bindable(event="selectionChange", style="noEvent")]
 		public function get selection():IListSelection { return _selection ||= new ListSelection(this); }
@@ -172,7 +172,7 @@ package flight.list
 			return _source[index];
 		}
 		
-		public function getItemById(id:String):Object
+		public function getItemById(id:Object):Object
 		{
 			for each (var item:Object in _source) {
 				if (idField in item && item[idField] == id) {
@@ -195,7 +195,7 @@ package flight.list
 			return adapter.indexOf(item);
 		}
 		
-		public function getItems(index:int=0, length:int = 0x7FFFFFFF):*
+		public function getItems(index:int = 0, length:int = 0x7FFFFFFF):*
 		{
 			if (index < 0) {
 				index = Math.max(adapter.length + index, 0);
@@ -531,7 +531,7 @@ class XMLListAdapter
 	public function concat(... args):XMLList
 	{
 		var items:XMLList = source.copy();
-		for each (var xml:Object in args) {
+		for each (var xml:* in args) {
 			items += xml;
 		}
 		return items;
@@ -586,7 +586,7 @@ class XMLListAdapter
 		
 		// build values to insert
 		var insertedItems:XMLList = new XMLList();
-		for each (var item:Object in values) {
+		for each (var item:* in values) {
 			insertedItems += item;
 		}
 		source[startIndex] = (startIndex < source.length()) ?

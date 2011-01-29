@@ -56,6 +56,8 @@ package flight.components
 				for each (var behavior:IBehavior in value) {
 					style[behavior.type] = behavior;
 				}
+			} else if (value === null) {
+				_behaviors.removeItems();
 			}
 		}
 		private var _behaviors:IList;

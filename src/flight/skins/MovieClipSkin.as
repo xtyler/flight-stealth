@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -225,7 +225,9 @@ package flight.skins
 		
 		private function onLayout(event:Event):void
 		{
-			setLayoutSize(parent.width, parent.height);
+			if (target) {
+				setLayoutSize(target.width, target.height);
+			}
 		}
 		
 		private function onInit(event:Event):void
@@ -290,6 +292,8 @@ package flight.skins
 				_content.addItems( IList(value).getItems() );
 			} else if (value is Array) {
 				_content.addItems(value);
+			} else if (value === null) {
+				_content.removeItems();
 			} else {
 				_content.addItem(value);
 			}

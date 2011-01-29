@@ -40,9 +40,6 @@ package flight.graphics.paint
 		}
 		private var _alpha:Number;
 		
-		public function get graphicsFill():IGraphicsFill
-		{
-			return solidFill;
-		}
+		public function get graphicsFill():IGraphicsFill { return solidFill; }
 	}
 }

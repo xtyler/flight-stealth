@@ -13,9 +13,11 @@ package flight.graphics
 	import flight.display.DrawPhase;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
-
+	
 	public class Rect extends GraphicShape
 	{
+		// TODO: implement transform. filters. fill. stroke. mask. maskType.. blendMode.
+		
 		public function Rect()
 		{
 			addEventListener(LayoutPhase.RESIZE, onResize);

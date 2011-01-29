@@ -15,7 +15,7 @@ package flight.data
 	 */
 	public class DataChange
 	{
-		internal static var staticCallbacks:Vector.<Function> = new Vector.<Function>();
+		public static var staticCallbacks:Vector.<Function> = new Vector.<Function>();
 		
 		private static var headChange:DataChange;
 		private static var currentChange:DataChange;

@@ -31,7 +31,7 @@ package flight.containers
 		public function set dataProvider(value:*):void
 		{
 			RenderPhase.invalidate(this, InitializePhase.CREATE);
-			if (!(value is IList)) {
+			if (!(value is IList) && value !== null) {
 				if (!_dataProvider) {
 					_dataProvider = new ArrayList();
 				}

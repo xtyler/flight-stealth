@@ -220,7 +220,11 @@ package flight.layouts
 					percentWidth = percentHeight = NaN;
 				}
 				
+				var originalRect:Rectangle = childRect.clone();
 				updateChild(child, i == len - 1);
+				if (originalRect.equals(childRect)) {
+					continue;
+				}
 				
 				if (child is ILayoutBounds) {
 					ILayoutBounds(child).setLayoutSize(childRect.width, childRect.height);

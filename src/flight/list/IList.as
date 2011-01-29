@@ -12,7 +12,7 @@ package flight.list
 
 	public interface IList extends IEventDispatcher
 	{
-		function get length():int;
+		function get length():uint;
 		function get selection():IListSelection;
 		
 		function addItem(item:Object):Object;
@@ -20,7 +20,7 @@ package flight.list
 		function addItems(items:*, index:int = 0x7FFFFFFF):*;
 		function containsItem(item:Object):Boolean;
 		function getItemAt(index:int):Object;
-		function getItemById(id:String):Object;
+		function getItemById(id:Object):Object;
 		function getItemIndex(item:Object):int;
 		function getItems(index:int = 0, length:int = 0x7FFFFFFF):*;
 		function removeItem(item:Object):Object;

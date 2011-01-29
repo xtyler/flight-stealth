@@ -50,6 +50,8 @@ package flight.containers
 				_content.addItems( IList(value).getItems() );
 			} else if (value is Array) {
 				_content.addItems(value);
+			} else if (value === null) {
+				_content.removeItems();
 			} else {
 				_content.addItem(value);
 			}

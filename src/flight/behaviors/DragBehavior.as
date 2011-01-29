@@ -32,7 +32,7 @@ package flight.behaviors
 		
 		// ====== Event Listeners ====== //
 		
-		[EventListener(type="mouseDown", target="target")]
+		//[EventListener(type="mouseDown", target="target")]
 		public function onMouseDown(event:MouseEvent):void
 		{
 			var item:InteractiveObject = event.currentTarget as InteractiveObject;
@@ -41,7 +41,7 @@ package flight.behaviors
 			startPosition = item.parent.localToGlobal(startPosition);
 		}
 		
-		[EventListener(type="drag", target="target")]
+		//[EventListener(type="drag", target="target")]
 		public function onDrag(event:MouseEvent):void
 		{
 			var item:InteractiveObject = event.currentTarget as InteractiveObject;

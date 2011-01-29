@@ -13,8 +13,6 @@ package flight.graphics
 	import flash.geom.Matrix;
 	
 	import flight.display.DrawPhase;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
 	import flight.display.ShapeDisplay;
 	import flight.graphics.paint.IFill;
 	import flight.graphics.paint.IStroke;
