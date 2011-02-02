@@ -45,7 +45,7 @@ package flight.data
 			// restrict value within -1 (deselect) and highest possible index
 			value = value < -1 ? -1 : (value > list.length - 1 ? list.length - 1 : value);
 			if (_index != value) {
-				DataChange.queue(this, "item", _item, _item = list.getItemAt(value));
+				DataChange.queue(this, "item", _item, _item = list.get(value));
 				DataChange.queue(this, "index", _index, _index = value);
 				// TODO: optimize list selection
 				updatingLists = true;
@@ -61,7 +61,7 @@ package flight.data
 		public function get item():Object { return _item; }
 		public function set item(value:Object):void
 		{
-			var i:int = list.getItemIndex(value);
+			var i:int = list.getIndex(value);
 			if (i == -1) {
 				value = null;
 			}
@@ -93,8 +93,8 @@ package flight.data
 		{
 			var tmpItems:Array = [];
 			for (var i:int = 0; i < _items.length; i++) {
-				var item:Object = _items.getItemAt(i);
-				var index:int = list.getItemIndex(item);
+				var item:Object = _items.get(i);
+				var index:int = list.getIndex(item);
 				
 				if (index != -1) {
 					tmpItems.push(item);
@@ -112,13 +112,13 @@ package flight.data
 			
 			var list1:ArrayList = event.target as ArrayList;
 			if (!multiselect && list1.length > 1) {
-				list1.source = event.items != null ? event.items[0] : list1.getItemAt(0);
+				list1.source = event.added != null ? event.added[0] : list1.get(0);
 				event.stopImmediatePropagation();
 				return;
 			}
 			
 			var list2:ArrayList = (list1 == _indices) ? _items : _indices;
-			var getData:Function = (list1 == _indices) ? list.getItemAt : list.getItemIndex;
+			var getData:Function = (list1 == _indices) ? list.get : list.getIndex;
 			var tmpArray:Array;
 			var tmpObject:Object;
 			
@@ -126,30 +126,30 @@ package flight.data
 			switch (event.kind) {
 				case ListEventKind.ADD:
 					tmpArray = [];
-					for each (tmpObject in event.items) {
+					for each (tmpObject in event.added) {
 						tmpArray.push( getData(tmpObject) );
 					}
-					list2.addItems(tmpArray, event.location1);
+					list2.add(tmpArray, event.from);
 					break;
 				case ListEventKind.REMOVE:
-					list2.removeItems(event.location1, event.items.length);
+					list2.removeAt(event.from, event.added.length);
 					break;
 				case ListEventKind.MOVE:
-					if (event.items.length == 1) {
-						tmpObject = getData(event.items[0]);
-						list2.setItemIndex(tmpObject, event.location1);
+					if (event.added.length == 1) {
+						tmpObject = getData(event.added[0]);
+						list2.setIndex(tmpObject, event.from);
 					} else {
-						list2.swapItemsAt(event.location1, event.location2);
+						list2.swapAt(event.from, event.to);
 					}
 					break;
 				case ListEventKind.REPLACE:
-					tmpObject = getData(event.items[0]);
-					list2.setItemAt(tmpObject, event.location1);
+					tmpObject = getData(event.added[0]);
+					list2.set(tmpObject, event.from);
 					break;
 				default:	// ListEventKind.RESET
 					tmpArray = [];
 					for (var i:int = 0; i < list1.length; i++) {
-						tmpObject = list1.getItemAt(i);
+						tmpObject = list1.get(i);
 						tmpArray.push( getData(tmpObject) );
 					}
 					list2.source = tmpArray;
@@ -159,8 +159,8 @@ package flight.data
 			
 			var oldIndex:int = _index;
 			var oldItem:Object = _item;
-			index = _indices.length > 0 ? _indices.getItemAt(0) as Number : -1;
-			item = _items.getItemAt(0);
+			index = _indices.length > 0 ? _indices.get(0) as Number : -1;
+			item = _items.get(0);
 		}
 		
 	}

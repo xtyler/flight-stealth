@@ -13,23 +13,19 @@ package flight.list
 	public interface IList extends IEventDispatcher
 	{
 		function get length():uint;
-		function get selection():IListSelection;
+		function get selected():IListSelection;
 		
-		function addItem(item:Object):Object;
-		function addItemAt(item:Object, index:int):Object;
-		function addItems(items:*, index:int = 0x7FFFFFFF):*;
-		function containsItem(item:Object):Boolean;
-		function getItemAt(index:int):Object;
-		function getItemById(id:Object):Object;
-		function getItemIndex(item:Object):int;
-		function getItems(index:int = 0, length:int = 0x7FFFFFFF):*;
-		function removeItem(item:Object):Object;
-		function removeItemAt(index:int):Object;
-		function removeItems(index:int = 0, length:int = 0x7FFFFFFF):*;
-		function setItemAt(item:Object, index:int):Object;
-		function setItemIndex(item:Object, index:int):Object;
-		function swapItems(item1:Object, item2:Object):void
-		function swapItemsAt(index1:int, index2:int):void
+		function add(items:*, index:int = 0x7FFFFFFF):*;			// combined addItem, addItemAt, addItems
+		function contains(item:Object):Boolean;						// was containsItem
+		function get(index:int = 0, length:uint = 0):*;				// combined getItemAt, getItems
+		function getIndex(item:Object):int;							// was getItemIndex
+		function getById(id:Object, field:String = "id"):Object;	// was getItemById
+		function remove(item:Object):Object;						// was removeItem
+		function removeAt(index:int = 0, length:uint = 0):*;		// combined removeItemAt, removeItems
+		function set(index:int, item:Object):Object;				// was setItemAt
+		function setIndex(item:Object, index:int):Object;			// was setItemIndex
+		function swap(item1:Object, item2:Object):void				// was swapItems
+		function swapAt(index1:int, index2:int):void				// was swapItemsAt
 		
 	}
 }

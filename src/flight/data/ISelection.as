@@ -14,12 +14,12 @@ package flight.data
 		function get item():Object;
 		function set item(value:Object):void;
 		
-		function get multiselect():Boolean;
-		function set multiselect(value:Boolean):void;
+		function get multiSelect():Boolean;
+		function set multiSelect(value:Boolean):void;
 		
 		function get items():IList;
 		
-		function select(items:*):void;
+		function select(items:*):*;
 		
 	}
 }

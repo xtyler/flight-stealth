@@ -36,9 +36,9 @@ package flight.containers
 					_dataProvider = new ArrayList();
 				}
 				if (value is Array) {
-					_dataProvider.addItems(value);
+					_dataProvider.add(value);
 				} else {
-					_dataProvider.addItem(value);
+					_dataProvider.add(value);
 				}
 				DataChange.change(this, "dataProvider", _dataProvider, _dataProvider, true);
 			} else {
@@ -69,7 +69,7 @@ package flight.containers
 						addChildAt(child, i);
 					}
 					if ("data" in child) {
-						child["data"] = _dataProvider.getItemAt(i);
+						child["data"] = _dataProvider.get(i);
 					}
 				}
 				

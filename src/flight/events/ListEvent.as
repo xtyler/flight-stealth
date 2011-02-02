@@ -8,36 +8,37 @@ package flight.events
 {
 	import flash.events.Event;
 
-	public class ListEvent extends Event
+	public class ListEvent extends CentralEvent
 	{
 		public static const LIST_CHANGE:String = "listChange";
 		
-		private var _kind:String;
-		private var _items:*;
-		private var _location1:int;
-		private var _location2:int;
 		
-		public function ListEvent(type:String, kind:String, items:* = null, location1:int = -1, location2:int = -1)
+		public function ListEvent(type:String, target:Object = null, bubbles:Boolean = false, cancelable:Boolean = false,
+								  added:* = null, removed:* = null, from:int = -1, to:int = -1)
 		{
-			super(type);
+			super(type, target, bubbles, cancelable);
 			
-			_kind = kind;
-			_items = items;
-			_location1 = location1;
-			_location2 = location2;
+			_added = added;
+			_removed = removed;
+			_from = from;
+			_to = to;
 		}
 		
-		public function get kind():String { return _kind; }
+		public function get added():* { return _added; }
+		private var _added:*;
 		
-		public function get items():* { return _items; }
+		public function get removed():* { return _removed; }
+		private var _removed:*;
 		
-		public function get location1():int { return _location1; }
+		public function get from():int { return _from; }
+		private var _from:int;
 		
-		public function get location2():int { return _location2; }
+		public function get to():int { return _to; }
+		private var _to:int;
 		
 		override public function clone():Event
 		{
-			return new ListEvent(type, _kind, _items, _location1, _location2);
+			return new ListEvent(type, target, bubbles, cancelable, _added, _removed, _from, _to);
 		}
 	}
 }

@@ -14,5 +14,7 @@ package flight.data
 		function set index(value:int):void;
 		
 		function get indices():IList;
+		
+		function selectAt(indices:*):*;
 	}
 }

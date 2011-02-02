@@ -57,7 +57,7 @@ package flight.components
 					style[behavior.type] = behavior;
 				}
 			} else if (value === null) {
-				_behaviors.removeItems();
+				_behaviors.removeAt();
 			}
 		}
 		private var _behaviors:IList;
@@ -185,7 +185,7 @@ package flight.components
 			if (event.oldValue is IBehavior) {
 				behavior = IBehavior(event.oldValue);
 				behaviorsChanging = true;
-				_behaviors.removeItem(behavior);
+				_behaviors.remove(behavior);
 				behaviorsChanging = false;
 				behavior.target = null;
 			}
@@ -195,7 +195,7 @@ package flight.components
 					behavior.type = event.property;
 				}
 				behaviorsChanging = true;
-				_behaviors.addItem(behavior);
+				_behaviors.add(behavior);
 				behaviorsChanging = false;
 				behavior.target = this;
 			}
@@ -208,26 +208,26 @@ package flight.components
 			}
 			
 			var behavior:IBehavior;
-			var location:int = event.location1;
+			var location:int = event.from;
 			switch (event.kind) {
 				case ListEventKind.ADD:
-					for each (behavior in event.items) {
+					for each (behavior in event.added) {
 						style[behavior.type] = behavior;
 					}
 					break;
 				case ListEventKind.REMOVE:
-					for each (behavior in event.items) {
+					for each (behavior in event.added) {
 						delete style[behavior.type];
 					}
 					break;
 				case ListEventKind.REPLACE:
-					behavior = event.items[1];
+					behavior = event.added[1];
 					delete style[behavior.type];
-					behavior = event.items[0];
+					behavior = event.added[0];
 					style[behavior.type] = behavior;
 					break;
 				default:	// ListEventKind.RESET
-					for each (behavior in event.items) {
+					for each (behavior in event.added) {
 						delete style[behavior.type];
 					}
 					for each (behavior in _behaviors) {

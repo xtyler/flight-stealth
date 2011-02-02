@@ -30,7 +30,7 @@ package flight.containers
 		public function Group()
 		{
 			for (var i:int = 0; i < numChildren; i ++) {
-				_content.addItem(getChildAt(i));
+				_content.add(getChildAt(i));
 			}
 			addEventListener(Event.ADDED, onChildAdded, true);
 			addEventListener(Event.REMOVED, onChildRemoved, true);
@@ -45,15 +45,15 @@ package flight.containers
 		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
-			_content.removeItems();
+			_content.removeAt();
 			if (value is IList) {
-				_content.addItems( IList(value).getItems() );
+				_content.add( IList(value).get() );
 			} else if (value is Array) {
-				_content.addItems(value);
+				_content.add(value);
 			} else if (value === null) {
-				_content.removeItems();
+				_content.removeAt();
 			} else {
-				_content.addItem(value);
+				_content.add(value);
 			}
 			DataChange.change(this, "content", _content, _content, true);
 		}
@@ -228,7 +228,7 @@ package flight.containers
 			}
 			
 			contentChanging = true;
-			content.addItemAt(child, getChildIndex(child));
+			content.add(child, getChildIndex(child));
 			contentChanging = false;
 			
 			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
@@ -243,7 +243,7 @@ package flight.containers
 			}
 			
 			contentChanging = true;
-			content.removeItem(child);
+			content.remove(child);
 			contentChanging = false;
 			
 			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
@@ -258,30 +258,30 @@ package flight.containers
 			
 			contentChanging = true;
 			var child:DisplayObject;
-			var location:int = event.location1;
+			var location:int = event.from;
 			switch (event.kind) {
 				case ListEventKind.ADD:
-					for each (child in event.items) {
+					for each (child in event.added) {
 						addChildAt(child, location++);
 					}
 					break;
 				case ListEventKind.REMOVE:
-					for each (child in event.items) {
+					for each (child in event.added) {
 						removeChild(child);
 					}
 					break;
 				case ListEventKind.MOVE:
-					addChildAt(event.items[0], location);
-					if (event.items.length == 2) {
-						addChildAt(event.items[1], event.location2);
+					addChildAt(event.added[0], location);
+					if (event.added.length == 2) {
+						addChildAt(event.added[1], event.to);
 					}
 					break;
 				case ListEventKind.REPLACE:
-					removeChild(event.items[1]);
-					addChildAt(event.items[0], location);
+					removeChild(event.added[1]);
+					addChildAt(event.added[0], location);
 					break;
 				default:	// ListEventKind.RESET
-					for each (child in event.items) {
+					for each (child in event.added) {
 						removeChild(child);
 					}
 					for each (child in _content) {

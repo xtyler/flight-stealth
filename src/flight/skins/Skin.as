@@ -79,10 +79,10 @@ package flight.skins
 		protected function attachSkin():void
 		{
 			for (var i:int = 0; i < _target.numChildren; i ++) {
-				_content.addItemAt(_target.getChildAt(i), i);
+				_content.add(_target.getChildAt(i), i);
 			}
 			for (i; i < _content.length; i++) {
-				_target.addChildAt(DisplayObject(_content.getItemAt(i)), i);
+				_target.addChildAt(DisplayObject(_content.get(i)), i);
 			}
 			_target.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 10, true);
 			_target.addEventListener(Event.ADDED, onChildAdded, true);
@@ -129,15 +129,15 @@ package flight.skins
 		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
-			_content.removeItems();
+			_content.removeAt();
 			if (value is IList) {
-				_content.addItems( IList(value).getItems() );
+				_content.add( IList(value).get() );
 			} else if (value is Array) {
-				_content.addItems(value);
+				_content.add(value);
 			} else if (value === null) {
-				_content.removeItems();
+				_content.removeAt();
 			} else {
-				_content.addItem(value);
+				_content.add(value);
 			}
 			DataChange.change(this, "content", _content, _content, true);
 		}
@@ -226,7 +226,7 @@ package flight.skins
 			}
 			
 			contentChanging = true;
-			content.addItemAt(child, _target.getChildIndex(child));
+			content.add(child, _target.getChildIndex(child));
 			contentChanging = false;
 		}
 		
@@ -238,7 +238,7 @@ package flight.skins
 			}
 			
 			contentChanging = true;
-			content.removeItem(child);
+			content.remove(child);
 			contentChanging = false;
 		}
 		
@@ -250,30 +250,30 @@ package flight.skins
 			
 			contentChanging = true;
 			var child:DisplayObject;
-			var location:int = event.location1;
+			var location:int = event.from;
 			switch (event.kind) {
 				case ListEventKind.ADD:
-					for each (child in event.items) {
+					for each (child in event.added) {
 						_target.addChildAt(child, location++);
 					}
 					break;
 				case ListEventKind.REMOVE:
-					for each (child in event.items) {
+					for each (child in event.added) {
 						_target.removeChild(child);
 					}
 					break;
 				case ListEventKind.MOVE:
-					_target.addChildAt(event.items[0], location);
-					if (event.items.length == 2) {
-						_target.addChildAt(event.items[1], event.location2);
+					_target.addChildAt(event.added[0], location);
+					if (event.added.length == 2) {
+						_target.addChildAt(event.added[1], event.to);
 					}
 					break;
 				case ListEventKind.REPLACE:
-					_target.removeChild(event.items[1]);
-					_target.addChildAt(event.items[0], location);
+					_target.removeChild(event.added[1]);
+					_target.addChildAt(event.added[0], location);
 					break;
 				default:	// ListEventKind.RESET
-					for each (child in event.items) {
+					for each (child in event.added) {
 						_target.removeChild(child);
 					}
 					for each (child in _content) {
