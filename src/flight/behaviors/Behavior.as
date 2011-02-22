@@ -9,13 +9,13 @@ package flight.behaviors
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	
+
 	import flight.data.DataBind;
 	import flight.data.DataChange;
 	import flight.events.SkinEvent;
 	import flight.skins.ISkinnable;
 	import flight.utils.getClassName;
-	
+
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
 	public class Behavior extends EventDispatcher implements IBehavior

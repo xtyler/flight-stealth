@@ -4,13 +4,12 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.list
+package flight.collections
 {
 	import flight.data.IListSelection;
 	import flight.data.ListSelection;
-	import flight.events.ListEvent;
-	
-	dynamic public class ArrayList extends ArrayPlus implements IList
+
+	dynamic public class ArrayList extends ArrayDispatcher implements IList
 	{
 		public function ArrayList(source:Array = null)
 		{
@@ -21,7 +20,7 @@ package flight.list
 		public function get selected():IListSelection { return _selected ||= new ListSelection(this); }
 		private var _selected:ListSelection;
 		
-		public function add(items:*, index:int = 0x7FFFFFFF):*
+		public function add(items:*, index:int = int.MAX_VALUE):*
 		{
 			if (items is Array) {
 				if (index >= length) {
@@ -57,11 +56,6 @@ package flight.list
 			return this[index];
 		}
 		
-		public function getIndex(item:Object):int
-		{
-			return indexOf(item);
-		}
-		
 		public function getById(id:Object, field:String = "id"):Object
 		{
 			for each (var item:Object in this) {
@@ -70,6 +64,16 @@ package flight.list
 				}
 			}
 			return null;
+		}
+		
+		public function indexOf(item:Object, fromIndex:int = 0):int
+		{
+			return super.indexOf(item, fromIndex);
+		}
+		
+		public function lastIndexOf(item:Object, fromIndex:int = 2147483647):int
+		{
+			return super.lastIndexOf(item, fromIndex);
 		}
 		
 		public function remove(item:Object):Object
@@ -92,14 +96,13 @@ package flight.list
 			if (oldIndex == -1) {
 				return add(item, index);
 			} else if (index < 0) {
-				index = Math.max(length + index, 0);
+				index = (length + index) > 0 ? length + index : 0;
 			}
 			
-			_splice(oldIndex, 1);
-			_splice(index, 0, item);
-			if (hasEventListener(ListEvent.LIST_CHANGE)) {
-				dispatchEvent(new ListEvent(ListEvent.LIST_CHANGE, this, false, false, null, null, index, oldIndex));
-			}
+			queueChanges = true;
+			splice(oldIndex, 1);
+			splice(index, 0, item);
+			queueChanges = false;
 			return item;
 		}
 		
@@ -116,8 +119,8 @@ package flight.list
 			var item2:Object = this[index2];
 			this[index1] = item2;
 			this[index2] = item1;
-			if (hasEventListener(ListEvent.LIST_CHANGE)) {
-				dispatchEvent(new ListEvent(ListEvent.LIST_CHANGE, this, false, false, null, null, index1, index2));
+			if (dispatcher) {
+				listChange(index1, index2);
 			}
 		}
 	}

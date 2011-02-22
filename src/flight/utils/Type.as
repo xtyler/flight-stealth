@@ -7,11 +7,11 @@
 package flight.utils
 {
 	import flash.net.registerClassAlias;
-	import flash.utils.Dictionary;
 	import flash.utils.describeType;
+	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
+
 	/**
 	 * The static Type class contains a collection of type-specific utilities,
 	 * including object reflection. Reflection is described in XML, which

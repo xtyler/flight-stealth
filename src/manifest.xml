@@ -22,7 +22,7 @@
 	<component id="DockLayout" class="flight.layouts.DockLayout"/>
 	
 	<!-- data -->
-	<component id="ArrayList" class="flight.list.ArrayList"/>
+	<component id="ArrayList" class="flight.collections.ArrayList"/>
 	<component id="Position" class="flight.data.Position"/>
 	<component id="Track" class="flight.data.Track"/>
 	<component id="Style" class="flight.styles.Style"/>

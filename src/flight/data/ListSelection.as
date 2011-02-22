@@ -7,35 +7,42 @@
 package flight.data
 {
 	import flash.events.EventDispatcher;
-	
+
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
-	import flight.list.ArrayList;
-	import flight.list.IList;
-	
+
 	public class ListSelection extends EventDispatcher implements IListSelection
 	{
-		private var list:IList;
-		private var updatingLists:Boolean;
+		private var updating:Boolean;
 		
-		public function ListSelection(list:IList)
+		public function ListSelection(list:IList = null)
 		{
 			this.list = list;
-			list.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 10);
-			_indices = new ArrayList();
-			_indices.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
-			_items = new ArrayList();
-			_items.addEventListener(ListEvent.LIST_CHANGE, onSelectionChange, false, 10);
 		}
 		
-		
-		[Bindable(event="mutliselectChange", style="noEvent")]
-		public function get multiselect():Boolean { return _multiselect }
-		public function set multiselect(value:Boolean):void
+		[Bindable(event="listChange", style="noEvent")]
+		public function get list():IList { return _list; }
+		public function set list(value:IList):void
 		{
-			DataChange.change(this, "multiselect", _multiselect, _multiselect = value);
+			if (_list) {
+				_list.removeEventListener(ListEvent.LIST_CHANGE, onListChange);
+			}
+			index = -1;
+			DataChange.change(this, "list", _list, _list = value);
+			if (_list) {
+				_list.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 10);
+			}
 		}
-		private var _multiselect:Boolean = false;
+		private var _list:IList;
+		
+		[Bindable(event="itemChange", style="noEvent")]
+		public function get item():Object { return _item; }
+		public function set item(value:Object):void
+		{
+			index = list.indexOf(value);
+		}
+		private var _item:Object = null;
 		
 		
 		[Bindable(event="indexChange", style="noEvent")]
@@ -45,123 +52,135 @@ package flight.data
 			// restrict value within -1 (deselect) and highest possible index
 			value = value < -1 ? -1 : (value > list.length - 1 ? list.length - 1 : value);
 			if (_index != value) {
-				DataChange.queue(this, "item", _item, _item = list.get(value));
 				DataChange.queue(this, "index", _index, _index = value);
-				// TODO: optimize list selection
-				updatingLists = true;
-				_indices.source = [_index];
-				_items.source = [_item];
-				updatingLists = false;
+				DataChange.queue(this, "item", _item, _item = _index != -1 ? list.get(_index) : null);
+				
+				if (_items) {
+					_items.queueChanges = updating = true;
+					_items.removeAt(0, int.MAX_VALUE);
+					_items.add(_item);
+					_items.queueChanges = updating = false;
+				}
+				
+				if (_indices) {
+					_indices.queueChanges = updating = true;
+					_indices.removeAt(0, int.MAX_VALUE);
+					_indices.add(_index);
+					_indices.queueChanges = updating = false;
+				}
+				
 				DataChange.change();
 			}
 		}
 		private var _index:int = -1;
 		
-		[Bindable(event="itemChange", style="noEvent")]
-		public function get item():Object { return _item; }
-		public function set item(value:Object):void
-		{
-			var i:int = list.getIndex(value);
-			if (i == -1) {
-				value = null;
-			}
-			if (_item != value) {
-				DataChange.queue(this, "item", _item, _item = value);
-				DataChange.queue(this, "index", _index, _index = i);
-				updatingLists = true;
-				_items.source = [_item];
-				_indices.source = [_index];
-				updatingLists = false;
-			}
-		}
-		private var _item:Object = null;
-		
-		[Bindable(event="indicesChange", style="noEvent")]
-		public function get indices():IList { return _indices; }
-		private var _indices:ArrayList;
 		
 		[Bindable(event="itemsChange", style="noEvent")]
-		public function get items():IList { return _items; }
-		private var _items:ArrayList = new ArrayList();
-		
-		public function select(items:*):void
+		public function get items():IList
 		{
-			_items.source = items;
+			if (!_items) {
+				_items = new ArrayList();
+				if (_item) {
+					_items.push(_item);
+				}
+				indices;
+				_items.addEventListener(ListEvent.LIST_CHANGE, onItemsChange, false, 10);
+			}
+			return _items;
+		}
+		private var _items:ArrayList;
+		
+		[Bindable(event="indicesChange", style="noEvent")]
+		public function get indices():IList
+		{
+			if (!_indices) {
+				_indices = new ArrayList();
+				if (_index != -1) {
+					_indices.push(_index);
+				}
+				items;
+				_indices.addEventListener(ListEvent.LIST_CHANGE, onIndicesChange, false, 10);
+			}
+			return _indices;
+		}
+		private var _indices:ArrayList;
+		
+		
+		public function select(items:*):*
+		{
+			if (items is Array) {
+				this.items;
+				_items.queueChanges = true;
+				_items.removeAt(0, int.MAX_VALUE);
+				_items.add(items);
+				_items.queueChanges = false;
+			} else {
+				item = items;
+			}
+		}
+		
+		public function selectAt(indices:*):*
+		{
+			if (indices is Array) {
+				this.indices;
+				_indices.queueChanges = true;
+				_indices.removeAt(0, int.MAX_VALUE);
+				_indices.add(indices);
+				_indices.queueChanges = false;
+			} else {
+				index = indices;
+			}
 		}
 		
 		private function onListChange(event:ListEvent):void
 		{
-			var tmpItems:Array = [];
-			for (var i:int = 0; i < _items.length; i++) {
-				var item:Object = _items.get(i);
-				var index:int = list.getIndex(item);
-				
-				if (index != -1) {
-					tmpItems.push(item);
+			if (!event.removed) {
+				return;
+			}
+			
+			if (_items) {
+				_items.queueChanges = true;
+				for each (var item:Object in event.removed) {
+					_items.remove(item);
 				}
+				_items.queueChanges = false;
+			} else if (event.removed.indexOf(_item) != -1) {
+				index = -1;
 			}
-			
-			_items.source = tmpItems;
 		}
 		
-		private function onSelectionChange(event:ListEvent):void
+		private function onItemsChange(event:ListEvent):void
 		{
-			if (updatingLists) {
+			if (updating) {
 				return;
 			}
 			
-			var list1:ArrayList = event.target as ArrayList;
-			if (!multiselect && list1.length > 1) {
-				list1.source = event.added != null ? event.added[0] : list1.get(0);
-				event.stopImmediatePropagation();
-				return;
+			var item:Object;
+			_indices.queueChanges = updating = true;
+			_indices.removeAt(0, int.MAX_VALUE);
+			for each (item in _items) {
+				_indices.add(_list.indexOf(item));
 			}
-			
-			var list2:ArrayList = (list1 == _indices) ? _items : _indices;
-			var getData:Function = (list1 == _indices) ? list.get : list.getIndex;
-			var tmpArray:Array;
-			var tmpObject:Object;
-			
-			updatingLists = true;
-			switch (event.kind) {
-				case ListEventKind.ADD:
-					tmpArray = [];
-					for each (tmpObject in event.added) {
-						tmpArray.push( getData(tmpObject) );
-					}
-					list2.add(tmpArray, event.from);
-					break;
-				case ListEventKind.REMOVE:
-					list2.removeAt(event.from, event.added.length);
-					break;
-				case ListEventKind.MOVE:
-					if (event.added.length == 1) {
-						tmpObject = getData(event.added[0]);
-						list2.setIndex(tmpObject, event.from);
-					} else {
-						list2.swapAt(event.from, event.to);
-					}
-					break;
-				case ListEventKind.REPLACE:
-					tmpObject = getData(event.added[0]);
-					list2.set(tmpObject, event.from);
-					break;
-				default:	// ListEventKind.RESET
-					tmpArray = [];
-					for (var i:int = 0; i < list1.length; i++) {
-						tmpObject = list1.get(i);
-						tmpArray.push( getData(tmpObject) );
-					}
-					list2.source = tmpArray;
-					break;
-			}
-			updatingLists = false;
-			
-			var oldIndex:int = _index;
-			var oldItem:Object = _item;
-			index = _indices.length > 0 ? _indices.get(0) as Number : -1;
-			item = _items.get(0);
+			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1) : null);
+			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1) : -1);
+			_indices.queueChanges = updating = false;
 		}
-		
+
+		private function onIndicesChange(event:ListEvent):void
+		{
+			if (updating) {
+				return;
+			}
+			
+			var index:int;
+			_items.queueChanges = updating = true;
+			_items.removeAt(0, int.MAX_VALUE);
+			for each (index in _items) {
+				_items.add(_list.get(index));
+			}
+			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1) : null);
+			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1) : -1);
+			_items.queueChanges = updating = false;
+		}
 	}
 }

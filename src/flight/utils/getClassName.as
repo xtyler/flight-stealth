@@ -7,7 +7,7 @@
 package flight.utils
 {
 	import flash.utils.getQualifiedClassName;
-	
+
 	/**
 	 * Returns the exact class name, without package or path.
 	 * 

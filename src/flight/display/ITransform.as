@@ -8,7 +8,7 @@ package flight.display
 {
 	import flash.display.DisplayObject;
 	import flash.geom.Matrix;
-	
+
 	/**
 	 * Coordinate transformation defining position, scale and rotation, also
 	 * including basic width and height values.

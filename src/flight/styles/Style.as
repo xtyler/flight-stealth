@@ -11,7 +11,7 @@ package flight.styles
 	import flash.events.EventDispatcher;
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
-	
+
 	import flight.data.DataChange;
 	import flight.display.RenderPhase;
 	import flight.events.StyleEvent;

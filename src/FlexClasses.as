@@ -1,5 +1,32 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package
 {
+	import mx.binding.ArrayElementWatcher;
+	import mx.binding.BindingManager;
+	import mx.binding.FunctionReturnWatcher;
+	import mx.binding.IBindingClient;
+	import mx.binding.IWatcherSetupUtil;
+	import mx.binding.IWatcherSetupUtil2;
+	import mx.binding.PropertyWatcher;
+	import mx.binding.RepeaterComponentWatcher;
+	import mx.binding.RepeaterItemWatcher;
+	import mx.binding.StaticPropertyWatcher;
+	import mx.binding.XMLWatcher;
+	import mx.core.ClassFactory;
+	import mx.core.DeferredInstanceFromClass;
+	import mx.core.DeferredInstanceFromFunction;
+	import mx.core.IFlexModuleFactory;
+	import mx.core.IMXMLObject;
+	import mx.core.IPropertyChangeNotifier;
+	import mx.styles.StyleManager;
+	import mx.utils.ObjectProxy;
+	import mx.utils.UIDUtil;
+
 	/**
 	 * @private
 	 * This class is used to link additional classes into flight-stealth.swc
@@ -11,33 +38,33 @@ package
 	 */
 	internal class FlexClasses
 	{
-		import mx.core.IMXMLObject;						IMXMLObject;
-		import mx.core.IFlexModuleFactory;				IFlexModuleFactory;
+		IMXMLObject;
+		IFlexModuleFactory;
 		
 		// binding references for use of the [Bindable] metadata tag
-		import mx.binding.BindingManager;				BindingManager;
-		import mx.core.IPropertyChangeNotifier;			IPropertyChangeNotifier;
-		import mx.utils.ObjectProxy;					ObjectProxy;
-		import mx.utils.UIDUtil;						UIDUtil;
+		BindingManager;
+		IPropertyChangeNotifier;
+		ObjectProxy;
+		UIDUtil;
 		
 		// mx core references for use of MXML
-		import mx.styles.StyleManager;					StyleManager;
-		import mx.core.ClassFactory;					ClassFactory;
-		import mx.core.DeferredInstanceFromClass;		DeferredInstanceFromClass;
-		import mx.core.DeferredInstanceFromFunction;	DeferredInstanceFromFunction;
+		StyleManager;
+		ClassFactory;
+		DeferredInstanceFromClass;
+		DeferredInstanceFromFunction;
 		
 		// binding references for use of the curly-brace binding in MXML
-		import mx.binding.IWatcherSetupUtil;			IWatcherSetupUtil;
+		IWatcherSetupUtil;
 		// Required class for Flash Buider 4 binding in AS3 projects
-		import mx.binding.IBindingClient;				IBindingClient;
-		import mx.binding.IWatcherSetupUtil2;			IWatcherSetupUtil2;
-		import mx.binding.ArrayElementWatcher;			ArrayElementWatcher;
-		import mx.binding.FunctionReturnWatcher;		FunctionReturnWatcher;
-		import mx.binding.PropertyWatcher;				PropertyWatcher;
-		import mx.binding.RepeaterComponentWatcher;		RepeaterComponentWatcher;
-		import mx.binding.RepeaterItemWatcher;			RepeaterItemWatcher;
-		import mx.binding.StaticPropertyWatcher;		StaticPropertyWatcher;
-		import mx.binding.XMLWatcher;					XMLWatcher;
+		IBindingClient;
+		IWatcherSetupUtil2;
+		ArrayElementWatcher;
+		FunctionReturnWatcher;
+		PropertyWatcher;
+		RepeaterComponentWatcher;
+		RepeaterItemWatcher;
+		StaticPropertyWatcher;
+		XMLWatcher;
 	}
 
 }

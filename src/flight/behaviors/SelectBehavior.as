@@ -7,10 +7,10 @@
 package flight.behaviors
 {
 	import flash.events.MouseEvent;
-	
+
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
-	
+
 	public class SelectBehavior extends Behavior implements IBehavior
 	{
 		public function SelectBehavior()

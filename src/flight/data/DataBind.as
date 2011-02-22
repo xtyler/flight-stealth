@@ -8,11 +8,11 @@ package flight.data
 {
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
-	
+
 	import flight.utils.Type;
 	import flight.utils.getClassName;
 	import flight.utils.getType;
-	
+
 	public class DataBind
 	{
 		protected var setterObjects:Array = [];

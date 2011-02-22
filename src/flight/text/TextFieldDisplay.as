@@ -12,7 +12,7 @@ package flight.text
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextLineMetrics;
-	
+
 	import flight.data.DataChange;
 	import flight.display.IInvalidating;
 	import flight.display.ITransform;
@@ -25,9 +25,9 @@ package flight.text
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyleable;
 	import flight.styles.Style;
-	
+
 	import mx.core.IMXMLObject;
-	
+
 	[Style(name="left")]
 	[Style(name="top")]
 	[Style(name="right")]

@@ -11,7 +11,7 @@ package flight.display
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
 	import flight.data.DataChange;
 	import flight.layouts.Bounds;
 	import flight.layouts.Box;
@@ -19,9 +19,9 @@ package flight.display
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyleable;
 	import flight.styles.Style;
-	
+
 	import mx.core.IMXMLObject;
-	
+
 	[Style(name="left")]
 	[Style(name="top")]
 	[Style(name="right")]

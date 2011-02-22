@@ -11,12 +11,12 @@ package flight.graphics
 	import flash.display.IGraphicsData;
 	import flash.events.Event;
 	import flash.geom.Matrix;
-	
+
 	import flight.display.DrawPhase;
 	import flight.display.ShapeDisplay;
 	import flight.graphics.paint.IFill;
 	import flight.graphics.paint.IStroke;
-	
+
 	public class GraphicShape extends ShapeDisplay implements IGraphicShape
 	{
 		// TODO: naming?

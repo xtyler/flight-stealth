@@ -10,12 +10,12 @@ package flight.behaviors
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	
+
 	import flight.data.DataChange;
 	import flight.data.ITrack;
 	import flight.data.Track;
 	import flight.events.ButtonEvent;
-	
+
 	public class SlideBehavior extends Behavior
 	{
 		private var dragPercent:Number;

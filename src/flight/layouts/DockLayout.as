@@ -8,7 +8,7 @@ package flight.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-	
+
 	import flight.styles.IStyleable;
 
 	public class DockLayout extends BasicLayout

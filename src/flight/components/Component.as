@@ -7,7 +7,7 @@
 package flight.components
 {
 	import flash.display.InteractiveObject;
-	
+
 	import flight.behaviors.IBehavior;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
@@ -15,14 +15,13 @@ package flight.components
 	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
 	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
 	import flight.events.SkinEvent;
 	import flight.events.StyleEvent;
-	import flight.list.ArrayList;
-	import flight.list.IList;
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
-	
+
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
 	public class Component extends SpriteDisplay implements ISkinnable
@@ -209,31 +208,31 @@ package flight.components
 			
 			var behavior:IBehavior;
 			var location:int = event.from;
-			switch (event.kind) {
-				case ListEventKind.ADD:
-					for each (behavior in event.added) {
-						style[behavior.type] = behavior;
-					}
-					break;
-				case ListEventKind.REMOVE:
-					for each (behavior in event.added) {
-						delete style[behavior.type];
-					}
-					break;
-				case ListEventKind.REPLACE:
-					behavior = event.added[1];
-					delete style[behavior.type];
-					behavior = event.added[0];
-					style[behavior.type] = behavior;
-					break;
-				default:	// ListEventKind.RESET
-					for each (behavior in event.added) {
-						delete style[behavior.type];
-					}
-					for each (behavior in _behaviors) {
-						style[behavior.type] = behavior;
-					}
-			}
+//			switch (event.kind) {
+//				case ListEventKind.ADD:
+//					for each (behavior in event.added) {
+//						style[behavior.type] = behavior;
+//					}
+//					break;
+//				case ListEventKind.REMOVE:
+//					for each (behavior in event.added) {
+//						delete style[behavior.type];
+//					}
+//					break;
+//				case ListEventKind.REPLACE:
+//					behavior = event.added[1];
+//					delete style[behavior.type];
+//					behavior = event.added[0];
+//					style[behavior.type] = behavior;
+//					break;
+//				default:	// ListEventKind.RESET
+//					for each (behavior in event.added) {
+//						delete style[behavior.type];
+//					}
+//					for each (behavior in _behaviors) {
+//						style[behavior.type] = behavior;
+//					}
+//			}
 		}
 		private var behaviorsChanging:Boolean;
 	}

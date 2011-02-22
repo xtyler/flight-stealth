@@ -9,12 +9,12 @@ package flight.events
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.Event;
-		import flash.events.MouseEvent;
+	import flash.events.MouseEvent;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	import flash.utils.setTimeout;
-	
+
 	/**
 	 * The ButtonEvent transforms InteractiveObjects into buttons by adding the common
 	 * mouse-related events that make up a buttons behavior. The ButtonEvent class is a

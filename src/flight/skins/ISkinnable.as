@@ -7,10 +7,10 @@
 package flight.skins
 {
 	import flash.events.IEventDispatcher;
-	
+
 	import flight.data.IDataRenderer;
 	import flight.styles.IStateful;
-	
+
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
 	public interface ISkinnable extends IEventDispatcher, IDataRenderer, IStateful

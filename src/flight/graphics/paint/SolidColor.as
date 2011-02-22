@@ -8,9 +8,9 @@ package flight.graphics.paint
 {
 	import flash.display.GraphicsSolidFill;
 	import flash.display.IGraphicsFill;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class SolidColor implements IFill
 	{
 		protected var solidFill:GraphicsSolidFill;

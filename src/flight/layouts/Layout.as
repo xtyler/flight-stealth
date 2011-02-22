@@ -10,16 +10,15 @@ package flight.layouts
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
-	
+
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
 	import flight.events.StyleEvent;
 	import flight.styles.IStyleable;
-	
+
 	public class Layout extends EventDispatcher implements ILayout
 	{
 		protected var layoutStyles:Array;
@@ -295,45 +294,45 @@ package flight.layouts
 		private function onContentChange(event:ListEvent):void
 		{
 			var child:DisplayObject;
-			switch (event.kind) {
-				case ListEventKind.ADD:
-					for each (child in event.added) {
-					if (child is IStyleable) {
-						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-					}
-				}
-					break;
-				case ListEventKind.REMOVE:
-					for each (child in event.added) {
-					if (child is IStyleable) {
-						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-					}
-				}
-					break;
-				case ListEventKind.MOVE:
-					break;
-				case ListEventKind.REPLACE:
-					child = event.added[1];
-					if (child is IStyleable) {
-						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-					}
-					child = event.added[0];
-					if (child is IStyleable) {
-						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-					}
-					break;
-				default:	// ListEventKind.RESET
-					for each (child in event.added) {
-					if (child is IStyleable) {
-						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-					}
-				}
-					for each (child in _target.content) {
-					if (child is IStyleable) {
-						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-					}
-				}
-			}
+//			switch (event.kind) {
+//				case ListEventKind.ADD:
+//					for each (child in event.added) {
+//					if (child is IStyleable) {
+//						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+//					}
+//				}
+//					break;
+//				case ListEventKind.REMOVE:
+//					for each (child in event.added) {
+//					if (child is IStyleable) {
+//						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+//					}
+//				}
+//					break;
+//				case ListEventKind.MOVE:
+//					break;
+//				case ListEventKind.REPLACE:
+//					child = event.added[1];
+//					if (child is IStyleable) {
+//						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+//					}
+//					child = event.added[0];
+//					if (child is IStyleable) {
+//						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+//					}
+//					break;
+//				default:	// ListEventKind.RESET
+//					for each (child in event.added) {
+//					if (child is IStyleable) {
+//						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+//					}
+//				}
+//					for each (child in _target.content) {
+//					if (child is IStyleable) {
+//						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+//					}
+//				}
+//			}
 		}
 	}
 }

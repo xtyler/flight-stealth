@@ -7,13 +7,12 @@
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
-	
+
 	import flight.data.DataChange;
-	import flight.data.IPosition;
 	import flight.data.ITrack;
 	import flight.data.Track;
 	import flight.events.ButtonEvent;
-	
+
 	public class StepBehavior extends Behavior
 	{
 		public function StepBehavior()

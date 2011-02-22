@@ -8,7 +8,7 @@ package flight.events
 {
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
-	
+
 	public class SkinEvent extends Event
 	{
 		public static const SKIN_PART_CHANGE:String = "skinPartChange";

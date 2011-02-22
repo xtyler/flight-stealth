@@ -8,7 +8,7 @@ package flight.data
 {
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
-	
+
 	/**
 	 * DataChange enables objects to broadcast when their properties change
 	 * value, allowing property watchers and data binding.

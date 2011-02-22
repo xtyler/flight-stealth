@@ -9,7 +9,7 @@ package flight.containers
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
-	
+
 	import flight.data.DataChange;
 	import flight.data.ITrack;
 	import flight.data.Track;
@@ -17,11 +17,10 @@ package flight.containers
 	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
 	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
 	import flight.layouts.ILayout;
-	import flight.list.ArrayList;
-	import flight.list.IList;
-	
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
+
 	[Style(name="background")]	// TODO: implement limited drawing feature
 	
 	[DefaultProperty("content")]
@@ -259,35 +258,35 @@ package flight.containers
 			contentChanging = true;
 			var child:DisplayObject;
 			var location:int = event.from;
-			switch (event.kind) {
-				case ListEventKind.ADD:
-					for each (child in event.added) {
-						addChildAt(child, location++);
-					}
-					break;
-				case ListEventKind.REMOVE:
-					for each (child in event.added) {
-						removeChild(child);
-					}
-					break;
-				case ListEventKind.MOVE:
-					addChildAt(event.added[0], location);
-					if (event.added.length == 2) {
-						addChildAt(event.added[1], event.to);
-					}
-					break;
-				case ListEventKind.REPLACE:
-					removeChild(event.added[1]);
-					addChildAt(event.added[0], location);
-					break;
-				default:	// ListEventKind.RESET
-					for each (child in event.added) {
-						removeChild(child);
-					}
-					for each (child in _content) {
-						addChildAt(child, location++);
-					}
-			}
+//			switch (event.kind) {
+//				case ListEventKind.ADD:
+//					for each (child in event.added) {
+//						addChildAt(child, location++);
+//					}
+//					break;
+//				case ListEventKind.REMOVE:
+//					for each (child in event.added) {
+//						removeChild(child);
+//					}
+//					break;
+//				case ListEventKind.MOVE:
+//					addChildAt(event.added[0], location);
+//					if (event.added.length == 2) {
+//						addChildAt(event.added[1], event.to);
+//					}
+//					break;
+//				case ListEventKind.REPLACE:
+//					removeChild(event.added[1]);
+//					addChildAt(event.added[0], location);
+//					break;
+//				default:	// ListEventKind.RESET
+//					for each (child in event.added) {
+//						removeChild(child);
+//					}
+//					for each (child in _content) {
+//						addChildAt(child, location++);
+//					}
+//			}
 			contentChanging = false;
 			
 			RenderPhase.invalidate(this, LayoutPhase.MEASURE);

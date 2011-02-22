@@ -7,9 +7,9 @@
 package flight.layouts
 {
 	import flash.events.EventDispatcher;
-	
+
 	import flight.data.DataChange;
-	
+
 	/**
 	 * The Bounds class holds values related to a object's dimensions.
 	 */

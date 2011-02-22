@@ -8,12 +8,12 @@ package flight.graphics
 {
 	import flash.display.GraphicsPathCommand;
 	import flash.events.Event;
-	
+
 	import flight.data.DataChange;
 	import flight.display.DrawPhase;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
-	
+
 	public class Rect extends GraphicShape
 	{
 		// TODO: implement transform. filters. fill. stroke. mask. maskType.. blendMode.

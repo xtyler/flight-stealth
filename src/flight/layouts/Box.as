@@ -10,7 +10,7 @@ package flight.layouts
 	import flash.events.EventDispatcher;
 
 	import flight.data.DataChange;
-	
+
 	[Event(name="change", type="flash.events.Event")]
 
 	public class Box extends EventDispatcher

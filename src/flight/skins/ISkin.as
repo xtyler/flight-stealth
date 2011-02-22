@@ -9,7 +9,7 @@ package flight.skins
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
-	
+
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
 	public interface ISkin extends IEventDispatcher

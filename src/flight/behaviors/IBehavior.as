@@ -7,7 +7,6 @@
 package flight.behaviors
 {
 	import flash.display.InteractiveObject;
-	import flash.events.IEventDispatcher;
 
 	public interface IBehavior
 	{

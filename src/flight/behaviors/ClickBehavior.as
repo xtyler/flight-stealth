@@ -6,15 +6,14 @@
 
 package flight.behaviors
 {
-	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+
 	import flight.components.ButtonState;
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
 	import flight.styles.IStateful;
-	
+
 	[SkinState("up")]
 	[SkinState("over")]
 	[SkinState("down")]

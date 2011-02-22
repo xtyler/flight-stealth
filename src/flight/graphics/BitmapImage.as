@@ -12,10 +12,10 @@ package flight.graphics
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
-	
+
 	import flight.data.DataChange;
 	import flight.display.BitmapDisplay;
-	
+
 	[Style(name="left")]
 	[Style(name="right")]
 	[Style(name="top")]

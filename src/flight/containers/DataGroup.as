@@ -12,9 +12,9 @@ package flight.containers
 	import flight.data.DataChange;
 	import flight.display.InitializePhase;
 	import flight.display.RenderPhase;
-	import flight.list.ArrayList;
-	import flight.list.IList;
-	
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
+
 	/**
 	 * @alpha - DataGroup is currently non-functional
 	 */

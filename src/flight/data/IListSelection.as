@@ -6,8 +6,8 @@
 
 package flight.data
 {
-	import flight.list.IList;
-	
+	import flight.collections.IList;
+
 	public interface IListSelection extends ISelection
 	{
 		function get index():int;

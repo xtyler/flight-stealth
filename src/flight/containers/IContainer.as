@@ -8,8 +8,8 @@ package flight.containers
 {
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
-	import flight.list.IList;
-	
+	import flight.collections.IList;
+
 	public interface IContainer extends IMeasureable
 	{
 		function get content():IList;

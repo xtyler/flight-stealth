@@ -12,22 +12,21 @@ package flight.skins
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
-	
+
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
 	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
-	import flight.list.ArrayList;
-	import flight.list.IList;
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.styles.IStateful;
-	
+
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
 	/**
@@ -251,35 +250,35 @@ package flight.skins
 			contentChanging = true;
 			var child:DisplayObject;
 			var location:int = event.from;
-			switch (event.kind) {
-				case ListEventKind.ADD:
-					for each (child in event.added) {
-						_target.addChildAt(child, location++);
-					}
-					break;
-				case ListEventKind.REMOVE:
-					for each (child in event.added) {
-						_target.removeChild(child);
-					}
-					break;
-				case ListEventKind.MOVE:
-					_target.addChildAt(event.added[0], location);
-					if (event.added.length == 2) {
-						_target.addChildAt(event.added[1], event.to);
-					}
-					break;
-				case ListEventKind.REPLACE:
-					_target.removeChild(event.added[1]);
-					_target.addChildAt(event.added[0], location);
-					break;
-				default:	// ListEventKind.RESET
-					for each (child in event.added) {
-						_target.removeChild(child);
-					}
-					for each (child in _content) {
-						_target.addChildAt(child, location++);
-					}
-			}
+//			switch (event.kind) {
+//				case ListEventKind.ADD:
+//					for each (child in event.added) {
+//						_target.addChildAt(child, location++);
+//					}
+//					break;
+//				case ListEventKind.REMOVE:
+//					for each (child in event.added) {
+//						_target.removeChild(child);
+//					}
+//					break;
+//				case ListEventKind.MOVE:
+//					_target.addChildAt(event.added[0], location);
+//					if (event.added.length == 2) {
+//						_target.addChildAt(event.added[1], event.to);
+//					}
+//					break;
+//				case ListEventKind.REPLACE:
+//					_target.removeChild(event.added[1]);
+//					_target.addChildAt(event.added[0], location);
+//					break;
+//				default:	// ListEventKind.RESET
+//					for each (child in event.added) {
+//						_target.removeChild(child);
+//					}
+//					for each (child in _content) {
+//						_target.addChildAt(child, location++);
+//					}
+//			}
 			contentChanging = false;
 			
 			RenderPhase.invalidate(_target, LayoutPhase.MEASURE);

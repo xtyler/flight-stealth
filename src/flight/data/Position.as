@@ -8,7 +8,7 @@ package flight.data
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	
+
 	[Event(name="change", type="flash.events.Event")]
 	
 	public class Position extends EventDispatcher implements IPosition

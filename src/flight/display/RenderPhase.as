@@ -12,9 +12,9 @@ package flight.display
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
-	
+
 	import flight.utils.getClassName;
-	
+
 	public class RenderPhase
 	{
 		// the 'render' event is dispatched by Flash through which order of

@@ -8,7 +8,7 @@ package flight.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.events.IEventDispatcher;
-	
+
 	[Event(name="resize", type="flash.events.Event")]
 	
 	public interface IMeasureable extends IEventDispatcher

@@ -6,9 +6,8 @@
 
 package flight.layouts
 {
-	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-	
+
 	/**
 	 * A simple box-model layout element containing size and bounds logic,
 	 * including measured and explicit sizing.

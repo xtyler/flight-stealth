@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package flight.events
 {
-	import flash.events.EventDispatcher;
-	import flash.utils.Dictionary;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
-	
+	import flash.utils.Dictionary;
+
 	public class CentralDispatcher implements IEventDispatcher
 	{
 		public var target:Object;

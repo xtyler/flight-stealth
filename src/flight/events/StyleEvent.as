@@ -7,7 +7,7 @@
 package flight.events
 {
 	import flash.events.Event;
-	
+
 	public class StyleEvent extends Event
 	{
 		public static const STYLE_CHANGE:String = "styleChange";
