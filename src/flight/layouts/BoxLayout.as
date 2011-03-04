@@ -19,7 +19,7 @@ package flight.layouts
 	import flight.events.StyleEvent;
 	import flight.styles.IStyleable;
 
-	public class Layout extends EventDispatcher implements ILayout
+	public class BoxLayout extends EventDispatcher implements ILayout
 	{
 		protected var layoutStyles:Array;
 		
@@ -36,7 +36,7 @@ package flight.layouts
 		protected var horizontalSpace:Number;
 		protected var verticalSpace:Number;
 		
-		public function Layout(target:IContainer = null)
+		public function BoxLayout(target:IContainer = null)
 		{
 			this.target = target;
 		}

@@ -8,7 +8,7 @@ package flight.layouts
 {
 	import flash.display.DisplayObject;
 
-	public class VerticalLayout extends Layout
+	public class VerticalLayout extends BoxLayout
 	{
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{

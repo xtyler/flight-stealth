@@ -15,7 +15,6 @@
 	<component id="Application" class="flight.containers.Application"/>
 	
 	<!-- layouts -->
-	<component id="Layout" class="flight.layouts.Layout"/>
 	<component id="HorizontalLayout" class="flight.layouts.HorizontalLayout"/>
 	<component id="VerticalLayout" class="flight.layouts.VerticalLayout"/>
 	<component id="BasicLayout" class="flight.layouts.BasicLayout"/>

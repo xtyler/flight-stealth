@@ -10,7 +10,7 @@ package flight.layouts
 
 	import flight.styles.IStyleable;
 
-	public class BasicLayout extends Layout
+	public class BasicLayout extends BoxLayout
 	{
 		public function BasicLayout()
 		{
