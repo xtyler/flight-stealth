@@ -8,21 +8,15 @@ package flight.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.display.LayoutPhase;
 	import flight.display.RenderPhase;
-	import flight.events.ListEvent;
-	import flight.events.StyleEvent;
-	import flight.styles.IStyleable;
 
-	public class BoxLayout extends EventDispatcher implements ILayout
+	public class BoxLayout extends Layout
 	{
-		protected var layoutStyles:Array;
-		
 		protected var childRect:Rectangle;
 		protected var childMin:Rectangle = new Rectangle();
 		protected var childMax:Rectangle = new Rectangle();
@@ -38,31 +32,8 @@ package flight.layouts
 		
 		public function BoxLayout(target:IContainer = null)
 		{
-			this.target = target;
+			super(target);
 		}
-		
-		[Bindable(event="targetChange", style="noEvent")]
-		public function get target():IContainer { return _target; }
-		public function set target(value:IContainer):void
-		{
-			if (_target == value) {
-				return;
-			}
-			if (_target) {
-				_target.display.removeEventListener(LayoutPhase.MEASURE, onMeasure);
-				_target.display.removeEventListener(LayoutPhase.LAYOUT, onLayout);
-				_target.content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
-			}
-			DataChange.change(this, "target", _target, _target = value);
-			if (_target) {
-				_target.display.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 50, true);
-				_target.display.addEventListener(LayoutPhase.LAYOUT, onLayout, false, 50, true);
-				_target.content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
-				RenderPhase.invalidate(_target.display, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
-			}
-		}
-		private var _target:IContainer;
 		
 		[Bindable(event="paddingChange", style="noEvent")]
 		public function get padding():Box { return _padding ||= new Box(); }
@@ -84,8 +55,8 @@ package flight.layouts
 				_padding.addEventListener(Event.CHANGE, onPaddingChange);
 			}
 			
-			if (_target) {
-				RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
+			if (target) {
+				RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
 			}
 			DataChange.change();
 		}
@@ -95,7 +66,7 @@ package flight.layouts
 		public function get horizontalAlign():String { return _horizontalAlign }
 		public function set horizontalAlign(value:String):void
 		{
-			if (_target) RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
+			if (target) RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
 			DataChange.change(this, "horizontalAlign", _horizontalAlign, _horizontalAlign = value);
 		}
 		private var _horizontalAlign:String = Align.LEFT;
@@ -104,25 +75,25 @@ package flight.layouts
 		public function get verticalAlign():String { return _verticalAlign }
 		public function set verticalAlign(value:String):void
 		{
-			if (_target) RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
+			if (target) RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
 			DataChange.change(this, "verticalAlign", _verticalAlign, _verticalAlign = value);
 		}
 		private var _verticalAlign:String = Align.TOP;
 		
-		public function measure():void
+		override public function measure():void
 		{
-			if (!_target) return;
+			if (!target) return;
 			
-			var measured:IBounds = _target.measured;
+			var measured:IBounds = target.measured;
 			measured.minWidth = measured.minHeight = 0;
 			measured.maxWidth = measured.maxHeight = 0xFFFFFF;
 			measured.width = measured.height = 0;
 			contentMargin.left = contentMargin.top = contentMargin.right = contentMargin.bottom = 0;
 			horizontalPercent = verticalPercent = 0;
 			
-			var len:int = _target.content.length;
+			var len:int = target.content.length;
 			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(_target.content.get(i, 0));
+				var child:DisplayObject = DisplayObject(target.content.get(i, 0));
 				
 				if (child is ILayoutBounds) {
 					var layoutChild:ILayoutBounds = ILayoutBounds(child);
@@ -168,16 +139,16 @@ package flight.layouts
 			measured.maxHeight += space;
 		}
 		
-		public function update():void
+		override public function update():void
 		{
-			if (!_target) return;
+			if (!target) return;
 			
-			var measured:IBounds = _target.measured;
+			var measured:IBounds = target.measured;
 			contentMargin.left = contentMargin.top = contentMargin.right = contentMargin.bottom = 0;
 			contentRect.x = _padding.left;
 			contentRect.y = _padding.top;
-			contentRect.width = _target.contentWidth;
-			contentRect.height = _target.contentHeight
+			contentRect.width = target.contentWidth;
+			contentRect.height = target.contentHeight
 			var measuredWidth:Number = measured.width + horizontalPercent * contentRect.width;
 			var measuredHeight:Number = measured.height + verticalPercent * contentRect.height;
 			horizontalSpace = measuredWidth < contentRect.width ? contentRect.width - measuredWidth : 0;
@@ -185,9 +156,9 @@ package flight.layouts
 			contentRect.width -= _padding.left + _padding.right;
 			contentRect.height -= _padding.top + _padding.bottom;
 			
-			var len:int = _target.content.length;
+			var len:int = target.content.length;
 			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(_target.content.get(i, 0));
+				var child:DisplayObject = DisplayObject(target.content.get(i, 0));
 				
 				childMargin = contentMargin.clone(childMargin);
 				if (child is ILayoutBounds) {
@@ -249,60 +220,11 @@ package flight.layouts
 				(height >=  childMax.height) ? childMax.height : height;
 		}
 		
-		protected function measureChild(child:DisplayObject, last:Boolean = false):void
-		{
-		}
-		
-		protected function updateChild(child:DisplayObject, last:Boolean = false):void
-		{
-		}
-		
-		protected function registerStyle(property:String):void
-		{
-			if (!layoutStyles) {
-				layoutStyles = [];
-			}
-			layoutStyles.push(property);
-		}
-		
-		private function onStyleChange(event:StyleEvent):void
-		{
-			if (layoutStyles && layoutStyles.indexOf(event.property) != -1) {
-				RenderPhase.invalidate(_target.display, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
-			}
-		}
-		
-		private function onMeasure(event:Event):void
-		{
-			measure();
-		}
-		
-		private function onLayout(event:Event):void
-		{
-			update();
-		}
-		
 		private function onPaddingChange(event:Event):void
 		{
-			if (_target) {
-				RenderPhase.invalidate(_target.display, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
-			}
-		}
-		
-		private function onContentChange(event:ListEvent):void
-		{
-			var child:DisplayObject;
-			for each (child in event.removed) {
-				if (child is IStyleable) {
-					IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-				}
-			}
-			for each (child in event.items) {
-				if (child is IStyleable) {
-					IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-				}
+			if (target) {
+				RenderPhase.invalidate(target.display, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
 			}
 		}
 	}

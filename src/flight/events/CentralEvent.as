@@ -7,14 +7,17 @@
 package flight.events
 {
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 
 	public class CentralEvent extends Event
 	{
 		public function CentralEvent(type:String, target:Object = null, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			_type = type;
-			_target = target;
-			type = CentralDispatcher.getTargetType(type, target);
+			if (!(_target is IEventDispatcher) || _target is CentralDispatcher) {
+				_target = target;
+				type = CentralDispatcher.getTargetType(type, target);
+			}
 			super(type, bubbles, cancelable);
 		}
 
