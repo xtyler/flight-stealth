@@ -206,7 +206,7 @@ package flight.collections
 				if (listChangeEvent) {
 					listChangeEvent.append(from, to, added, removed);
 				} else {
-					listChangeEvent = new ListEvent(ListEvent.LIST_CHANGE, this, false, false, from, to, added, removed);
+					listChangeEvent = new ListEvent(ListEvent.LIST_CHANGE, null, false, false, from, to, added, removed);
 				}
 				
 				if (!_queueChanges) {

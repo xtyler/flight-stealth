@@ -251,7 +251,6 @@ package flight.skins
 			
 			contentChanging = true;
 			var child:DisplayObject;
-			var child:DisplayObject;
 			for each (child in event.removed) {
 				_target.removeChild(child);
 			}
