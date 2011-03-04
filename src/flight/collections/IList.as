@@ -17,12 +17,12 @@ package flight.collections
 		
 		function add(items:*, index:int = int.MAX_VALUE):*;					// combined addItem, addItemAt, addItems
 		function contains(item:Object):Boolean;								// was containsItem
-		function get(index:int = 0, length:uint = 0):*;						// combined getItemAt, getItems
+		function get(index:int = 0, length:uint = int.MAX_VALUE):*;			// combined getItemAt, getItems
 		function getById(id:Object, field:String = "id"):Object;			// was getItemById
-		function indexOf(item:Object, fromIndex:int = 0):int;				// was getItemIndex
-		function lastIndexOf(item:Object, fromIndex:int = int.MAX_VALUE):int;
+		function getIndex(item:Object, fromIndex:int = 0):int;				// was getItemIndex
+		function getLastIndex(item:Object, fromIndex:int = int.MAX_VALUE):int;
 		function remove(item:Object):Object;								// was removeItem
-		function removeAt(index:int = 0, length:uint = 0):*;				// combined removeItemAt, removeItems
+		function removeAt(index:int = 0, length:uint = int.MAX_VALUE):*;	// combined removeItemAt, removeItems
 		function set(index:int, item:Object):Object;						// was setItemAt
 		function setIndex(item:Object, index:int):Object;					// was setItemIndex
 		function swap(item1:Object, item2:Object):void						// was swapItems

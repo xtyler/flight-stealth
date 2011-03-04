@@ -69,7 +69,7 @@ package flight.containers
 						addChildAt(child, i);
 					}
 					if ("data" in child) {
-						child["data"] = _dataProvider.get(i);
+						child["data"] = _dataProvider.get(i, 0);
 					}
 				}
 				

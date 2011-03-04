@@ -84,7 +84,7 @@ package flight.collections
 			return null;
 		}
 		
-		public function indexOf(item:Object, fromIndex:int = 0):int
+		public function getIndex(item:Object, fromIndex:int = 0):int
 		{
 			if (fromIndex < 0) {
 				fromIndex = _length - fromIndex > 0 ? _length - fromIndex : 0;
@@ -108,7 +108,7 @@ package flight.collections
 			return -1;
 		}
 		
-		public function lastIndexOf(item:Object, fromIndex:int = int.MAX_VALUE):int
+		public function getLastIndex(item:Object, fromIndex:int = int.MAX_VALUE):int
 		{
 			if (fromIndex < 0) {
 				fromIndex = _length - fromIndex > 0 ? _length - fromIndex : 0;

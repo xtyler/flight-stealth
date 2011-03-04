@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -168,12 +168,12 @@ package flight.collections
 		override AS3 function concat(...args):Array
 		{
 			var value:ArrayDispatcher = new this['constructor']();
-			value._push.apply(value, this);
+			value.push.apply(value, this);
 			for each (var o:Object in args) {
 				if (o is Array) {
-					value._push.apply(value, o);
+					value.push.apply(value, o);
 				} else {
-					value._push(o);
+					value.push(o);
 				}
 			}
 			return value;
@@ -182,21 +182,21 @@ package flight.collections
 		override AS3 function slice(startIndex:* = 0, endIndex:* = 16777215):Array
 		{
 			var value:ArrayDispatcher = new this['constructor']();
-			value._push.apply(value, super.AS3::slice(startIndex, endIndex));
+			value.push.apply(value, super.AS3::slice(startIndex, endIndex));
 			return value;
 		}
 
 		override AS3 function filter(callback:Function, thisObject:* = null):Array
 		{
 			var value:ArrayDispatcher = new this['constructor']();
-			value._push.apply(value, super.AS3::filter(callback, thisObject));
+			value.push.apply(value, super.AS3::filter(callback, thisObject));
 			return value;
 		}
 
 		override AS3 function map(callback:Function, thisObject:* = null):Array
 		{
 			var value:ArrayDispatcher = new this['constructor']();
-			value._push.apply(value, super.AS3::map(callback, thisObject));
+			value.push.apply(value, super.AS3::map(callback, thisObject));
 			return value;
 		}
 		
@@ -234,10 +234,11 @@ package flight.collections
 		
 		private function onListChange(event:ListEvent):void
 		{
-			for each (var item:Object in event.removed) {
+			var item:Object;
+			for each (item in event.removed) {
 				item.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onItemChange);
 			}
-			for each (var item:Object in event.items) {
+			for each (item in event.items) {
 				item.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onItemChange, false, 100);
 			}
 		}

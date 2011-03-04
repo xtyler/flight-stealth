@@ -122,7 +122,7 @@ package flight.layouts
 			
 			var len:int = _target.content.length;
 			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(_target.content.get(i));
+				var child:DisplayObject = DisplayObject(_target.content.get(i, 0));
 				
 				if (child is ILayoutBounds) {
 					var layoutChild:ILayoutBounds = ILayoutBounds(child);
@@ -187,7 +187,7 @@ package flight.layouts
 			
 			var len:int = _target.content.length;
 			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(_target.content.get(i));
+				var child:DisplayObject = DisplayObject(_target.content.get(i, 0));
 				
 				childMargin = contentMargin.clone(childMargin);
 				if (child is ILayoutBounds) {
@@ -294,45 +294,16 @@ package flight.layouts
 		private function onContentChange(event:ListEvent):void
 		{
 			var child:DisplayObject;
-//			switch (event.kind) {
-//				case ListEventKind.ADD:
-//					for each (child in event.added) {
-//					if (child is IStyleable) {
-//						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-//					}
-//				}
-//					break;
-//				case ListEventKind.REMOVE:
-//					for each (child in event.added) {
-//					if (child is IStyleable) {
-//						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-//					}
-//				}
-//					break;
-//				case ListEventKind.MOVE:
-//					break;
-//				case ListEventKind.REPLACE:
-//					child = event.added[1];
-//					if (child is IStyleable) {
-//						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-//					}
-//					child = event.added[0];
-//					if (child is IStyleable) {
-//						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-//					}
-//					break;
-//				default:	// ListEventKind.RESET
-//					for each (child in event.added) {
-//					if (child is IStyleable) {
-//						IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-//					}
-//				}
-//					for each (child in _target.content) {
-//					if (child is IStyleable) {
-//						IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
-//					}
-//				}
-//			}
+			for each (child in event.removed) {
+				if (child is IStyleable) {
+					IStyleable(child).style.removeEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+				}
+			}
+			for each (child in event.items) {
+				if (child is IStyleable) {
+					IStyleable(child).style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
+				}
+			}
 		}
 	}
 }

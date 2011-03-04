@@ -40,7 +40,7 @@ package flight.data
 		public function get item():Object { return _item; }
 		public function set item(value:Object):void
 		{
-			index = list.indexOf(value);
+			index = list.getIndex(value);
 		}
 		private var _item:Object = null;
 		
@@ -53,18 +53,18 @@ package flight.data
 			value = value < -1 ? -1 : (value > list.length - 1 ? list.length - 1 : value);
 			if (_index != value) {
 				DataChange.queue(this, "index", _index, _index = value);
-				DataChange.queue(this, "item", _item, _item = _index != -1 ? list.get(_index) : null);
+				DataChange.queue(this, "item", _item, _item = _index != -1 ? list.get(_index, 0) : null);
 				
 				if (_items) {
 					_items.queueChanges = updating = true;
-					_items.removeAt(0, int.MAX_VALUE);
+					_items.removeAt();
 					_items.add(_item);
 					_items.queueChanges = updating = false;
 				}
 				
 				if (_indices) {
 					_indices.queueChanges = updating = true;
-					_indices.removeAt(0, int.MAX_VALUE);
+					_indices.removeAt();
 					_indices.add(_index);
 					_indices.queueChanges = updating = false;
 				}
@@ -111,7 +111,7 @@ package flight.data
 			if (items is Array) {
 				this.items;
 				_items.queueChanges = true;
-				_items.removeAt(0, int.MAX_VALUE);
+				_items.removeAt();
 				_items.add(items);
 				_items.queueChanges = false;
 			} else {
@@ -124,7 +124,7 @@ package flight.data
 			if (indices is Array) {
 				this.indices;
 				_indices.queueChanges = true;
-				_indices.removeAt(0, int.MAX_VALUE);
+				_indices.removeAt();
 				_indices.add(indices);
 				_indices.queueChanges = false;
 			} else {
@@ -157,12 +157,12 @@ package flight.data
 			
 			var item:Object;
 			_indices.queueChanges = updating = true;
-			_indices.removeAt(0, int.MAX_VALUE);
+			_indices.removeAt();
 			for each (item in _items) {
-				_indices.add(_list.indexOf(item));
+				_indices.add(_list.getIndex(item));
 			}
-			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1) : null);
-			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1) : -1);
+			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1, 0) : null);
+			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1, 0) : -1);
 			_indices.queueChanges = updating = false;
 		}
 
@@ -174,12 +174,12 @@ package flight.data
 			
 			var index:int;
 			_items.queueChanges = updating = true;
-			_items.removeAt(0, int.MAX_VALUE);
+			_items.removeAt();
 			for each (index in _items) {
-				_items.add(_list.get(index));
+				_items.add(_list.get(index, 0));
 			}
-			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1) : null);
-			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1) : -1);
+			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1, 0) : null);
+			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1, 0) : -1);
 			_items.queueChanges = updating = false;
 		}
 	}

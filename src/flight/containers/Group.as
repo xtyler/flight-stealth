@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -44,19 +44,21 @@ package flight.containers
 		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
+			_content.queueChanges = true;
 			_content.removeAt();
 			if (value is IList) {
 				_content.add( IList(value).get() );
 			} else if (value is Array) {
 				_content.add(value);
 			} else if (value === null) {
-				_content.removeAt();
+				_content.removeAt();						// TODO: refactor this duplicate removeAt
 			} else {
 				_content.add(value);
 			}
+			_content.queueChanges = false;					// TODO: determine if List change AND propertychange should both fire
 			DataChange.change(this, "content", _content, _content, true);
 		}
-		private var _content:IList = new ArrayList();
+		private var _content:ArrayList = new ArrayList();
 		
 		/**
 		 * @inheritDoc
@@ -257,36 +259,12 @@ package flight.containers
 			
 			contentChanging = true;
 			var child:DisplayObject;
-			var location:int = event.from;
-//			switch (event.kind) {
-//				case ListEventKind.ADD:
-//					for each (child in event.added) {
-//						addChildAt(child, location++);
-//					}
-//					break;
-//				case ListEventKind.REMOVE:
-//					for each (child in event.added) {
-//						removeChild(child);
-//					}
-//					break;
-//				case ListEventKind.MOVE:
-//					addChildAt(event.added[0], location);
-//					if (event.added.length == 2) {
-//						addChildAt(event.added[1], event.to);
-//					}
-//					break;
-//				case ListEventKind.REPLACE:
-//					removeChild(event.added[1]);
-//					addChildAt(event.added[0], location);
-//					break;
-//				default:	// ListEventKind.RESET
-//					for each (child in event.added) {
-//						removeChild(child);
-//					}
-//					for each (child in _content) {
-//						addChildAt(child, location++);
-//					}
-//			}
+			for each (child in event.removed) {
+				removeChild(child);
+			}
+			for each (child in event.items) {
+				addChildAt(child, _content.getIndex(child));
+			}
 			contentChanging = false;
 			
 			RenderPhase.invalidate(this, LayoutPhase.MEASURE);

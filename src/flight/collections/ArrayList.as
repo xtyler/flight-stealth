@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -26,7 +26,7 @@ package flight.collections
 				if (index >= length) {
 					push.apply(this, items);
 				} else {
-					Array(items).unshift(index, 0);
+					items.unshift(index, 0);
 					splice.apply(this, items);
 				}
 			} else {
@@ -41,10 +41,10 @@ package flight.collections
 		
 		public function contains(item:Object):Boolean
 		{
-			return indexOf(item) != -1;
+			return getIndex(item) != -1;
 		}
 		
-		public function get(index:int = 0, length:uint = 0):*
+		public function get(index:int = 0, length:uint = int.MAX_VALUE):*
 		{
 			if (length > 0) {
 				return slice(index, index + length);
@@ -66,23 +66,23 @@ package flight.collections
 			return null;
 		}
 		
-		public function indexOf(item:Object, fromIndex:int = 0):int
+		public function getIndex(item:Object, fromIndex:int = 0):int
 		{
-			return super.indexOf(item, fromIndex);
+			return indexOf(item, fromIndex);
 		}
 		
-		public function lastIndexOf(item:Object, fromIndex:int = 2147483647):int
+		public function getLastIndex(item:Object, fromIndex:int = 2147483647):int
 		{
-			return super.lastIndexOf(item, fromIndex);
+			return lastIndexOf(item, fromIndex);
 		}
 		
 		public function remove(item:Object):Object
 		{
-			var index:int = indexOf(item);
-			return (index != -1) ? removeAt(index) : null;
+			var index:int = getIndex(item);
+			return (index != -1) ? removeAt(index, 0) : null;
 		}
 		
-		public function removeAt(index:int = 0, length:uint = 0):*
+		public function removeAt(index:int = 0, length:uint = int.MAX_VALUE):*
 		{
 			if (length > 0) {
 				return splice(index, length);
@@ -92,7 +92,7 @@ package flight.collections
 		
 		public function setIndex(item:Object, index:int):Object
 		{
-			var oldIndex:int = indexOf(item);
+			var oldIndex:int = getIndex(item);
 			if (oldIndex == -1) {
 				return add(item, index);
 			} else if (index < 0) {
@@ -108,8 +108,8 @@ package flight.collections
 		
 		public function swap(item1:Object, item2:Object):void
 		{
-			var index1:int = indexOf(item1);
-			var index2:int = indexOf(item2);
+			var index1:int = getIndex(item1);
+			var index2:int = getIndex(item2);
 			swapAt(index1, index2);
 		}
 		

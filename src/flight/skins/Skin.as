@@ -81,7 +81,7 @@ package flight.skins
 				_content.add(_target.getChildAt(i), i);
 			}
 			for (i; i < _content.length; i++) {
-				_target.addChildAt(DisplayObject(_content.get(i)), i);
+				_target.addChildAt(DisplayObject(_content.get(i, 0)), i);
 			}
 			_target.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 10, true);
 			_target.addEventListener(Event.ADDED, onChildAdded, true);
@@ -128,19 +128,21 @@ package flight.skins
 		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
+			_content.queueChanges = true;
 			_content.removeAt();
 			if (value is IList) {
 				_content.add( IList(value).get() );
 			} else if (value is Array) {
 				_content.add(value);
 			} else if (value === null) {
-				_content.removeAt();
+				_content.removeAt();						// TODO: determine if List change AND propertychange should both fire
 			} else {
 				_content.add(value);
 			}
+			_content.queueChanges = false;					// TODO: determine if List change AND propertychange should both fire
 			DataChange.change(this, "content", _content, _content, true);
 		}
-		private var _content:IList = new ArrayList();
+		private var _content:ArrayList = new ArrayList();
 		
 		/**
 		 * @inheritDoc
@@ -249,36 +251,13 @@ package flight.skins
 			
 			contentChanging = true;
 			var child:DisplayObject;
-			var location:int = event.from;
-//			switch (event.kind) {
-//				case ListEventKind.ADD:
-//					for each (child in event.added) {
-//						_target.addChildAt(child, location++);
-//					}
-//					break;
-//				case ListEventKind.REMOVE:
-//					for each (child in event.added) {
-//						_target.removeChild(child);
-//					}
-//					break;
-//				case ListEventKind.MOVE:
-//					_target.addChildAt(event.added[0], location);
-//					if (event.added.length == 2) {
-//						_target.addChildAt(event.added[1], event.to);
-//					}
-//					break;
-//				case ListEventKind.REPLACE:
-//					_target.removeChild(event.added[1]);
-//					_target.addChildAt(event.added[0], location);
-//					break;
-//				default:	// ListEventKind.RESET
-//					for each (child in event.added) {
-//						_target.removeChild(child);
-//					}
-//					for each (child in _content) {
-//						_target.addChildAt(child, location++);
-//					}
-//			}
+			var child:DisplayObject;
+			for each (child in event.removed) {
+				_target.removeChild(child);
+			}
+			for each (child in event.items) {
+				_target.addChildAt(child, _content.getIndex(child));
+			}
 			contentChanging = false;
 			
 			RenderPhase.invalidate(_target, LayoutPhase.MEASURE);

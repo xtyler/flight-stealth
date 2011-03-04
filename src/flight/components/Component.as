@@ -205,34 +205,14 @@ package flight.components
 			if (behaviorsChanging) {
 				return;
 			}
-			
+
 			var behavior:IBehavior;
-			var location:int = event.from;
-//			switch (event.kind) {
-//				case ListEventKind.ADD:
-//					for each (behavior in event.added) {
-//						style[behavior.type] = behavior;
-//					}
-//					break;
-//				case ListEventKind.REMOVE:
-//					for each (behavior in event.added) {
-//						delete style[behavior.type];
-//					}
-//					break;
-//				case ListEventKind.REPLACE:
-//					behavior = event.added[1];
-//					delete style[behavior.type];
-//					behavior = event.added[0];
-//					style[behavior.type] = behavior;
-//					break;
-//				default:	// ListEventKind.RESET
-//					for each (behavior in event.added) {
-//						delete style[behavior.type];
-//					}
-//					for each (behavior in _behaviors) {
-//						style[behavior.type] = behavior;
-//					}
-//			}
+			for each (behavior in event.removed) {
+				delete style[behavior.type];
+			}
+			for each (behavior in event.items) {
+				style[behavior.type] = behavior;
+			}
 		}
 		private var behaviorsChanging:Boolean;
 	}
