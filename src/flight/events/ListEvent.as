@@ -14,8 +14,7 @@ package flight.events
 		public static const ITEM_CHANGE:String = "itemChange";
 		
 		
-		public function ListEvent(type:String, target:Object = null, bubbles:Boolean = false, cancelable:Boolean = false,
-								  from:int = -1, to:int = -1, items:Array = null, removed:Array = null)
+		public function ListEvent(type:String, target:Object = null, bubbles:Boolean = false, cancelable:Boolean = false, from:int = -1, to:int = -1, items:Array = null, removed:Array = null)
 		{
 			super(type, target, bubbles, cancelable);
 

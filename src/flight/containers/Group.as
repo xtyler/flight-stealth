@@ -13,8 +13,8 @@ package flight.containers
 	import flight.data.DataChange;
 	import flight.data.ITrack;
 	import flight.data.Track;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
+	import flight.events.LayoutEvent;
+	import flight.utils.RenderPhase;
 	import flight.display.SpriteDisplay;
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
@@ -146,11 +146,11 @@ package flight.containers
 		{
 			if (_clipped != value) {
 				if (value) {
-					addEventListener(LayoutPhase.RESIZE, onResize);
+					addEventListener(LayoutEvent.RESIZE, onResize);
 					contained = false;
-					RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+					RenderPhase.invalidate(this, LayoutEvent.RESIZE);
 				} else {
-					removeEventListener(LayoutPhase.RESIZE, onResize);
+					removeEventListener(LayoutEvent.RESIZE, onResize);
 					contained = true;
 				}
 				DataChange.change(this, "clipped", _clipped, _clipped = value);
@@ -232,8 +232,8 @@ package flight.containers
 			content.add(child, getChildIndex(child));
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
 		}
 		
 		private function onChildRemoved(event:Event):void
@@ -247,8 +247,8 @@ package flight.containers
 			content.remove(child);
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
 		}
 		
 		private function onContentChange(event:ListEvent):void
@@ -267,8 +267,8 @@ package flight.containers
 			}
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
 		}
 		private var contentChanging:Boolean;
 	}

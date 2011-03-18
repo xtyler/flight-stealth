@@ -13,12 +13,16 @@ package flight.display
 	import flash.geom.Rectangle;
 
 	import flight.data.DataChange;
+	import flight.events.InitializeEvent;
+	import flight.events.InvalidationEvent;
+	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.Box;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyleable;
 	import flight.styles.Style;
+	import flight.utils.RenderPhase;
 
 	import mx.core.IMXMLObject;
 
@@ -33,11 +37,11 @@ package flight.display
 	[Style(name="dock")]
 	[Style(name="tile")]
 	
-	[Event(name="initialize", type="flash.events.Event")]
-	[Event(name="style", type="flash.events.Event")]
-	[Event(name="move", type="flash.events.Event")]
-	[Event(name="resize", type="flash.events.Event")]
-	[Event(name="ready", type="flash.events.Event")]
+	[Event(name="initialize", type="flight.events.InitializeEvent")]
+	[Event(name="style", type="flight.events.StyleEvent")]
+	[Event(name="move", type="flight.events.LayoutEvent")]
+	[Event(name="resize", type="flight.events.LayoutEvent")]
+	[Event(name="ready", type="flight.events.InitializeEvent")]
 	
 	/**
 	 * Advanced Bitmap implementation providing styling, transformation and
@@ -51,7 +55,7 @@ package flight.display
 			_width = _measured.width;
 			_height = _measured.height;
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			addEventListener(LayoutEvent.MEASURE, onMeasure);
 			snapToPixel = true;
 		}
 		
@@ -138,7 +142,7 @@ package flight.display
 			if (super.x != value) {
 				// TODO: update registration point if transformX/Y != 0
 				invalidateLayout();
-				RenderPhase.invalidate(this, LayoutPhase.MOVE);
+				RenderPhase.invalidate(this, LayoutEvent.MOVE);
 				DataChange.change(this, "x", super.x, super.x = value);
 			}
 		}
@@ -156,7 +160,7 @@ package flight.display
 			if (super.y != value) {
 				// TODO: update registration point if transformX/Y != 0
 				invalidateLayout();
-				RenderPhase.invalidate(this, LayoutPhase.MOVE);
+				RenderPhase.invalidate(this, LayoutEvent.MOVE);
 				DataChange.change(this, "y", super.y, super.y = value);
 			}
 		}
@@ -578,7 +582,7 @@ package flight.display
 				x = Math.round(x);
 				y = Math.round(y);
 			}
-			RenderPhase.invalidate(this, LayoutPhase.MOVE);
+			RenderPhase.invalidate(this, LayoutEvent.MOVE);
 			DataChange.queue(this, "x", super.x, super.x = x);
 			DataChange.change(this, "y", super.y, super.y = y);
 		}
@@ -723,7 +727,7 @@ package flight.display
 		 */
 		public function invalidate(phase:String = null):void
 		{
-			RenderPhase.invalidate(this, phase || RenderPhase.VALIDATE);
+			RenderPhase.invalidate(this, phase || InvalidationEvent.VALIDATE);
 		}
 		
 		/**
@@ -758,9 +762,9 @@ package flight.display
 		protected function invalidateLayout(measureOnly:Boolean = false):void
 		{
 			if (!_freeform) {
-				RenderPhase.invalidate(parent, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(parent, LayoutEvent.MEASURE);
 				if (!measureOnly) {
-					RenderPhase.invalidate(parent, LayoutPhase.LAYOUT);
+					RenderPhase.invalidate(parent, LayoutEvent.LAYOUT);
 				}
 			}
 		}
@@ -776,8 +780,8 @@ package flight.display
 				if (!layout) {
 					invalidateLayout();
 				}
-				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+				RenderPhase.invalidate(this, LayoutEvent.RESIZE);
 				if (_nativeSizing) {
 					DataChange.queue(this, "scaleX", super.scaleX, super.scaleX = w / unscaledRect.width);
 				}
@@ -796,8 +800,8 @@ package flight.display
 				if (!layout) {
 					invalidateLayout();
 				}
-				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+				RenderPhase.invalidate(this, LayoutEvent.RESIZE);
 				if (_nativeSizing) {
 					DataChange.change(this, "scaleY", super.scaleY, super.scaleY = h / unscaledRect.height);
 				}
@@ -838,9 +842,9 @@ package flight.display
 		private function onAddedToStage(event:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			RenderPhase.invalidate(this, InitializePhase.INITIALIZE);
-			RenderPhase.invalidate(this, InitializePhase.READY);
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, InitializeEvent.INITIALIZE);
+			RenderPhase.invalidate(this, InitializeEvent.READY);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
 		}
 		
 		private function onMarginChange(event:Event):void

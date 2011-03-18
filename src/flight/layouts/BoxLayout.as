@@ -12,8 +12,8 @@ package flight.layouts
 
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
+	import flight.events.LayoutEvent;
+	import flight.utils.RenderPhase;
 
 	public class BoxLayout extends Layout
 	{
@@ -56,7 +56,7 @@ package flight.layouts
 			}
 			
 			if (target) {
-				RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
+				RenderPhase.invalidate(target.display, LayoutEvent.LAYOUT);
 			}
 			DataChange.change();
 		}
@@ -66,7 +66,7 @@ package flight.layouts
 		public function get horizontalAlign():String { return _horizontalAlign }
 		public function set horizontalAlign(value:String):void
 		{
-			if (target) RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
+			if (target) RenderPhase.invalidate(target.display, LayoutEvent.LAYOUT);
 			DataChange.change(this, "horizontalAlign", _horizontalAlign, _horizontalAlign = value);
 		}
 		private var _horizontalAlign:String = Align.LEFT;
@@ -75,7 +75,7 @@ package flight.layouts
 		public function get verticalAlign():String { return _verticalAlign }
 		public function set verticalAlign(value:String):void
 		{
-			if (target) RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
+			if (target) RenderPhase.invalidate(target.display, LayoutEvent.LAYOUT);
 			DataChange.change(this, "verticalAlign", _verticalAlign, _verticalAlign = value);
 		}
 		private var _verticalAlign:String = Align.TOP;
@@ -223,8 +223,8 @@ package flight.layouts
 		private function onPaddingChange(event:Event):void
 		{
 			if (target) {
-				RenderPhase.invalidate(target.display, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(target.display, LayoutPhase.LAYOUT);
+				RenderPhase.invalidate(target.display, LayoutEvent.MEASURE);
+				RenderPhase.invalidate(target.display, LayoutEvent.LAYOUT);
 			}
 		}
 	}

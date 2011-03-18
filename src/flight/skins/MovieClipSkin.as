@@ -15,13 +15,14 @@ package flight.skins
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.InitializePhase;
-	import flight.display.LayoutPhase;
 	import flight.display.MovieClipDisplay;
-	import flight.display.RenderPhase;
+	import flight.events.InitializeEvent;
+	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.SkinEvent;
 	import flight.layouts.Align;
@@ -31,10 +32,9 @@ package flight.skins
 	import flight.layouts.ILayout;
 	import flight.layouts.ILayoutBounds;
 	import flight.layouts.IMeasureable;
-	import flight.collections.ArrayList;
-	import flight.collections.IList;
 	import flight.styles.IStateful;
 	import flight.styles.IStyleable;
+	import flight.utils.RenderPhase;
 	import flight.utils.Type;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
@@ -57,7 +57,7 @@ package flight.skins
 				_content.add(getChildAt(i));
 			}
 			
-			addEventListener(InitializePhase.INITIALIZE, onInit);
+			addEventListener(InitializeEvent.INITIALIZE, onInit);
 			addEventListener(Event.ADDED, onChildAdded, true);
 			addEventListener(Event.REMOVED, onChildRemoved, true);
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
@@ -101,7 +101,7 @@ package flight.skins
 			if (!layout) {
 				layout = new DockLayout();
 			}
-			_target.addEventListener(LayoutPhase.LAYOUT, onLayout);
+			_target.addEventListener(LayoutEvent.LAYOUT, onLayout);
 		}
 		
 		protected function detachSkin():void
@@ -370,8 +370,8 @@ package flight.skins
 			content.add(child, getChildIndex(child));
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
 		}
 		
 		private function onChildRemoved(event:Event):void
@@ -385,8 +385,8 @@ package flight.skins
 			content.remove(child);
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
 		}
 		
 		private function onContentChange(event:ListEvent):void
@@ -405,8 +405,8 @@ package flight.skins
 			}
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
 		}
 		private var contentChanging:Boolean;
 		

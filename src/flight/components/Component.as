@@ -9,18 +9,18 @@ package flight.components
 	import flash.display.InteractiveObject;
 
 	import flight.behaviors.IBehavior;
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
 	import flight.display.SpriteDisplay;
+	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.SkinEvent;
 	import flight.events.StyleEvent;
-	import flight.collections.ArrayList;
-	import flight.collections.IList;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
+	import flight.utils.RenderPhase;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
@@ -89,7 +89,7 @@ package flight.components
 				if (_skin) {
 					detachSkin();
 				}
-				RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(this, LayoutEvent.MEASURE);
 				DataChange.queue(this, "skin", _skin, _skin = value);
 				if (_skin) {
 					attachSkin();

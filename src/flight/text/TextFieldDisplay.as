@@ -12,20 +12,21 @@ package flight.text
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextLineMetrics;
-
+	
 	import flight.data.DataChange;
 	import flight.display.IInvalidating;
 	import flight.display.ITransform;
-	import flight.display.InitializePhase;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
+	import flight.events.InitializeEvent;
+	import flight.events.InvalidationEvent;
+	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.Box;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyleable;
 	import flight.styles.Style;
-
+	import flight.utils.RenderPhase;
+	
 	import mx.core.IMXMLObject;
 
 	[Style(name="left")]
@@ -39,11 +40,11 @@ package flight.text
 	[Style(name="dock")]
 	[Style(name="tile")]
 	
-	[Event(name="initialize", type="flash.events.Event")]
-	[Event(name="style", type="flash.events.Event")]
-	[Event(name="move", type="flash.events.Event")]
-	[Event(name="resize", type="flash.events.Event")]
-	[Event(name="ready", type="flash.events.Event")]
+	[Event(name="initialize", type="flight.events.InitializeEvent")]
+	[Event(name="style", type="flight.events.StyleEvent")]
+	[Event(name="move", type="flight.events.LayoutEvent")]
+	[Event(name="resize", type="flight.events.LayoutEvent")]
+	[Event(name="ready", type="flight.events.InitializeEvent")]
 	
 	/**
 	 * Advanced TextField implementation providing styling, transformation and
@@ -57,7 +58,7 @@ package flight.text
 			_width = _measured.width;
 			_height = _measured.height;
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			addEventListener(LayoutPhase.MEASURE, onMeasure);
+			addEventListener(LayoutEvent.MEASURE, onMeasure);
 			addEventListener(Event.CHANGE, onTextChange);
 			snapToPixel = true;
 		}
@@ -145,7 +146,7 @@ package flight.text
 			if (super.x != value) {
 				// TODO: update registration point if transformX/Y != 0
 				invalidateLayout();
-				RenderPhase.invalidate(this, LayoutPhase.MOVE);
+				RenderPhase.invalidate(this, LayoutEvent.MOVE);
 				DataChange.change(this, "x", super.x, super.x = value);
 			}
 		}
@@ -163,7 +164,7 @@ package flight.text
 			if (super.y != value) {
 				// TODO: update registration point if transformX/Y != 0
 				invalidateLayout();
-				RenderPhase.invalidate(this, LayoutPhase.MOVE);
+				RenderPhase.invalidate(this, LayoutEvent.MOVE);
 				DataChange.change(this, "y", super.y, super.y = value);
 			}
 		}
@@ -569,7 +570,7 @@ package flight.text
 				x = Math.round(x);
 				y = Math.round(y);
 			}
-			RenderPhase.invalidate(this, LayoutPhase.MOVE);
+			RenderPhase.invalidate(this, LayoutEvent.MOVE);
 			DataChange.queue(this, "x", super.x, super.x = x);
 			DataChange.change(this, "y", super.y, super.y = y);
 		}
@@ -700,7 +701,7 @@ package flight.text
 		 */
 		public function invalidate(phase:String = null):void
 		{
-			RenderPhase.invalidate(this, phase || RenderPhase.VALIDATE);
+			RenderPhase.invalidate(this, phase || InvalidationEvent.VALIDATE);
 		}
 		
 		/**
@@ -736,9 +737,9 @@ package flight.text
 		protected function invalidateLayout(measureOnly:Boolean = false):void
 		{
 			if (!_freeform) {
-				RenderPhase.invalidate(parent, LayoutPhase.MEASURE);
+				RenderPhase.invalidate(parent, LayoutEvent.MEASURE);
 				if (!measureOnly) {
-					RenderPhase.invalidate(parent, LayoutPhase.LAYOUT);
+					RenderPhase.invalidate(parent, LayoutEvent.LAYOUT);
 				}
 			}
 		}
@@ -754,8 +755,8 @@ package flight.text
 				if (!layout) {
 					invalidateLayout();
 				}
-				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+				RenderPhase.invalidate(this, LayoutEvent.RESIZE);
 				if (!isNaN(_explicit.width)) {
 					super.width = w;
 				}
@@ -774,8 +775,8 @@ package flight.text
 				if (!layout) {
 					invalidateLayout();
 				}
-				RenderPhase.invalidate(this, LayoutPhase.LAYOUT);
-				RenderPhase.invalidate(this, LayoutPhase.RESIZE);
+				RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+				RenderPhase.invalidate(this, LayoutEvent.RESIZE);
 				if (!isNaN(_explicit.height)) {
 					super.height = h;
 				}
@@ -804,14 +805,14 @@ package flight.text
 		private function onAddedToStage(event:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			RenderPhase.invalidate(this, InitializePhase.INITIALIZE);
-			RenderPhase.invalidate(this, InitializePhase.READY);
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, InitializeEvent.INITIALIZE);
+			RenderPhase.invalidate(this, InitializeEvent.READY);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
 		}
 		
 		private function onTextChange(event:Event):void
 		{
-			RenderPhase.invalidate(this, LayoutPhase.MEASURE);
+			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
 		}
 		
 		private function onMarginChange(event:Event):void

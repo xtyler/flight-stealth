@@ -10,7 +10,7 @@ package flight.containers
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 
-	import flight.display.InitializePhase;
+	import flight.events.InitializeEvent;
 	import flight.layouts.DockLayout;
 
 	//[Frame(factoryClass="flight.containers.FrameLoader")]
@@ -19,7 +19,7 @@ package flight.containers
 	{
 		public function Application()
 		{
-			addEventListener(InitializePhase.INITIALIZE, onInit);
+			addEventListener(InitializeEvent.INITIALIZE, onInit);
 			if (stage != null) {
 				// if this is the root application class
 				initStage();

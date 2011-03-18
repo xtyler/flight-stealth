@@ -13,19 +13,19 @@ package flight.skins
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.containers.IContainer;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
+	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
-	import flight.collections.ArrayList;
-	import flight.collections.IList;
 	import flight.styles.IStateful;
+	import flight.utils.RenderPhase;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
@@ -83,7 +83,7 @@ package flight.skins
 			for (i; i < _content.length; i++) {
 				_target.addChildAt(DisplayObject(_content.get(i, 0)), i);
 			}
-			_target.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 10, true);
+			_target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10, true);
 			_target.addEventListener(Event.ADDED, onChildAdded, true);
 			_target.addEventListener(Event.REMOVED, onChildRemoved, true);
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
@@ -259,8 +259,8 @@ package flight.skins
 			}
 			contentChanging = false;
 			
-			RenderPhase.invalidate(_target, LayoutPhase.MEASURE);
-			RenderPhase.invalidate(_target, LayoutPhase.LAYOUT);
+			RenderPhase.invalidate(_target, LayoutEvent.MEASURE);
+			RenderPhase.invalidate(_target, LayoutEvent.LAYOUT);
 		}
 		private var contentChanging:Boolean;
 	}

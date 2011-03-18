@@ -12,11 +12,11 @@ package flight.layouts
 
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
+	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.StyleEvent;
 	import flight.styles.IStyleable;
+	import flight.utils.RenderPhase;
 
 	public class Layout extends EventDispatcher implements ILayout
 	{
@@ -35,17 +35,17 @@ package flight.layouts
 				return;
 			}
 			if (_target) {
-				_target.display.removeEventListener(LayoutPhase.MEASURE, onMeasure);
-				_target.display.removeEventListener(LayoutPhase.LAYOUT, onLayout);
+				_target.display.removeEventListener(LayoutEvent.MEASURE, onMeasure);
+				_target.display.removeEventListener(LayoutEvent.LAYOUT, onLayout);
 				_target.content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			}
 			DataChange.change(this, "target", _target, _target = value);
 			if (_target) {
-				_target.display.addEventListener(LayoutPhase.MEASURE, onMeasure, false, 50, true);
-				_target.display.addEventListener(LayoutPhase.LAYOUT, onLayout, false, 50, true);
+				_target.display.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 50, true);
+				_target.display.addEventListener(LayoutEvent.LAYOUT, onLayout, false, 50, true);
 				_target.content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
-				RenderPhase.invalidate(_target.display, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
+				RenderPhase.invalidate(_target.display, LayoutEvent.MEASURE);
+				RenderPhase.invalidate(_target.display, LayoutEvent.LAYOUT);
 			}
 		}
 		private var _target:IContainer;
@@ -91,8 +91,8 @@ package flight.layouts
 		private function onStyleChange(event:StyleEvent):void
 		{
 			if (layoutStyles && layoutStyles.indexOf(event.property) != -1) {
-				RenderPhase.invalidate(_target.display, LayoutPhase.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutPhase.LAYOUT);
+				RenderPhase.invalidate(_target.display, LayoutEvent.MEASURE);
+				RenderPhase.invalidate(_target.display, LayoutEvent.LAYOUT);
 			}
 		}
 		

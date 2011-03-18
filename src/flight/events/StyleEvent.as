@@ -8,9 +8,14 @@ package flight.events
 {
 	import flash.events.Event;
 
+	import flight.utils.RenderPhase;
+
 	public class StyleEvent extends Event
 	{
 		public static const STYLE_CHANGE:String = "styleChange";
+		
+		public static const STYLE:String = "style";
+		RenderPhase.registerPhase(STYLE, StyleEvent, 150);
 		
 		public function StyleEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false,
 								   source:Object = null, property:String = "", oldValue:Object = null, newValue:Object = null)

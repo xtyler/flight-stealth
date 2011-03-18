@@ -10,9 +10,9 @@ package flight.graphics
 	import flash.events.Event;
 
 	import flight.data.DataChange;
-	import flight.display.DrawPhase;
-	import flight.display.LayoutPhase;
-	import flight.display.RenderPhase;
+	import flight.events.DrawEvent;
+	import flight.events.LayoutEvent;
+	import flight.utils.RenderPhase;
 
 	public class Rect extends GraphicShape
 	{
@@ -20,7 +20,7 @@ package flight.graphics
 		
 		public function Rect()
 		{
-			addEventListener(LayoutPhase.RESIZE, onResize);
+			addEventListener(LayoutEvent.RESIZE, onResize);
 		}
 		
 		[Bindable(event="radiusXChange", style="noEvent")]
@@ -124,7 +124,7 @@ package flight.graphics
 		
 		private function onResize(event:Event):void
 		{
-			RenderPhase.invalidate(this, DrawPhase.DRAW);
+			RenderPhase.invalidate(this, DrawEvent.DRAW);
 		}
 	}
 }

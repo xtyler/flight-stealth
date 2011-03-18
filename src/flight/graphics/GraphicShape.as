@@ -12,8 +12,8 @@ package flight.graphics
 	import flash.events.Event;
 	import flash.geom.Matrix;
 
-	import flight.display.DrawPhase;
 	import flight.display.ShapeDisplay;
+	import flight.events.DrawEvent;
 	import flight.graphics.paint.IFill;
 	import flight.graphics.paint.IStroke;
 
@@ -31,8 +31,8 @@ package flight.graphics
 		{
 			graphicsData = new Vector.<IGraphicsData>;
 			graphicsPath = new GraphicsPath();
-			addEventListener(DrawPhase.DRAW, onDraw);
-			invalidate(DrawPhase.DRAW);
+			addEventListener(DrawEvent.DRAW, onDraw);
+			invalidate(DrawEvent.DRAW);
 		}
 		
 		public function get stroke():IStroke { return _stroke; }

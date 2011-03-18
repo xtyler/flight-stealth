@@ -4,7 +4,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.display
+package flight.utils
 {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
@@ -13,27 +13,20 @@ package flight.display
 	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
 
-	import flight.utils.getClassName;
-
 	public class RenderPhase
 	{
-		// the 'render' event is dispatched by Flash through which order of
-		// resolution is not guaranteed
-		public static const VALIDATE:String = "validate";
-		RenderPhase.registerPhase(VALIDATE);
-		
 		private static var rendering:Boolean = false;
 		private static var phaseList:Array = [];
 		private static var phaseIndex:Object = {};
-		private static var displayNodeDepths:Dictionary = new Dictionary(true);
+		private static var displayLevels:Dictionary = new Dictionary(true);
 		private static var invalidStages:Dictionary = new Dictionary(true);
 		
-		public static function registerPhase(phase:String, priority:int = 0, ascending:Boolean = true):void
+		public static function registerPhase(type:String, eventType:Class = null, priority:int = 0, ascending:Boolean = true):void
 		{
-			var renderPhase:RenderPhase = phaseIndex[phase];
+			var renderPhase:RenderPhase = phaseIndex[type];
 			if (!renderPhase) {
-				renderPhase = new RenderPhase(phase);
-				phaseIndex[phase] = renderPhase;
+				renderPhase = new RenderPhase(type);
+				phaseIndex[type] = renderPhase;
 				phaseList.push(renderPhase);
 			}
 			
@@ -51,7 +44,7 @@ package flight.display
 			}
 			
 			var renderPhase:RenderPhase = phaseIndex[phase];
-			if (renderPhase.hasDisplay(display)) {
+			if (renderPhase.hasDispatcher(display)) {
 				return;
 			}
 			
@@ -59,19 +52,19 @@ package flight.display
 			display.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 50, true);
 			
 			if (display.stage == null) {
-				renderPhase.addDisplay(display, -1);
+				renderPhase.addDispatcher(display, -1);
 			} else {
 				
-				var nodeDepth:int = displayNodeDepths[display] != null ?
-					displayNodeDepths[display] :
-					displayNodeDepths[display] = getDepth(display);
+				var level:int = displayLevels[display] != null ?
+					displayLevels[display] :
+					displayLevels[display] = getLevel(display);
 				
-				renderPhase.addDisplay(display, nodeDepth);
+				renderPhase.addDispatcher(display, level);
 				
 				if (!rendering) {
 					invalidateStage(display.stage);
-				} else if ((renderPhase.ascending && nodeDepth >= renderPhase.renderingDepth) ||
-						  (!renderPhase.ascending && nodeDepth <= renderPhase.renderingDepth)) {
+				} else if ((renderPhase.ascending && level >= renderPhase.currentLevel) ||
+						  (!renderPhase.ascending && level <= renderPhase.currentLevel)) {
 					setTimeout(invalidateStage, 0, display.stage);
 				}
 			}
@@ -88,12 +81,12 @@ package flight.display
 			
 			var renderPhase:RenderPhase = phaseIndex[phase];
 			if (renderPhase) {
-				renderPhase.removeDisplay(display);
+				renderPhase.removeDispatcher(display);
 				display.dispatchEvent(new Event(renderPhase.type));
 			} else {
 				for each (renderPhase in phaseList) {
-					if (renderPhase.hasDisplay(display)) {
-						renderPhase.removeDisplay(display);
+					if (renderPhase.hasDispatcher(display)) {
+						renderPhase.removeDispatcher(display);
 						display.dispatchEvent(new Event(renderPhase.type));
 					}
 				}
@@ -110,18 +103,18 @@ package flight.display
 			rendering = false;
 		}
 		
-		private static function getDepth(display:DisplayObject):int
+		private static function getLevel(display:DisplayObject):int
 		{
-			var nodeDepth:int = 0;
+			var level:int = 0;
 			while ((display = display.parent) != null) {
-				nodeDepth++;
-				// if a parent already has nodeDepth defined, take the shortcut
-				if (displayNodeDepths[display] != null) {
-					nodeDepth += displayNodeDepths[display];
+				level++;
+				// if a parent already has level defined, take the shortcut
+				if (displayLevels[display] != null) {
+					level += displayLevels[display];
 					break;
 				}
 			}
-			return nodeDepth;
+			return level;
 		}
 		
 		private static function invalidateStage(stage:Stage):void
@@ -152,11 +145,11 @@ package flight.display
 		private static function onAddedToStage(event:Event):void
 		{
 			var display:DisplayObject = DisplayObject(event.target);
-			displayNodeDepths[display] = getDepth(display);
+			displayLevels[display] = getLevel(display);
 			
 			for each (var renderPhase:RenderPhase in phaseList) {
-				if (renderPhase.hasDisplay(display)) {
-					renderPhase.removeDisplay(display);
+				if (renderPhase.hasDispatcher(display)) {
+					renderPhase.removeDispatcher(display);
 					invalidate(display, renderPhase.type);
 				}
 			}
@@ -165,97 +158,89 @@ package flight.display
 		private static function onRemovedFromStage(event:Event):void
 		{
 			var display:DisplayObject = DisplayObject(event.target);
-			delete displayNodeDepths[display];
+			delete displayLevels[display];
 			
 			for each (var renderPhase:RenderPhase in phaseList) {
-				if (renderPhase.hasDisplay(display)) {
-					renderPhase.removeDisplay(display);
-					renderPhase.addDisplay(display, -1);
+				if (renderPhase.hasDispatcher(display)) {
+					renderPhase.removeDispatcher(display);
+					renderPhase.addDispatcher(display, -1);
 				}
 			}
 		}
+		
 		
 		
 		public var ascending:Boolean = false;
 		public var priority:int = 0;
 		
-		private var _type:String;
-		private var depths:Array = [];
-		private var pos:int = -1;
-		private var current:Dictionary = new Dictionary(true);
+		private var levels:Array = [];
+		private var eventType:Class;
+		private var currentList:Dictionary = new Dictionary(true);
 		private var invalidated:Dictionary = new Dictionary(true);
 		
-		public function RenderPhase(type:String)
+		public function RenderPhase(type:String, eventType:Class = null)
 		{
 			_type = type;
+			this.eventType = eventType || Event;
 		}
 		
-		public function get type():String
-		{
-			return _type;
-		}
+		public function get type():String { return _type; }
+		private var _type:String;
 		
-		public function get renderingDepth():int
-		{
-			return pos;
-		}
+		public function get currentLevel():int { return _currentLevel; }
+		private var _currentLevel:int = -1;
 		
 		public function render():void
 		{
-			if (depths.length == 0) {
-				return;
-			}
-			
-			var beg:int, end:int, vel:int;
+			var cleanList:Dictionary = currentList;
+			var end:int, vel:int;
 			if (ascending) {
-				beg = depths.length;
-				end = 0;
+				_currentLevel = levels.length - 1;
+				end = -1;
 				vel = -1;
 			} else {
-				beg = -1;
-				end = depths.length;
+				_currentLevel = 0;
+				end = levels.length;
 				vel = 1;
 			}
-			var pre:Dictionary;
 			
-			for (pos = beg; pos != end; pos += vel) {
-				if (depths[pos] == null) {
-					continue;
-				}
+			for (_currentLevel; _currentLevel != end; _currentLevel += vel) {
 				
-				// replace current dictionary with a clean one before new cycle
-				pre = current;
-				current = depths[pos];
-				depths[pos] = pre;
-				
-				for (var i:* in current) {
-					var display:DisplayObject = i;
-					delete current[i];
-					delete invalidated[display];
-					display.dispatchEvent(new Event(type));
+				if (levels[_currentLevel]) {
+					currentList = levels[_currentLevel];
+					levels[_currentLevel] = cleanList;
+					
+					for (var dispatcher:Object in currentList) {
+						delete currentList[dispatcher];
+						delete invalidated[dispatcher];
+						IEventDispatcher(dispatcher).dispatchEvent(new eventType(type));
+					}
+					cleanList = currentList;
 				}
 			}
-			pos = -1;
+			
+			_currentLevel = -1;
 		}
 		
-		public function addDisplay(display:DisplayObject, nodeDepth:int):void
+		public function addDispatcher(dispatcher:IEventDispatcher, level:int = 0):void
 		{
-			if (depths[nodeDepth] == null) {
-				depths[nodeDepth] = new Dictionary(true);
+			if (levels[level] == null) {
+				levels[level] = new Dictionary(true);
 			}
-			depths[nodeDepth][display] = true;
-			invalidated[display] = nodeDepth;
+			levels[level][dispatcher] = true;
+			invalidated[dispatcher] = level;
 		}
 		
-		public function removeDisplay(display:DisplayObject):void
+		public function removeDispatcher(dispatcher:IEventDispatcher):void
 		{
-			delete depths[ invalidated[display] ][display];
-			delete invalidated[display];
+			var level:int = invalidated[dispatcher];
+			delete levels[level][dispatcher];
+			delete invalidated[dispatcher];
 		}
 		
-		public function hasDisplay(display:IEventDispatcher):Boolean
+		public function hasDispatcher(dispatcher:IEventDispatcher):Boolean
 		{
-			return invalidated[display] != null;
+			return Boolean(invalidated[dispatcher]);
 		}
 		
 	}
