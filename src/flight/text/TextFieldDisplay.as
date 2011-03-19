@@ -12,7 +12,7 @@ package flight.text
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextLineMetrics;
-	
+
 	import flight.data.DataChange;
 	import flight.display.IInvalidating;
 	import flight.display.ITransform;
@@ -25,8 +25,8 @@ package flight.text
 	import flight.layouts.ILayoutBounds;
 	import flight.styles.IStyleable;
 	import flight.styles.Style;
-	import flight.utils.RenderPhase;
-	
+	import flight.utils.Invalidation;
+
 	import mx.core.IMXMLObject;
 
 	[Style(name="left")]
@@ -146,7 +146,7 @@ package flight.text
 			if (super.x != value) {
 				// TODO: update registration point if transformX/Y != 0
 				invalidateLayout();
-				RenderPhase.invalidate(this, LayoutEvent.MOVE);
+				invalidate(LayoutEvent.MOVE);
 				DataChange.change(this, "x", super.x, super.x = value);
 			}
 		}
@@ -164,7 +164,7 @@ package flight.text
 			if (super.y != value) {
 				// TODO: update registration point if transformX/Y != 0
 				invalidateLayout();
-				RenderPhase.invalidate(this, LayoutEvent.MOVE);
+				invalidate(LayoutEvent.MOVE);
 				DataChange.change(this, "y", super.y, super.y = value);
 			}
 		}
@@ -570,7 +570,7 @@ package flight.text
 				x = Math.round(x);
 				y = Math.round(y);
 			}
-			RenderPhase.invalidate(this, LayoutEvent.MOVE);
+			invalidate(LayoutEvent.MOVE);
 			DataChange.queue(this, "x", super.x, super.x = x);
 			DataChange.change(this, "y", super.y, super.y = y);
 		}
@@ -701,7 +701,7 @@ package flight.text
 		 */
 		public function invalidate(phase:String = null):void
 		{
-			RenderPhase.invalidate(this, phase || InvalidationEvent.VALIDATE);
+			Invalidation.invalidate(this, phase || InvalidationEvent.VALIDATE);
 		}
 		
 		/**
@@ -709,7 +709,7 @@ package flight.text
 		 */
 		public function validateNow(phase:String = null):void
 		{
-			RenderPhase.validateNow(this, phase);
+			Invalidation.validate(this, phase);
 		}
 		
 		/**
@@ -737,9 +737,9 @@ package flight.text
 		protected function invalidateLayout(measureOnly:Boolean = false):void
 		{
 			if (!_freeform) {
-				RenderPhase.invalidate(parent, LayoutEvent.MEASURE);
+				Invalidation.invalidate(parent, LayoutEvent.MEASURE);
 				if (!measureOnly) {
-					RenderPhase.invalidate(parent, LayoutEvent.LAYOUT);
+					Invalidation.invalidate(parent, LayoutEvent.LAYOUT);
 				}
 			}
 		}
@@ -755,8 +755,8 @@ package flight.text
 				if (!layout) {
 					invalidateLayout();
 				}
-				RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
-				RenderPhase.invalidate(this, LayoutEvent.RESIZE);
+				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.RESIZE);
 				if (!isNaN(_explicit.width)) {
 					super.width = w;
 				}
@@ -775,8 +775,8 @@ package flight.text
 				if (!layout) {
 					invalidateLayout();
 				}
-				RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
-				RenderPhase.invalidate(this, LayoutEvent.RESIZE);
+				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.RESIZE);
 				if (!isNaN(_explicit.height)) {
 					super.height = h;
 				}
@@ -805,14 +805,14 @@ package flight.text
 		private function onAddedToStage(event:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			RenderPhase.invalidate(this, InitializeEvent.INITIALIZE);
-			RenderPhase.invalidate(this, InitializeEvent.READY);
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			invalidate(InitializeEvent.INITIALIZE);
+			invalidate(InitializeEvent.READY);
+			invalidate(LayoutEvent.MEASURE);
 		}
 		
 		private function onTextChange(event:Event):void
 		{
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.MEASURE);
 		}
 		
 		private function onMarginChange(event:Event):void

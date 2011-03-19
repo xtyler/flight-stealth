@@ -179,6 +179,11 @@ package flight.events
 			this.deltaY = deltaY;
 		}
 		
+		override public function clone():Event
+		{
+			return new ButtonEvent(type, bubbles, cancelable);
+		}
+		
 		/**
 		 * The dispatch process for all ButtonEvent events.
 		 */

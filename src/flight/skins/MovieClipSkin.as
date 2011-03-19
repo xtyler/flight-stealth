@@ -34,7 +34,7 @@ package flight.skins
 	import flight.layouts.IMeasureable;
 	import flight.styles.IStateful;
 	import flight.styles.IStyleable;
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 	import flight.utils.Type;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
@@ -370,8 +370,8 @@ package flight.skins
 			content.add(child, getChildIndex(child));
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		
 		private function onChildRemoved(event:Event):void
@@ -385,8 +385,8 @@ package flight.skins
 			content.remove(child);
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		
 		private function onContentChange(event:ListEvent):void
@@ -405,8 +405,8 @@ package flight.skins
 			}
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		private var contentChanging:Boolean;
 		

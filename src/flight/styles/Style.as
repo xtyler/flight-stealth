@@ -14,7 +14,7 @@ package flight.styles
 
 	import flight.data.DataChange;
 	import flight.events.StyleEvent;
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 
 	[Event(name="styleChange", type="flight.events.StyleEvent")]
 	[Event(name="styleDelete", type="flight.events.StyleEvent")]
@@ -64,7 +64,7 @@ package flight.styles
 					styleProps["$"+prop] = true;
 					styleProps.push(prop);
 				}
-				RenderPhase.invalidate(_target, StyleEvent.STYLE);
+				Invalidation.invalidate(_target, StyleEvent.STYLE);
 				var oldValue:Object = prop in explicitData ? explicitData[prop] : styleData[prop];
 				DataChange.change(this, prop, oldValue, explicitData[name.localName] = value);
 				if (hasEventListener(StyleEvent.STYLE_CHANGE)) {
@@ -86,7 +86,7 @@ package flight.styles
 				delete styleProps["$"+prop];
 				styleProps.splice(styleProps.indexOf(prop), 1);
 			}
-			RenderPhase.invalidate(_target, StyleEvent.STYLE);
+			Invalidation.invalidate(_target, StyleEvent.STYLE);
 			var oldValue:Object = explicitData[prop];
 			DataChange.queue(this, prop, oldValue, styleData[prop]);
 			var deleted:Boolean = delete explicitData[prop];

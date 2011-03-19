@@ -25,7 +25,7 @@ package flight.skins
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
 	import flight.styles.IStateful;
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
@@ -259,8 +259,8 @@ package flight.skins
 			}
 			contentChanging = false;
 			
-			RenderPhase.invalidate(_target, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(_target, LayoutEvent.LAYOUT);
+			Invalidation.invalidate(_target, LayoutEvent.MEASURE);
+			Invalidation.invalidate(_target, LayoutEvent.LAYOUT);
 		}
 		private var contentChanging:Boolean;
 	}

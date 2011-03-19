@@ -9,15 +9,11 @@ package flight.containers
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 
-	import flight.data.DataChange;
-	import flight.events.InitializeEvent;
-	import flight.utils.RenderPhase;
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
+	import flight.data.DataChange;
+	import flight.events.InitializeEvent;
 
-	/**
-	 * @alpha - DataGroup is currently non-functional
-	 */
 	public class DataGroup extends Group
 	{
 		public function DataGroup()
@@ -30,7 +26,7 @@ package flight.containers
 		public function get dataProvider():IList { return _dataProvider ||= new ArrayList(); }
 		public function set dataProvider(value:*):void
 		{
-			RenderPhase.invalidate(this, InitializeEvent.CREATE);
+			invalidate(InitializeEvent.CREATE);
 			if (!(value is IList) && value !== null) {
 				if (!_dataProvider) {
 					_dataProvider = new ArrayList();
@@ -51,7 +47,7 @@ package flight.containers
 		public function get template():Object { return _template }
 		public function set template(value:Object):void
 		{
-			RenderPhase.invalidate(this, InitializeEvent.CREATE);
+			invalidate(InitializeEvent.CREATE);
 			DataChange.change(this, "template", _template, _template = value as Class);
 		}
 		private var _template:Class;

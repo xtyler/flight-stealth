@@ -6,12 +6,12 @@
 
 package flight.events
 {
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 
 	public class DrawEvent extends InvalidationEvent
 	{
 		public static const DRAW:String = "draw";
-		RenderPhase.registerPhase(DRAW, DrawEvent, 50);
+		Invalidation.registerPhase(DRAW, DrawEvent, 50);
 		
 		public function DrawEvent(type:String, bubbles:Boolean, cancelable:Boolean)
 		{

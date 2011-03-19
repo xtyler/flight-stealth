@@ -31,6 +31,8 @@ package flight.graphics
 		{
 			graphicsData = new Vector.<IGraphicsData>;
 			graphicsPath = new GraphicsPath();
+			graphicsPath.commands = new Vector.<int>();
+			graphicsPath.data = new Vector.<Number>();
 			addEventListener(DrawEvent.DRAW, onDraw);
 			invalidate(DrawEvent.DRAW);
 		}

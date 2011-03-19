@@ -10,16 +10,15 @@ package flight.containers
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.data.DataChange;
 	import flight.data.ITrack;
 	import flight.data.Track;
-	import flight.events.LayoutEvent;
-	import flight.utils.RenderPhase;
 	import flight.display.SpriteDisplay;
+	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
-	import flight.collections.ArrayList;
-	import flight.collections.IList;
 
 	[Style(name="background")]	// TODO: implement limited drawing feature
 	
@@ -148,7 +147,7 @@ package flight.containers
 				if (value) {
 					addEventListener(LayoutEvent.RESIZE, onResize);
 					contained = false;
-					RenderPhase.invalidate(this, LayoutEvent.RESIZE);
+					invalidate(LayoutEvent.RESIZE);
 				} else {
 					removeEventListener(LayoutEvent.RESIZE, onResize);
 					contained = true;
@@ -232,8 +231,8 @@ package flight.containers
 			content.add(child, getChildIndex(child));
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		
 		private function onChildRemoved(event:Event):void
@@ -247,8 +246,8 @@ package flight.containers
 			content.remove(child);
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		
 		private function onContentChange(event:ListEvent):void
@@ -267,8 +266,8 @@ package flight.containers
 			}
 			contentChanging = false;
 			
-			RenderPhase.invalidate(this, LayoutEvent.MEASURE);
-			RenderPhase.invalidate(this, LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		private var contentChanging:Boolean;
 	}

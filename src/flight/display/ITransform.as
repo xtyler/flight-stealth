@@ -103,6 +103,19 @@ package flight.display
 		function get scaleY():Number;
 		function set scaleY(value:Number):void;
 		
+		// TODO: enable skewing
+		/**
+		 * @default		0.0
+		 */
+		//function get skewX():Number;
+		//function set skewX(value:Number):void;
+		
+		/**
+		 * @default		0.0
+		 */
+		//function get skewY():Number;
+		//function set skewY(value:Number):void;
+		
 		/**
 		 * The rotation of the transform in degrees as applied from the
 		 * the transform point. The rotation is a value from 0 to 180 for

@@ -6,9 +6,9 @@
 
 package flight.containers
 {
+	import flight.collections.IList;
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
-	import flight.collections.IList;
 
 	public interface IContainer extends IMeasureable
 	{

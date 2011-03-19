@@ -12,7 +12,6 @@ package flight.graphics
 	import flight.data.DataChange;
 	import flight.events.DrawEvent;
 	import flight.events.LayoutEvent;
-	import flight.utils.RenderPhase;
 
 	public class Rect extends GraphicShape
 	{
@@ -107,8 +106,11 @@ package flight.graphics
 		override public function update():void
 		{
 			super.update();
-			var cmds:Vector.<int> = graphicsPath.commands = new Vector.<int>();
-			var data:Vector.<Number> = graphicsPath.data = new Vector.<Number>();
+			
+			var cmds:Vector.<int> = graphicsPath.commands;
+			var data:Vector.<Number> = graphicsPath.data;
+			cmds.splice(0, cmds.length);
+			data.splice(0, data.length);
 			
 			cmds.push(GraphicsPathCommand.MOVE_TO);
 			data.push(0, 0);
@@ -124,7 +126,7 @@ package flight.graphics
 		
 		private function onResize(event:Event):void
 		{
-			RenderPhase.invalidate(this, DrawEvent.DRAW);
+			invalidate(DrawEvent.DRAW);
 		}
 	}
 }

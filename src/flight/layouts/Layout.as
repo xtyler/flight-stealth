@@ -16,7 +16,7 @@ package flight.layouts
 	import flight.events.ListEvent;
 	import flight.events.StyleEvent;
 	import flight.styles.IStyleable;
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 
 	public class Layout extends EventDispatcher implements ILayout
 	{
@@ -44,8 +44,8 @@ package flight.layouts
 				_target.display.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 50, true);
 				_target.display.addEventListener(LayoutEvent.LAYOUT, onLayout, false, 50, true);
 				_target.content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
-				RenderPhase.invalidate(_target.display, LayoutEvent.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutEvent.LAYOUT);
+				Invalidation.invalidate(_target.display, LayoutEvent.MEASURE);
+				Invalidation.invalidate(_target.display, LayoutEvent.LAYOUT);
 			}
 		}
 		private var _target:IContainer;
@@ -91,8 +91,8 @@ package flight.layouts
 		private function onStyleChange(event:StyleEvent):void
 		{
 			if (layoutStyles && layoutStyles.indexOf(event.property) != -1) {
-				RenderPhase.invalidate(_target.display, LayoutEvent.MEASURE);
-				RenderPhase.invalidate(_target.display, LayoutEvent.LAYOUT);
+				Invalidation.invalidate(_target.display, LayoutEvent.MEASURE);
+				Invalidation.invalidate(_target.display, LayoutEvent.LAYOUT);
 			}
 		}
 		

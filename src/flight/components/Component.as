@@ -20,7 +20,6 @@ package flight.components
 	import flight.events.StyleEvent;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
-	import flight.utils.RenderPhase;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
@@ -89,7 +88,7 @@ package flight.components
 				if (_skin) {
 					detachSkin();
 				}
-				RenderPhase.invalidate(this, LayoutEvent.MEASURE);
+				invalidate(LayoutEvent.MEASURE);
 				DataChange.queue(this, "skin", _skin, _skin = value);
 				if (_skin) {
 					attachSkin();

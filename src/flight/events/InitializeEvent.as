@@ -6,18 +6,18 @@
 
 package flight.events
 {
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 
 	public class InitializeEvent extends InvalidationEvent
 	{
 		public static const READY:String = "ready";
-		RenderPhase.registerPhase(READY, InitializeEvent, -10);
+		Invalidation.registerPhase(READY, InitializeEvent, -10);
 		
 		public static const CREATE:String = "create";
-		RenderPhase.registerPhase(CREATE, InitializeEvent, 250);
+		Invalidation.registerPhase(CREATE, InitializeEvent, 250);
 		
 		public static const INITIALIZE:String = "initialize";
-		RenderPhase.registerPhase(INITIALIZE, InitializeEvent, 300);
+		Invalidation.registerPhase(INITIALIZE, InitializeEvent, 300);
 		
 		public function InitializeEvent(type:String, bubbles:Boolean, cancelable:Boolean)
 		{

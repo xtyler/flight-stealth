@@ -8,16 +8,22 @@ package flight.events
 {
 	import flash.events.Event;
 
-	import flight.utils.RenderPhase;
+	import flight.utils.Invalidation;
 
 	public class InvalidationEvent extends Event
 	{
 		public static const VALIDATE:String = "validate";
-		RenderPhase.registerPhase(VALIDATE, InvalidationEvent, 0);
+		Invalidation.registerPhase(VALIDATE, InvalidationEvent, 0);
 		
 		public function InvalidationEvent(type:String, bubbles:Boolean, cancelable:Boolean)
 		{
 			super(type, bubbles, cancelable);
+		}
+		
+		override public function clone():Event
+		{
+			var constructor:Class = Object(this).constructor;
+			return new constructor(type, bubbles, cancelable);
 		}
 	}
 }
