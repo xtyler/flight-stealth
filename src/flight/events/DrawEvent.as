@@ -13,7 +13,7 @@ package flight.events
 		public static const DRAW:String = "draw";
 		Invalidation.registerPhase(DRAW, DrawEvent, 50);
 		
-		public function DrawEvent(type:String, bubbles:Boolean, cancelable:Boolean)
+		public function DrawEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			super(type, bubbles, cancelable);
 		}

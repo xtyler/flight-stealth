@@ -15,7 +15,7 @@ package flight.events
 		public static const VALIDATE:String = "validate";
 		Invalidation.registerPhase(VALIDATE, InvalidationEvent, 0);
 		
-		public function InvalidationEvent(type:String, bubbles:Boolean, cancelable:Boolean)
+		public function InvalidationEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			super(type, bubbles, cancelable);
 		}

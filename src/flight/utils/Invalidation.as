@@ -93,7 +93,7 @@ package flight.utils
 		 * 						for the first time, or re-registered with new
 		 * 						priority/ascending settings.
 		 */
-		public static function registerPhase(phaseName:String, eventType:Class = Event, priority:int = 0, ascending:Boolean = true):Boolean
+		public static function registerPhase(phaseName:String, eventType:Class = null, priority:int = 0, ascending:Boolean = true):Boolean
 		{
 			var invalidationPhase:InvalidationPhase = phaseIndex[phaseName];
 			if (!invalidationPhase) {
@@ -338,10 +338,10 @@ internal class InvalidationPhase
 	 * @param eventType		Event class used when dispatching from invalidation
 	 * 						targets.
 	 */
-	public function InvalidationPhase(name:String, eventType:Class = Event)
+	public function InvalidationPhase(name:String, eventType:Class = null)
 	{
 		_name = name;
-		this.eventType = eventType;
+		this.eventType = eventType || Event;
 	}
 
 	/**

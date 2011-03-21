@@ -19,7 +19,7 @@ package flight.events
 		public static const INITIALIZE:String = "initialize";
 		Invalidation.registerPhase(INITIALIZE, InitializeEvent, 300);
 		
-		public function InitializeEvent(type:String, bubbles:Boolean, cancelable:Boolean)
+		public function InitializeEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			super(type, bubbles, cancelable);
 		}

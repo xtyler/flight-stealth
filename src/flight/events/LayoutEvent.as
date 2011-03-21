@@ -22,7 +22,7 @@ package flight.events
 		public static const MEASURE:String = "measure";
 		Invalidation.registerPhase(MEASURE, LayoutEvent, 100);
 		
-		public function LayoutEvent(type:String, bubbles:Boolean, cancelable:Boolean)
+		public function LayoutEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			super(type, bubbles, cancelable);
 		}
